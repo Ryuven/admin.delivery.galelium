@@ -956,7 +956,7 @@ window.doAssign=async function(){
 /* ── CATALOG ── */
 function renderCatalog(){
   const body=document.getElementById('cat-ob');if(!body)return;
-  if(!allProducts.length){body.innerHTML=`<tr><td colspan="5"><div class="er"><div class="er-ico">🍽️</div>Нет товаров</div></td></tr>`;return;}
+  if(!allProducts.length){body.innerHTML=`<tr><td colspan="6"><div class="er"><div class="er-ico">🍽️</div>Нет товаров</div></td></tr>`;return;}
   body.innerHTML=allProducts.map(p=>`<tr>
     <td style="display:flex;align-items:center;gap:10px;color:var(--text);font-weight:500">
       <div style="width:30px;height:30px;background:var(--s2);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:.8rem;flex-shrink:0;overflow:hidden">
@@ -965,6 +965,11 @@ function renderCatalog(){
     </td>
     <td style="color:var(--text2)">${p.categoryId||'—'}</td>
     <td style="font-family:var(--fm);color:var(--green)">${p.price} ₽</td>
+    <td>
+      ${p.barcode
+        ? `<span style="font-family:var(--fm);font-size:.66rem;color:var(--acc2);background:var(--accd);border:1px solid var(--accg);padding:2px 8px;border-radius:5px;letter-spacing:.06em">${p.barcode}</span>`
+        : `<span style="font-size:.62rem;color:var(--text3)">—</span>`}
+    </td>
     <td><span class="ostatus" style="color:${p.available!==false?'var(--green)':'var(--red)'};border-color:${p.available!==false?'var(--greeng)':'rgba(244,63,94,.2)'};background:${p.available!==false?'var(--greend)':'var(--redd)'}"><span class="osdot"></span>${p.available!==false?'Доступен':'Скрыт'}</span></td>
     <td><div class="oact">
       <button class="btn btn-secondary btn-sm" onclick="editProduct('${p.id}')">Изменить</button>
@@ -983,6 +988,20 @@ window.openAddProduct=function(){
       <div class="mf"><label class="ml">Категория</label><input class="mi" id="p-ct" placeholder="burgers"/></div>
     </div>
     <div class="mf"><label class="ml">URL изображения</label><input class="mi" id="p-im" placeholder="https://…"/></div>
+    <div class="mf">
+      <label class="ml" style="display:flex;align-items:center;gap:6px">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="2" y="4" width="3" height="16" rx="1"/><rect x="7" y="4" width="1.5" height="16" rx=".5"/><rect x="10" y="4" width="3" height="16" rx="1"/><rect x="15" y="4" width="1.5" height="16" rx=".5"/><rect x="18" y="4" width="3" height="16" rx="1"/></svg>
+        Штрих-код (EAN-13, QR и др.)
+      </label>
+      <div style="display:flex;gap:8px">
+        <input class="mi" id="p-bc" placeholder="4607086561315" inputmode="numeric" style="flex:1;letter-spacing:.06em"/>
+        <button class="btn btn-secondary" onclick="scanBarcodeAdmin()" title="Сканировать" style="flex-shrink:0;padding:0 14px;display:flex;align-items:center;gap:5px">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="3" height="16" rx="1"/><rect x="7" y="4" width="1.5" height="16" rx=".5"/><rect x="10" y="4" width="3" height="16" rx="1"/><rect x="15" y="4" width="1.5" height="16" rx=".5"/><rect x="18" y="4" width="3" height="16" rx="1"/></svg>
+          Скан
+        </button>
+      </div>
+      <div style="font-size:.6rem;color:var(--muted);margin-top:4px">Необязательно. Используется курьером при сборке заказа для верификации товара.</div>
+    </div>
   `;
   document.getElementById('m-order-foot').innerHTML=`<button class="btn btn-secondary" onclick="closeMo('order-modal')">Отмена</button><button class="btn btn-primary" onclick="saveNewProd()">Добавить</button>`;
   openMo('order-modal');
@@ -999,6 +1018,20 @@ window.editProduct=function(id){
       <div class="mf"><label class="ml">Категория</label><input class="mi" id="p-ct" value="${p.categoryId||''}"/></div>
     </div>
     <div class="mf"><label class="ml">URL изображения</label><input class="mi" id="p-im" value="${p.imageUrl||''}"/></div>
+    <div class="mf">
+      <label class="ml" style="display:flex;align-items:center;gap:6px">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="2" y="4" width="3" height="16" rx="1"/><rect x="7" y="4" width="1.5" height="16" rx=".5"/><rect x="10" y="4" width="3" height="16" rx="1"/><rect x="15" y="4" width="1.5" height="16" rx=".5"/><rect x="18" y="4" width="3" height="16" rx="1"/></svg>
+        Штрих-код (EAN-13, QR и др.)
+      </label>
+      <div style="display:flex;gap:8px">
+        <input class="mi" id="p-bc" value="${p.barcode||''}" placeholder="4607086561315" inputmode="numeric" style="flex:1;letter-spacing:.06em"/>
+        <button class="btn btn-secondary" onclick="scanBarcodeAdmin()" title="Сканировать" style="flex-shrink:0;padding:0 14px;display:flex;align-items:center;gap:5px">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="3" height="16" rx="1"/><rect x="7" y="4" width="1.5" height="16" rx=".5"/><rect x="10" y="4" width="3" height="16" rx="1"/><rect x="15" y="4" width="1.5" height="16" rx=".5"/><rect x="18" y="4" width="3" height="16" rx="1"/></svg>
+          Скан
+        </button>
+      </div>
+      <div style="font-size:.6rem;color:var(--muted);margin-top:4px">Используется курьером при сборке заказа для верификации товара.</div>
+    </div>
   `;
   document.getElementById('m-order-foot').innerHTML=`<button class="btn btn-danger" onclick="deleteProd('${id}')">Удалить</button><button class="btn btn-secondary" onclick="closeMo('order-modal')">Отмена</button><button class="btn btn-primary" onclick="saveEditProd('${id}')">Сохранить</button>`;
   openMo('order-modal');
@@ -1008,15 +1041,66 @@ window.saveNewProd=async function(){
   const name=document.getElementById('p-nm')?.value.trim();
   const price=parseFloat(document.getElementById('p-pr')?.value||'0');
   if(!name||!price){toast('Заполните название и цену','warn');return;}
+  const barcode=document.getElementById('p-bc')?.value.trim()||'';
   try{
-    await addDoc(collection(db,'products'),{name,description:document.getElementById('p-ds')?.value.trim()||'',price,categoryId:document.getElementById('p-ct')?.value.trim()||'',imageUrl:document.getElementById('p-im')?.value.trim()||'',available:true,createdAt:serverTimestamp(),updatedAt:serverTimestamp()});
+    await addDoc(collection(db,'products'),{name,description:document.getElementById('p-ds')?.value.trim()||'',price,categoryId:document.getElementById('p-ct')?.value.trim()||'',imageUrl:document.getElementById('p-im')?.value.trim()||'',barcode,available:true,createdAt:serverTimestamp(),updatedAt:serverTimestamp()});
     toast('Товар добавлен','ok');closeMo('order-modal');await loadProducts();
   }catch{toast('Ошибка','err');}
 };
 
+// Сканер штрихкода в админке (через BarcodeDetector + камера)
+window.scanBarcodeAdmin = async function() {
+  if (!('BarcodeDetector' in window)) {
+    toast('BarcodeDetector не поддерживается браузером. Введите вручную.','warn');
+    return;
+  }
+  // Создаём мини-оверлей
+  let div = document.getElementById('admin-scan-ov');
+  if (!div) { div = document.createElement('div'); div.id = 'admin-scan-ov'; document.body.appendChild(div); }
+  div.innerHTML = `
+    <div style="position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.92);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px">
+      <div style="font-size:.9rem;color:#fff;font-weight:600">Наведите камеру на штрих-код</div>
+      <div style="position:relative;width:min(320px,90vw);aspect-ratio:4/3;overflow:hidden;border-radius:14px">
+        <video id="asv" autoplay playsinline muted style="width:100%;height:100%;object-fit:cover"></video>
+        <div style="position:absolute;left:10%;right:10%;height:2px;background:rgba(62,207,142,.9);animation:laserMove 2s ease-in-out infinite;top:50%"></div>
+      </div>
+      <div id="as-hint" style="font-size:.76rem;color:rgba(255,255,255,.6)">Ожидаем сканирования…</div>
+      <button onclick="closeAdminScan()" style="padding:9px 24px;background:#1f2a21;border:1px solid rgba(62,207,142,.3);color:#3ecf8e;border-radius:8px;cursor:pointer;font-size:.76rem">Отмена</button>
+    </div>`;
+  let stream, raf;
+  const detector = new BarcodeDetector({formats:['ean_13','ean_8','upc_a','code_128','code_39','qr_code']});
+  stream = await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'}}}).catch(()=>null);
+  if (!stream) { toast('Камера недоступна','err'); div.innerHTML=''; return; }
+  const v = document.getElementById('asv');
+  v.srcObject = stream; await v.play();
+  const loop = async () => {
+    try {
+      const res = await detector.detect(v);
+      if (res.length) {
+        const code = res[0].rawValue;
+        stream.getTracks().forEach(t=>t.stop());
+        cancelAnimationFrame(raf);
+        div.innerHTML='';
+        const inp = document.getElementById('p-bc');
+        if (inp) { inp.value = code; inp.focus(); }
+        toast('Штрих-код отсканирован: '+code,'ok');
+        return;
+      }
+    } catch {}
+    raf = requestAnimationFrame(loop);
+  };
+  raf = requestAnimationFrame(loop);
+  window.closeAdminScan = () => {
+    cancelAnimationFrame(raf);
+    stream.getTracks().forEach(t=>t.stop());
+    div.innerHTML='';
+  };
+};
+
 window.saveEditProd=async function(id){
+  const barcode=document.getElementById('p-bc')?.value.trim()||'';
   try{
-    await updateDoc(doc(db,'products',id),{name:document.getElementById('p-nm')?.value.trim()||'',description:document.getElementById('p-ds')?.value.trim()||'',price:parseFloat(document.getElementById('p-pr')?.value||'0'),categoryId:document.getElementById('p-ct')?.value.trim()||'',imageUrl:document.getElementById('p-im')?.value.trim()||'',updatedAt:serverTimestamp()});
+    await updateDoc(doc(db,'products',id),{name:document.getElementById('p-nm')?.value.trim()||'',description:document.getElementById('p-ds')?.value.trim()||'',price:parseFloat(document.getElementById('p-pr')?.value||'0'),categoryId:document.getElementById('p-ct')?.value.trim()||'',imageUrl:document.getElementById('p-im')?.value.trim()||'',barcode,updatedAt:serverTimestamp()});
     toast('Товар обновлён','ok');closeMo('order-modal');await loadProducts();
   }catch{toast('Ошибка','err');}
 };

@@ -185,6 +185,39 @@ body::after{content:'';position:fixed;width:800px;height:800px;border-radius:50%
 .tk-pri{font-size:.52rem;font-weight:700;padding:2px 8px;border-radius:99px;border:1px solid;letter-spacing:.06em;text-transform:uppercase}
 .tk-subj{font-size:.76rem;font-weight:600;color:var(--text);margin-bottom:3px}
 .tk-meta{font-size:.62rem;color:var(--text3);display:flex;gap:8px;flex-wrap:wrap}
+.tk-unread-dot{width:7px;height:7px;border-radius:50%;background:var(--red);flex-shrink:0}
+
+/* Ticket chat thread (admin detail panel) */
+.tk-detail-wrap{display:flex;flex-direction:column;height:100%}
+.tk-client-row{display:flex;align-items:center;gap:10px;padding:14px 18px;border-bottom:1px solid var(--b)}
+.tk-client-av{width:36px;height:36px;border-radius:50%;background:var(--accd);border:1.5px solid var(--accg);display:flex;align-items:center;justify-content:center;color:var(--acc2);font-weight:700;font-size:.72rem;flex-shrink:0}
+.tk-client-body{flex:1;min-width:0}
+.tk-client-name{font-weight:700;font-size:.8rem;color:var(--text)}
+.tk-client-phone{font-size:.66rem;color:var(--text3);margin-top:1px}
+.tk-status-pill{font-size:.56rem;font-weight:700;padding:4px 10px;border-radius:99px;border:1px solid;letter-spacing:.04em;text-transform:uppercase;flex-shrink:0}
+.tk-status-pill.open{color:var(--yellow);border-color:var(--yellow);background:var(--yellowd)}
+.tk-status-pill.in_progress{color:var(--acc2);border-color:var(--acc2);background:var(--accd)}
+.tk-status-pill.resolved{color:var(--green);border-color:var(--green);background:var(--greend)}
+
+.tk-order-chip{display:flex;align-items:center;gap:9px;background:var(--s2);border:1px solid var(--b);border-radius:10px;padding:10px 13px;margin:12px 18px 0;font-size:.72rem;color:var(--text2);cursor:pointer;transition:border-color var(--tf)}
+.tk-order-chip:hover{border-color:var(--bh)}
+.tk-order-chip svg{color:var(--acc2);flex-shrink:0}
+.tk-order-chip-num{font-weight:700;color:var(--text)}
+.tk-order-chip-arrow{margin-left:auto;color:var(--text3);flex-shrink:0}
+
+.tk-chat-messages{flex:1;overflow-y:auto;padding:14px 18px;display:flex;flex-direction:column;gap:8px;min-height:180px;max-height:360px}
+.tk-msg{max-width:78%;padding:8px 12px;border-radius:12px;font-size:.75rem;line-height:1.5;word-wrap:break-word;white-space:pre-wrap}
+.tk-msg-client{align-self:flex-start;background:var(--s2);border:1px solid var(--b);color:var(--text)}
+.tk-msg-admin{align-self:flex-end;background:linear-gradient(135deg,var(--acc),var(--acc2));color:#fff}
+.tk-msg-time{font-size:.56rem;opacity:.6;margin-top:3px;display:block}
+
+.tk-chat-reply-row{display:flex;gap:8px;padding:12px 18px;border-top:1px solid var(--b);align-items:flex-end;flex-shrink:0}
+.tk-chat-reply-input{flex:1;resize:none;max-height:90px;border:1px solid var(--b);border-radius:9px;padding:9px 12px;font-family:var(--fs);font-size:.76rem;background:var(--s2);color:var(--text);outline:none;transition:border-color var(--tf)}
+.tk-chat-reply-input:focus{border-color:var(--acc)}
+.tk-chat-send{width:36px;height:36px;border-radius:9px;background:var(--acc);border:none;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:opacity var(--tf)}
+.tk-chat-send:disabled{opacity:.4;cursor:default}
+
+.tk-actions-row{display:flex;gap:8px;padding:12px 18px;border-top:1px solid var(--b);flex-wrap:wrap;flex-shrink:0}
 
 /* Map */
 .map-ph{background:var(--s2);height:200px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
@@ -424,7 +457,7 @@ textarea.mi{resize:vertical;min-height:80px}
           <div class="fb"><button class="fp active" onclick="fTickets('all',this)">Все</button><button class="fp r" onclick="fTickets('urgent',this)">Срочные</button><button class="fp" onclick="fTickets('open',this)">Открытые</button><button class="fp g" onclick="fTickets('resolved',this)">Решённые</button></div>
           <div id="tickets-list"></div>
         </div>
-        <div class="panel" id="ticket-detail"><div class="panel-head"><div class="panel-title">Детали обращения</div></div><div style="padding:24px;text-align:center;color:var(--text3);font-size:.74rem"><div style="font-size:2rem;opacity:.15;margin-bottom:10px">💬</div>Выберите обращение</div></div>
+        <div class="panel" id="ticket-detail"><div class="panel-head"><div class="panel-title">Детали обращения</div></div><div style="padding:40px 24px;text-align:center;color:var(--text3);font-size:.74rem"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" style="opacity:.2;margin-bottom:12px"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg><div>Выберите обращение из списка</div></div></div>
       </div>
     </div>
 
@@ -494,7 +527,7 @@ textarea.mi{resize:vertical;min-height:80px}
 <script type="module">
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.8.1/firebase-app.js';
 import { getAuth, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/11.8.1/firebase-auth.js';
-import { getFirestore, doc, getDoc, setDoc, addDoc, updateDoc, deleteDoc, getDocs, collection, query, where, orderBy, onSnapshot, serverTimestamp, limit } from 'https://www.gstatic.com/firebasejs/11.8.1/firebase-firestore.js';
+import { getFirestore, doc, getDoc, setDoc, addDoc, updateDoc, deleteDoc, getDocs, collection, query, where, orderBy, onSnapshot, serverTimestamp, limit, increment } from 'https://www.gstatic.com/firebasejs/11.8.1/firebase-firestore.js';
 
 const cfg={apiKey:'AIzaSyCjIAMFuwLKwmjChCuiz-MHLv5WZOczAAE',authDomain:'delivery-galelium.firebaseapp.com',projectId:'delivery-galelium',storageBucket:'delivery-galelium.firebasestorage.app',messagingSenderId:'982466555080',appId:'1:982466555080:web:c77ccbff0e71e540ddc9fd'};
 const app=initializeApp(cfg),auth=getAuth(app),db=getFirestore(app);
@@ -577,6 +610,8 @@ function startListeners(){
     updateCurKPI();
     if(document.getElementById('page-couriers').classList.contains('active'))renderCouriersPage();
   });
+
+  listenTickets();
 }
 
 /* ── LOAD ALL ── */
@@ -1212,76 +1247,158 @@ window.updateStaffRole=async function(uid){
   try{await setDoc(doc(db,'users',uid),{role,updatedAt:serverTimestamp()},{merge:true});toast('Роль обновлена','ok');closeMo('order-modal');await loadStaff();}catch{toast('Ошибка','err');}
 };
 
-/* ── SUPPORT TICKETS ── */
-const TICKETS=[
-  {id:'TKT-001',subject:'Заказ не доставлен',client:'Иван Петров',priority:'urgent',status:'open',time:'5 мин назад',msg:'Заказ #A4F3B2 не доставлен 2 часа. Курьер не отвечает.'},
-  {id:'TKT-002',subject:'Неверный состав заказа',client:'Мария Сидорова',priority:'normal',status:'open',time:'22 мин назад',msg:'В заказе не было картофеля фри, хотя он был оплачен.'},
-  {id:'TKT-003',subject:'Проблема с оплатой',client:'Алексей Козлов',priority:'normal',status:'open',time:'1 ч назад',msg:'Деньги списаны, заказ не создался.'},
-  {id:'TKT-004',subject:'Возврат средств',client:'Светлана Новикова',priority:'low',status:'resolved',time:'2 ч назад',msg:'Запрос на возврат обработан.'},
-  {id:'TKT-005',subject:'Курьер не по адресу',client:'Дмитрий Белов',priority:'urgent',status:'open',time:'2 мин назад',msg:'Курьер приехал не по тому адресу.'},
-  {id:'TKT-006',subject:'Холодная еда',client:'Анна Смирнова',priority:'normal',status:'open',time:'40 мин назад',msg:'Еда пришла совершенно холодной.'},
-];
+/* ── SUPPORT TICKETS (реальные данные из Firestore) ── */
+let TICKETS = [];
+let unsubTickets = null;
+let currentTicketId = null;
+let unsubTicketMsgs = null;
 
-function renderTickets(){
-  const el=document.getElementById('tickets-list');if(!el)return;
-  let list=[...TICKETS];
-  if(tktFilt==='urgent')list=list.filter(t=>t.priority==='urgent');
-  else if(tktFilt==='open')list=list.filter(t=>t.status==='open');
-  else if(tktFilt==='resolved')list=list.filter(t=>t.status==='resolved');
-  const urgent=TICKETS.filter(t=>t.status==='open').length;
-  const b=document.getElementById('sb-tkt-b');if(b){b.style.display=urgent>0?'':'none';b.textContent=urgent;}
-  const pc={urgent:'var(--red)',normal:'var(--acc2)',low:'var(--text3)'};
-  const pl={urgent:'Срочно',normal:'Обычный',low:'Низкий'};
-  el.innerHTML=list.map(t=>`<div class="ticket" onclick="openTicket('${t.id}')">
-    <div class="tk-head"><span class="tk-id">${t.id}</span><span class="tk-pri" style="color:${pc[t.priority]};border-color:${pc[t.priority]}30;background:${pc[t.priority]}10">${pl[t.priority]}</span></div>
-    <div class="tk-subj">${t.subject}</div>
-    <div class="tk-meta"><span>${t.client}</span><span>${t.time}</span><span style="color:${t.status==='resolved'?'var(--green)':'var(--acc2)'}">${t.status==='resolved'?'✓ Решено':'● Открыто'}</span></div>
-  </div>`).join('')||`<div class="er"><div class="er-ico">💬</div>Нет обращений</div>`;
+function escHtmlAdm(s) { return (s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
+
+function listenTickets() {
+  if (unsubTickets) unsubTickets();
+  const q = query(collection(db, 'supportTickets'), orderBy('updatedAt', 'desc'));
+  unsubTickets = onSnapshot(q, snap => {
+    TICKETS = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    renderTickets();
+  }, () => { /* индекс ещё не создан — тихо игнорируем, страница просто пуста */ });
 }
 
-window.fTickets=function(f,btn){
-  tktFilt=f;
-  document.querySelectorAll('#page-support .fp').forEach(p=>p.classList.remove('active'));
+function renderTickets() {
+  const el = document.getElementById('tickets-list'); if (!el) return;
+  let list = [...TICKETS];
+  if (tktFilt === 'urgent')        list = list.filter(t => (t.adminUnread || 0) > 0 && t.status !== 'resolved');
+  else if (tktFilt === 'open')     list = list.filter(t => t.status === 'open');
+  else if (tktFilt === 'resolved') list = list.filter(t => t.status === 'resolved');
+
+  const urgent = TICKETS.filter(t => (t.adminUnread || 0) > 0 && t.status !== 'resolved').length;
+  const b = document.getElementById('sb-tkt-b'); if (b) { b.style.display = urgent > 0 ? '' : 'none'; b.textContent = urgent; }
+
+  const sc = { open: 'var(--yellow)', in_progress: 'var(--acc2)', resolved: 'var(--green)' };
+  const sl = { open: 'Открыт', in_progress: 'В работе', resolved: 'Решён' };
+
+  el.innerHTML = list.map(t => {
+    const num  = '#' + t.id.slice(-6).toUpperCase();
+    const time = t.updatedAt?.toDate ? t.updatedAt.toDate().toLocaleDateString('ru-RU', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' }) : '—';
+    const hasUnread = (t.adminUnread || 0) > 0;
+    const c = sc[t.status] || 'var(--text3)';
+    return `<div class="ticket" onclick="openTicket('${t.id}')" style="${currentTicketId === t.id ? 'background:rgba(99,102,241,.06)' : ''}">
+      <div class="tk-head"><span class="tk-id">${num}</span><span class="tk-pri" style="color:${c};border-color:${c}30;background:${c}10">${sl[t.status] || t.status}</span></div>
+      <div class="tk-subj">${hasUnread ? '<span class="tk-unread-dot" style="display:inline-block;margin-right:6px;vertical-align:middle"></span>' : ''}${escHtmlAdm(t.subject)}</div>
+      <div class="tk-meta"><span>${escHtmlAdm(t.clientName)}</span>${t.orderNumber ? `<span>· #${escHtmlAdm(t.orderNumber)}</span>` : ''}<span>· ${time}</span></div>
+    </div>`;
+  }).join('') || `<div class="er"><div class="er-ico"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div>Нет обращений</div>`;
+}
+
+window.fTickets = function (f, btn) {
+  tktFilt = f;
+  document.querySelectorAll('#page-support .fp').forEach(p => p.classList.remove('active'));
   btn.classList.add('active');
   renderTickets();
 };
 
-window.openTicket=function(id){
-  const t=TICKETS.find(x=>x.id===id);if(!t)return;
-  const pc={urgent:'var(--red)',normal:'var(--acc2)',low:'var(--text3)'};
-  const pl={urgent:'Срочно',normal:'Обычный',low:'Низкий'};
-  document.getElementById('ticket-detail').innerHTML=`
-    <div class="panel-head">
-      <div class="panel-title">${t.id} · ${t.subject}</div>
-      <span class="tk-pri" style="color:${pc[t.priority]};border-color:${pc[t.priority]}30;background:${pc[t.priority]}10">${pl[t.priority]}</span>
-    </div>
-    <div style="padding:16px 18px">
-      <div style="font-size:.62rem;color:var(--text3);margin-bottom:12px">${t.client} · ${t.time}</div>
-      <div style="background:var(--s2);border:1px solid var(--b);border-radius:8px;padding:12px 14px;font-size:.76rem;color:var(--text2);line-height:1.7;margin-bottom:16px">${t.msg}</div>
-      <label class="ml">Ответ клиенту</label>
-      <textarea class="mi" id="tk-reply" rows="4" placeholder="Введите ответ…"></textarea>
-      <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
-        <button class="btn btn-primary" onclick="replyTicket('${t.id}')">📤 Отправить ответ</button>
-        <button class="btn btn-success" onclick="resolveTicket('${t.id}')">✓ Закрыть обращение</button>
+window.openTicket = async function (id) {
+  currentTicketId = id;
+  renderTickets(); // подсветить выбранный тикет в списке
+
+  const t = TICKETS.find(x => x.id === id); if (!t) return;
+
+  const sl = { open: 'Открыт', in_progress: 'В работе', resolved: 'Решён' };
+  const initials = (t.clientName || '?').trim().split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2) || '?';
+
+  const orderHtml = t.orderId ? `
+    <div class="tk-order-chip" onclick="openOrderModal('${t.orderId}')">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+      <span>Заказ <span class="tk-order-chip-num">#${escHtmlAdm(t.orderNumber || '')}</span></span>
+      <svg class="tk-order-chip-arrow" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+    </div>` : '';
+
+  document.getElementById('ticket-detail').innerHTML = `
+    <div class="tk-detail-wrap">
+      <div class="panel-head">
+        <div class="panel-title">${'#' + id.slice(-6).toUpperCase()}</div>
+        <span class="tk-status-pill ${t.status}">${sl[t.status] || t.status}</span>
       </div>
-    </div>
-  `;
+      <div class="tk-client-row">
+        <div class="tk-client-av">${initials}</div>
+        <div class="tk-client-body">
+          <div class="tk-client-name">${escHtmlAdm(t.clientName)}</div>
+          <div class="tk-client-phone">${escHtmlAdm(t.clientPhone || '—')}</div>
+        </div>
+      </div>
+      ${orderHtml}
+      <div class="tk-chat-messages" id="tk-chat-messages"><div style="padding:30px;text-align:center;color:var(--text3);font-size:.72rem">Загрузка…</div></div>
+      <div class="tk-chat-reply-row">
+        <textarea class="tk-chat-reply-input" id="tk-reply-input" rows="1" placeholder="Ваш ответ…"
+          oninput="this.style.height='auto';this.style.height=Math.min(this.scrollHeight,90)+'px'"
+          onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendTicketReply('${id}');}"></textarea>
+        <button class="tk-chat-send" id="tk-send-btn" onclick="sendTicketReply('${id}')">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        </button>
+      </div>
+      <div class="tk-actions-row">
+        ${t.status !== 'in_progress' && t.status !== 'resolved' ? `<button class="btn" style="background:var(--accd);border:1px solid var(--accg);color:var(--acc2)" onclick="setTicketStatus('${id}','in_progress')">Взять в работу</button>` : ''}
+        ${t.status !== 'resolved' ? `<button class="btn btn-success" onclick="setTicketStatus('${id}','resolved')">Решено</button>` : `<button class="btn" style="background:var(--accd);border:1px solid var(--accg);color:var(--acc2)" onclick="setTicketStatus('${id}','open')">Открыть заново</button>`}
+      </div>
+    </div>`;
+
+  // Гасим непрочитанные для админа при открытии
+  updateDoc(doc(db, 'supportTickets', id), { adminUnread: 0 }).catch(() => {});
+
+  listenTicketMessages(id);
 };
 
-window.replyTicket=function(id){
-  const txt=document.getElementById('tk-reply')?.value.trim();
-  if(!txt){toast('Введите текст ответа','warn');return;}
-  toast('Ответ отправлен клиенту ✓','ok');
-  const el=document.getElementById('tk-reply');if(el)el.value='';
+function listenTicketMessages(ticketId) {
+  if (unsubTicketMsgs) unsubTicketMsgs();
+  const q = query(collection(db, 'supportTickets', ticketId, 'messages'), orderBy('createdAt', 'asc'));
+  unsubTicketMsgs = onSnapshot(q, snap => {
+    renderTicketMessages(snap.docs.map(d => ({ id: d.id, ...d.data() })));
+  });
+}
+
+function renderTicketMessages(msgs) {
+  const el = document.getElementById('tk-chat-messages'); if (!el) return;
+  if (msgs.length === 0) {
+    el.innerHTML = '<div style="padding:30px;text-align:center;color:var(--text3);font-size:.72rem">Нет сообщений</div>';
+    return;
+  }
+  el.innerHTML = msgs.map(m => {
+    const mine = m.senderRole === 'admin';
+    const time = m.createdAt?.toDate ? m.createdAt.toDate().toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' }) : '';
+    return `<div class="tk-msg ${mine ? 'tk-msg-admin' : 'tk-msg-client'}">${escHtmlAdm(m.text)}<span class="tk-msg-time">${time}</span></div>`;
+  }).join('');
+  el.scrollTop = el.scrollHeight;
+}
+
+window.sendTicketReply = async function (ticketId) {
+  const inp = document.getElementById('tk-reply-input'); if (!inp) return;
+  const text = inp.value.trim(); if (!text) return;
+  inp.value = ''; inp.style.height = 'auto';
+  const btn = document.getElementById('tk-send-btn'); if (btn) btn.disabled = true;
+
+  try {
+    await addDoc(collection(db, 'supportTickets', ticketId, 'messages'), {
+      text, senderId: CU.uid, senderRole: 'admin', senderName: AD?.displayName || 'Дастгирӣ', createdAt: serverTimestamp(),
+    });
+    await updateDoc(doc(db, 'supportTickets', ticketId), {
+      clientUnread:          increment(1),
+      lastMessage:           text.slice(0, 120),
+      lastMessageAt:         serverTimestamp(),
+      lastMessageSenderRole: 'admin',
+      status:                'in_progress',
+      updatedAt:             serverTimestamp(),
+    });
+  } catch (e) { toast('Ошибка отправки', 'err'); }
+  if (btn) btn.disabled = false;
+  inp.focus();
 };
 
-window.resolveTicket=function(id){
-  const t=TICKETS.find(x=>x.id===id);
-  if(t){t.status='resolved';}
-  toast('Обращение закрыто','ok');
-  renderTickets();
-  const det=document.getElementById('ticket-detail');
-  if(det)det.innerHTML=`<div class="panel-head"><div class="panel-title">Детали обращения</div></div><div style="padding:24px;text-align:center;color:var(--text3);font-size:.74rem"><div style="font-size:2rem;opacity:.15;margin-bottom:10px">✅</div>Обращение закрыто</div>`;
+window.setTicketStatus = async function (ticketId, status) {
+  try {
+    await updateDoc(doc(db, 'supportTickets', ticketId), { status, updatedAt: serverTimestamp() });
+    toast(status === 'resolved' ? 'Обращение закрыто' : status === 'in_progress' ? 'Взято в работу' : 'Обращение переоткрыто', 'ok');
+    openTicket(ticketId);
+  } catch (e) { toast('Ошибка', 'err'); }
 };
 
 /* ── SETTINGS ── */

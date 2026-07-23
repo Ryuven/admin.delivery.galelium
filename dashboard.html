@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>Dashboard · Galelium Admin</title>
+<title>Dashboard · Dastdaroz Admin</title>
 <meta name="robots" content="noindex,nofollow"/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
@@ -35,11 +35,8 @@ body::after{display:none}
 /* ── SIDEBAR ── */
 .sb{width:var(--sw);flex-shrink:0;background:var(--s1);border-right:1px solid var(--b);display:flex;flex-direction:column;position:relative;overflow:hidden;transition:transform var(--t) var(--ease)}
 .sb::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,rgba(255,255,255,.2),transparent 70%)}
-.sb-logo{padding:16px 16px 12px;border-bottom:1px solid var(--b);display:flex;align-items:center;gap:10px}
-.sb-mark{width:30px;height:30px;background:#222;border:1px solid rgba(255,255,255,.12);border-radius:7px;display:flex;align-items:center;justify-content:center;color:#fff;flex-shrink:0}
-.sb-brand{font-family:var(--fd);font-weight:800;font-size:.8rem;color:#fff;letter-spacing:-.01em;line-height:1.1}
-.sb-brand em{color:#fff;font-style:normal;opacity:.6}
-.sb-brand-sub{font-size:.38rem;letter-spacing:.28em;text-transform:uppercase;color:var(--muted);margin-top:3px}
+.sb-logo{padding:18px 20px 16px;border-bottom:1px solid var(--b);display:flex;align-items:center}
+.sb-logo img{width:100%;height:auto;max-height:28px;object-fit:contain;object-position:left center;opacity:.92;filter:brightness(0) invert(1)}
 .sb-admin{margin:8px 12px;padding:8px 10px;background:var(--s2);border:1px solid var(--b);border-radius:8px;display:flex;align-items:center;gap:8px}
 .sb-av{width:26px;height:26px;border-radius:50%;background:var(--accd);border:1.5px solid var(--accg);display:flex;align-items:center;justify-content:center;font-size:.56rem;font-weight:700;color:var(--acc2);flex-shrink:0;overflow:hidden}
 .sb-av img{width:100%;height:100%;object-fit:cover}
@@ -214,7 +211,7 @@ body::after{display:none}
 .tk-actions-row{display:flex;gap:7px;padding:10px 16px;border-top:1px solid var(--b);flex-wrap:wrap;flex-shrink:0}
 
 /* Modal */
-.mo{position:fixed;inset:0;z-index:999;background:rgba(2,3,10,.88);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;padding:16px;opacity:0;visibility:hidden;transition:all .22s var(--ease)}
+.mo{position:fixed;inset:0;z-index:999;background:rgba(0,0,0,.82);display:flex;align-items:center;justify-content:center;padding:16px;opacity:0;visibility:hidden;transition:all .22s var(--ease)}
 .mo.open{opacity:1;visibility:visible}
 .modal{background:var(--s1);border:1px solid var(--bh);border-radius:14px;width:100%;max-width:500px;max-height:90svh;overflow:hidden;display:flex;flex-direction:column;transform:translateY(14px) scale(.97);transition:transform .22s var(--spring)}
 .mo.open .modal{transform:none}
@@ -262,14 +259,14 @@ textarea.mi{resize:vertical;min-height:76px}
 .tdot{width:5px;height:5px;border-radius:50%;flex-shrink:0;background:var(--acc2)}
 .toast.ok .tdot{background:var(--green)}.toast.err .tdot{background:var(--red)}.toast.info .tdot{background:var(--acc2)}.toast.warn .tdot{background:var(--yellow)}
 
-/* Mobile overlay — no backdrop-filter (creates stacking context that covers sidebar) */
-.sb-overlay{display:none;position:fixed;inset:0;z-index:150;background:rgba(0,0,0,.6)}
+/* Mobile overlay — position:fixed, z-index строго ниже сайдбара */
+.sb-overlay{display:none;position:fixed;inset:0;z-index:190;background:rgba(0,0,0,.65)}
 
 /* ── RESPONSIVE ── */
 @media(max-width:900px){
   :root{--sw:220px}
-  .sb{position:fixed;left:0;top:0;bottom:0;z-index:200;transform:translateX(-110%)}
-  .sb.open{transform:translateX(0);box-shadow:20px 0 60px rgba(0,0,0,.7)}
+  .sb{position:fixed;left:0;top:0;bottom:0;z-index:300;transform:translateX(-110%)}
+  .sb.open{transform:translateX(0);box-shadow:16px 0 48px rgba(0,0,0,.8)}
   .sb-overlay.open{display:block}
   .mob-btn{display:flex}
   .tb-search{display:none}
@@ -295,7 +292,6 @@ textarea.mi{resize:vertical;min-height:76px}
 </head>
 <body>
 <div class="toast-wrap" id="toast-wrap"></div>
-<div class="sb-overlay" id="sb-overlay"></div>
 
 <!-- ORDER MODAL -->
 <div class="mo" id="order-modal">
@@ -322,11 +318,11 @@ textarea.mi{resize:vertical;min-height:76px}
 </div>
 
 <div class="app">
+<div class="sb-overlay" id="sb-overlay"></div>
 <!-- ═══ SIDEBAR ═══ -->
 <aside class="sb" id="sidebar">
   <div class="sb-logo">
-    <div class="sb-mark"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5M2 12l10 5 10-5"/></svg></div>
-    <div><div class="sb-brand">Galelium <em>Admin</em></div><div class="sb-brand-sub">Control Center</div></div>
+    <img src="dastdaroz.png" alt="Dastdaroz"/>
   </div>
   <div class="sb-admin">
     <div class="sb-av" id="sb-av">A</div>
@@ -496,9 +492,8 @@ textarea.mi{resize:vertical;min-height:76px}
           <div style="padding:16px;font-size:.72rem;color:var(--text2);line-height:2.2">
             <div><span style="color:var(--text3)">Версия:</span> Admin v2.0</div>
             <div><span style="color:var(--text3)">База данных:</span> Firebase Firestore</div>
-            <div><span style="color:var(--text3)">Проект:</span> delivery-galelium</div>
+            <div><span style="color:var(--text3)">Проект:</span> dastdaroz</div>
             <div><span style="color:var(--text3)">Статус:</span> <span style="color:var(--green)">● Работает</span></div>
-            <div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--b)"><span style="color:var(--text3)">Домены:</span><br><span style="font-family:var(--fm);font-size:.62rem;color:var(--acc2)">delivery.galelium.com/main<br>courier.delivery.galelium.com/courier<br>admin.delivery.galelium.com/dashboard</span></div>
           </div>
         </div>
       </div>

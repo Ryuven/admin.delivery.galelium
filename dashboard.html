@@ -22,78 +22,76 @@
   --muted:#3f4260;--muted2:#1e2038;--muted3:#111326;
   --fd:'Syne',sans-serif;--fm:'DM Mono',monospace;--fs:'Inter',system-ui,sans-serif;
   --ease:cubic-bezier(.32,0,.18,1);--spring:cubic-bezier(.34,1.56,.64,1);
-  --t:.2s;--tf:.12s;--sw:240px;--th:56px;
+  --t:.2s;--tf:.12s;--sw:232px;--th:52px;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{height:100%}
 body{background:var(--bg);color:var(--text);font-family:var(--fs);font-weight:400;min-height:100svh;overflow:hidden;-webkit-font-smoothing:antialiased}
-::-webkit-scrollbar{width:4px;height:4px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--muted2);border-radius:99px}
+::-webkit-scrollbar{width:3px;height:3px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--muted2);border-radius:99px}
 body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;background-image:linear-gradient(var(--b) 1px,transparent 1px),linear-gradient(90deg,var(--b) 1px,transparent 1px);background-size:48px 48px;mask-image:radial-gradient(ellipse 80% 80% at 0% 0%,black 20%,transparent 70%)}
-body::after{content:'';position:fixed;width:800px;height:800px;border-radius:50%;pointer-events:none;z-index:0;background:radial-gradient(circle,rgba(99,102,241,.05) 0%,transparent 65%);top:-200px;left:-200px}
+body::after{content:'';position:fixed;width:700px;height:700px;border-radius:50%;pointer-events:none;z-index:0;background:radial-gradient(circle,rgba(99,102,241,.04) 0%,transparent 65%);top:-200px;left:-200px}
 .app{display:flex;height:100svh;position:relative;z-index:1}
-::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--muted2);border-radius:99px}
 
 /* ── SIDEBAR ── */
 .sb{width:var(--sw);flex-shrink:0;background:var(--s1);border-right:1px solid var(--b);display:flex;flex-direction:column;position:relative;overflow:hidden;transition:transform var(--t) var(--ease)}
 .sb::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,var(--acc),transparent 60%)}
-.sb-logo{padding:18px 18px 14px;border-bottom:1px solid var(--b);display:flex;align-items:center;gap:10px}
-.sb-mark{width:32px;height:32px;background:linear-gradient(135deg,var(--acc),var(--acc2));border-radius:8px;display:flex;align-items:center;justify-content:center;color:#fff;flex-shrink:0;box-shadow:0 4px 14px rgba(99,102,241,.3)}
-.sb-brand{font-family:var(--fd);font-weight:800;font-size:.82rem;color:#fff;letter-spacing:-.01em;line-height:1.1}
+.sb-logo{padding:16px 16px 12px;border-bottom:1px solid var(--b);display:flex;align-items:center;gap:10px}
+.sb-mark{width:30px;height:30px;background:linear-gradient(135deg,var(--acc),var(--acc2));border-radius:7px;display:flex;align-items:center;justify-content:center;color:#fff;flex-shrink:0;box-shadow:0 4px 12px rgba(99,102,241,.28)}
+.sb-brand{font-family:var(--fd);font-weight:800;font-size:.8rem;color:#fff;letter-spacing:-.01em;line-height:1.1}
 .sb-brand em{color:var(--acc2);font-style:normal}
-.sb-brand-sub{font-size:.4rem;letter-spacing:.28em;text-transform:uppercase;color:var(--muted);margin-top:3px}
-.sb-admin{margin:10px 14px;padding:8px 12px;background:var(--s2);border:1px solid var(--b);border-radius:8px;display:flex;align-items:center;gap:9px}
-.sb-av{width:28px;height:28px;border-radius:50%;background:var(--accd);border:1.5px solid var(--accg);display:flex;align-items:center;justify-content:center;font-size:.6rem;font-weight:700;color:var(--acc2);flex-shrink:0;overflow:hidden}
+.sb-brand-sub{font-size:.38rem;letter-spacing:.28em;text-transform:uppercase;color:var(--muted);margin-top:3px}
+.sb-admin{margin:8px 12px;padding:8px 10px;background:var(--s2);border:1px solid var(--b);border-radius:8px;display:flex;align-items:center;gap:8px}
+.sb-av{width:26px;height:26px;border-radius:50%;background:var(--accd);border:1.5px solid var(--accg);display:flex;align-items:center;justify-content:center;font-size:.56rem;font-weight:700;color:var(--acc2);flex-shrink:0;overflow:hidden}
 .sb-av img{width:100%;height:100%;object-fit:cover}
-.sb-name{font-size:.72rem;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.sb-role{font-size:.52rem;color:var(--muted);letter-spacing:.04em;margin-top:1px}
-.sb-rt{margin:0 14px 8px;padding:7px 10px;background:var(--greend);border:1px solid var(--greeng);border-radius:7px;display:flex;align-items:center;gap:7px;font-size:.6rem;color:var(--green);font-weight:600}
-.rt-dot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:rtP 2s ease-in-out infinite;flex-shrink:0}
-@keyframes rtP{0%,100%{box-shadow:0 0 0 0 rgba(16,185,129,.6)}50%{box-shadow:0 0 0 5px rgba(16,185,129,0)}}
-.sb-nav{flex:1;overflow-y:auto;padding:6px 10px}
-.nav-grp{font-size:.42rem;letter-spacing:.3em;text-transform:uppercase;color:var(--muted2);padding:12px 8px 4px}
-.ni{display:flex;align-items:center;gap:9px;padding:8px 10px;cursor:pointer;color:var(--text3);font-size:.76rem;font-weight:500;border-radius:7px;position:relative;transition:color var(--tf),background var(--tf);border:none;background:none;width:100%;text-align:left;font-family:var(--fs)}
+.sb-name{font-size:.7rem;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sb-role{font-size:.5rem;color:var(--muted);letter-spacing:.04em;margin-top:1px}
+.sb-rt{margin:0 12px 6px;padding:6px 10px;background:var(--greend);border:1px solid var(--greeng);border-radius:6px;display:flex;align-items:center;gap:6px;font-size:.56rem;color:var(--green);font-weight:600}
+.rt-dot{width:5px;height:5px;border-radius:50%;background:var(--green);animation:rtP 2s ease-in-out infinite;flex-shrink:0}
+@keyframes rtP{0%,100%{box-shadow:0 0 0 0 rgba(16,185,129,.6)}50%{box-shadow:0 0 0 4px rgba(16,185,129,0)}}
+.sb-nav{flex:1;overflow-y:auto;padding:4px 8px}
+.nav-grp{font-size:.4rem;letter-spacing:.3em;text-transform:uppercase;color:var(--muted2);padding:10px 8px 3px}
+.ni{display:flex;align-items:center;gap:8px;padding:7px 9px;cursor:pointer;color:var(--text3);font-size:.72rem;font-weight:500;border-radius:6px;position:relative;transition:color var(--tf),background var(--tf);border:none;background:none;width:100%;text-align:left;font-family:var(--fs)}
 .ni:hover{color:var(--text2);background:var(--s2)}
 .ni.active{color:var(--acc2);background:var(--accd)}
 .ni.active::before{content:'';position:absolute;left:0;top:4px;bottom:4px;width:2px;background:var(--acc);border-radius:99px}
-.ni svg{flex-shrink:0;opacity:.6;transition:opacity var(--tf)}
+.ni svg{flex-shrink:0;opacity:.55;transition:opacity var(--tf)}
 .ni.active svg{opacity:1}
-.ni-badge{margin-left:auto;min-width:17px;height:17px;padding:0 5px;font-size:.5rem;font-weight:700;display:flex;align-items:center;justify-content:center;border-radius:99px;background:var(--red);color:#fff}
+.ni-badge{margin-left:auto;min-width:16px;height:16px;padding:0 4px;font-size:.48rem;font-weight:700;display:flex;align-items:center;justify-content:center;border-radius:99px;background:var(--red);color:#fff}
 .ni-badge.info{background:var(--acc)}
-.sb-bottom{padding:10px;border-top:1px solid var(--b)}
-.sb-logout{width:100%;padding:8px 10px;background:none;border:1px solid var(--b);border-radius:7px;color:var(--text3);font-size:.68rem;font-family:var(--fs);cursor:pointer;display:flex;align-items:center;gap:8px;transition:all var(--tf)}
+.sb-bottom{padding:8px;border-top:1px solid var(--b)}
+.sb-logout{width:100%;padding:7px 9px;background:none;border:1px solid var(--b);border-radius:6px;color:var(--text3);font-size:.64rem;font-family:var(--fs);cursor:pointer;display:flex;align-items:center;gap:7px;transition:all var(--tf)}
 .sb-logout:hover{border-color:rgba(244,63,94,.3);color:var(--red);background:var(--redd)}
 
 /* ── MAIN ── */
 .main{flex:1;overflow:hidden;display:flex;flex-direction:column;min-width:0}
-.topbar{height:var(--th);flex-shrink:0;background:rgba(5,6,15,.9);backdrop-filter:blur(20px);border-bottom:1px solid var(--b);display:flex;align-items:center;padding:0 20px;gap:12px;z-index:50}
-.tb-title{font-family:var(--fd);font-weight:800;font-size:.9rem;color:#fff;flex:1;letter-spacing:-.01em}
-.tb-search{display:flex;align-items:center;gap:8px;background:var(--s2);border:1px solid var(--b);border-radius:7px;padding:6px 12px;width:260px;transition:border-color var(--tf)}
+.topbar{height:var(--th);flex-shrink:0;background:rgba(5,6,15,.92);backdrop-filter:blur(20px);border-bottom:1px solid var(--b);display:flex;align-items:center;padding:0 18px;gap:10px;z-index:50}
+.tb-title{font-family:var(--fd);font-weight:800;font-size:.88rem;color:#fff;flex:1;letter-spacing:-.01em}
+.tb-search{display:flex;align-items:center;gap:7px;background:var(--s2);border:1px solid var(--b);border-radius:7px;padding:5px 10px;width:240px;transition:border-color var(--tf)}
 .tb-search:focus-within{border-color:var(--acc);box-shadow:0 0 0 3px var(--accd)}
-.tb-search input{background:none;border:none;outline:none;color:var(--text);font-family:var(--fs);font-size:.76rem;width:100%}
+.tb-search input{background:none;border:none;outline:none;color:var(--text);font-family:var(--fs);font-size:.72rem;width:100%}
 .tb-search input::placeholder{color:var(--muted)}
 .tb-search svg{color:var(--muted);flex-shrink:0}
-.tb-btn{background:none;border:1px solid var(--b);border-radius:7px;cursor:pointer;color:var(--text3);width:32px;height:32px;display:flex;align-items:center;justify-content:center;transition:all var(--tf);position:relative;flex-shrink:0}
+.tb-btn{background:none;border:1px solid var(--b);border-radius:6px;cursor:pointer;color:var(--text3);width:30px;height:30px;display:flex;align-items:center;justify-content:center;transition:all var(--tf);flex-shrink:0}
 .tb-btn:hover{border-color:var(--bh);color:var(--text2);background:var(--s2)}
-.tb-notif-dot{position:absolute;top:4px;right:4px;width:7px;height:7px;border-radius:50%;background:var(--red);border:2px solid var(--bg)}
-.tb-time{font-family:var(--fm);font-size:.7rem;color:var(--muted);letter-spacing:.06em;flex-shrink:0}
-.tb-sep{width:1px;height:20px;background:var(--b);flex-shrink:0}
+.tb-time{font-family:var(--fm);font-size:.66rem;color:var(--muted);letter-spacing:.06em;flex-shrink:0}
+.tb-sep{width:1px;height:18px;background:var(--b);flex-shrink:0}
 .mob-btn{display:none;background:none;border:none;cursor:pointer;color:var(--text3);width:32px;height:32px;border-radius:7px;align-items:center;justify-content:center;transition:all var(--tf)}
 .mob-btn:hover{background:var(--s2);color:var(--text)}
 
 /* ── PAGES ── */
 .pages{flex:1;overflow-y:auto}
-.page{display:none;padding:20px 22px 36px;animation:pgIn .25s var(--ease) both}
+.page{display:none;padding:18px 20px 36px;animation:pgIn .22s var(--ease) both}
 .page.active{display:block}
-@keyframes pgIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+@keyframes pgIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
 
 /* ── SHARED COMPONENTS ── */
-.sh{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:16px;gap:12px;flex-wrap:wrap}
-.sh-tag{font-size:.42rem;letter-spacing:.3em;text-transform:uppercase;color:var(--muted2);margin-bottom:3px}
-.sh-title{font-family:var(--fd);font-weight:800;font-size:1.2rem;color:#fff;letter-spacing:-.02em;line-height:1}
+.sh{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:14px;gap:12px;flex-wrap:wrap}
+.sh-tag{font-size:.4rem;letter-spacing:.3em;text-transform:uppercase;color:var(--muted2);margin-bottom:3px}
+.sh-title{font-family:var(--fd);font-weight:800;font-size:1.15rem;color:#fff;letter-spacing:-.02em;line-height:1}
 .sh-title em{color:var(--acc2);font-style:normal}
-.sh-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-.btn{padding:7px 14px;border-radius:7px;font-family:var(--fs);font-size:.68rem;font-weight:600;cursor:pointer;transition:all var(--tf);letter-spacing:.02em;display:inline-flex;align-items:center;gap:6px;border:none;white-space:nowrap}
-.btn-primary{background:linear-gradient(135deg,var(--acc),var(--acc2));color:#fff;box-shadow:0 3px 10px rgba(99,102,241,.25)}
+.sh-actions{display:flex;gap:7px;align-items:center;flex-wrap:wrap}
+.btn{padding:6px 13px;border-radius:6px;font-family:var(--fs);font-size:.66rem;font-weight:600;cursor:pointer;transition:all var(--tf);letter-spacing:.02em;display:inline-flex;align-items:center;gap:5px;border:none;white-space:nowrap}
+.btn-primary{background:linear-gradient(135deg,var(--acc),var(--acc2));color:#fff;box-shadow:0 3px 10px rgba(99,102,241,.22)}
 .btn-primary:hover{opacity:.88}
 .btn-secondary{background:var(--s2);border:1px solid var(--b);color:var(--text2)}
 .btn-secondary:hover{border-color:var(--bh);color:var(--text)}
@@ -101,12 +99,12 @@ body::after{content:'';position:fixed;width:800px;height:800px;border-radius:50%
 .btn-danger:hover{background:rgba(244,63,94,.18)}
 .btn-success{background:var(--greend);border:1px solid var(--greeng);color:var(--green)}
 .btn-success:hover{background:rgba(16,185,129,.18)}
-.btn-sm{padding:5px 10px;font-size:.62rem}
+.btn-sm{padding:4px 9px;font-size:.6rem}
 .btn:disabled{opacity:.4;cursor:not-allowed}
 
 /* KPI */
-.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px}
-.kpi{background:var(--s1);border:1px solid var(--b);border-radius:12px;padding:16px 18px;position:relative;overflow:hidden;transition:border-color var(--tf),transform var(--t)}
+.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px}
+.kpi{background:var(--s1);border:1px solid var(--b);border-radius:11px;padding:14px 16px;position:relative;overflow:hidden;transition:border-color var(--tf),transform var(--t)}
 .kpi:hover{border-color:var(--bh);transform:translateY(-1px)}
 .kpi::before{content:'';position:absolute;top:0;left:0;right:0;height:1px}
 .kpi.acc::before{background:linear-gradient(90deg,var(--acc),transparent)}
@@ -115,181 +113,184 @@ body::after{content:'';position:fixed;width:800px;height:800px;border-radius:50%
 .kpi.red::before{background:linear-gradient(90deg,var(--red),transparent)}
 .kpi.blue::before{background:linear-gradient(90deg,var(--blue),transparent)}
 .kpi.cyan::before{background:linear-gradient(90deg,var(--cyan),transparent)}
-.kpi-label{font-size:.48rem;letter-spacing:.18em;text-transform:uppercase;color:var(--text3);margin-bottom:8px;display:flex;align-items:center;justify-content:space-between}
-.kpi-trend{font-size:.52rem;font-weight:600;padding:2px 6px;border-radius:99px}
+.kpi-label{font-size:.46rem;letter-spacing:.18em;text-transform:uppercase;color:var(--text3);margin-bottom:7px;display:flex;align-items:center;justify-content:space-between}
+.kpi-trend{font-size:.5rem;font-weight:600;padding:2px 5px;border-radius:99px}
 .kpi-trend.up{color:var(--green);background:var(--greend)}
 .kpi-trend.down{color:var(--red);background:var(--redd)}
-.kpi-val{font-family:var(--fd);font-size:1.6rem;font-weight:800;color:#fff;line-height:1;letter-spacing:-.03em;margin-bottom:4px}
-.kpi-sub{font-size:.6rem;color:var(--text3)}
-.kpi-ico{position:absolute;right:14px;bottom:10px;font-size:1.8rem;opacity:.06}
-.kpi-spark{margin-top:10px;height:28px}
+.kpi-val{font-family:var(--fd);font-size:1.5rem;font-weight:800;color:#fff;line-height:1;letter-spacing:-.03em;margin-bottom:4px}
+.kpi-sub{font-size:.56rem;color:var(--text3)}
+.kpi-ico{position:absolute;right:12px;bottom:8px;font-size:1.6rem;opacity:.05}
+.kpi-spark{margin-top:8px;height:24px}
 
 /* Layouts */
-.two-col{display:grid;grid-template-columns:1fr 340px;gap:14px;margin-bottom:14px}
-.three-col{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:14px}
-.panel{background:var(--s1);border:1px solid var(--b);border-radius:12px;overflow:hidden}
-.panel-head{padding:14px 18px;border-bottom:1px solid var(--b);display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
-.panel-title{font-size:.76rem;font-weight:700;color:var(--text);display:flex;align-items:center;gap:7px}
-.pdot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.two-col{display:grid;grid-template-columns:1fr 320px;gap:12px;margin-bottom:12px}
+.three-col{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:12px}
+.panel{background:var(--s1);border:1px solid var(--b);border-radius:11px;overflow:hidden}
+.panel-head{padding:12px 16px;border-bottom:1px solid var(--b);display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.panel-title{font-size:.72rem;font-weight:700;color:var(--text);display:flex;align-items:center;gap:6px}
+.pdot{width:5px;height:5px;border-radius:50%;flex-shrink:0}
 
 /* Table */
 .ot{width:100%;border-collapse:collapse}
-.ot th{font-size:.48rem;letter-spacing:.2em;text-transform:uppercase;color:var(--text3);padding:10px 16px;text-align:left;border-bottom:1px solid var(--b);white-space:nowrap;background:var(--s2);font-weight:500}
-.ot td{padding:11px 16px;font-size:.76rem;color:var(--text2);border-bottom:1px solid rgba(99,102,241,.04);vertical-align:middle}
-.ot tr:hover td{background:rgba(99,102,241,.03)}
+.ot th{font-size:.46rem;letter-spacing:.2em;text-transform:uppercase;color:var(--text3);padding:9px 14px;text-align:left;border-bottom:1px solid var(--b);white-space:nowrap;background:var(--s2);font-weight:500}
+.ot td{padding:10px 14px;font-size:.72rem;color:var(--text2);border-bottom:1px solid rgba(99,102,241,.03);vertical-align:middle}
+.ot tr:hover td{background:rgba(99,102,241,.025)}
 .ot tr:last-child td{border-bottom:none}
-.mono{font-family:var(--fm);font-size:.68rem;color:var(--text3)}
-.ostatus{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:99px;font-size:.58rem;font-weight:600;border:1px solid;white-space:nowrap}
-.osdot{width:5px;height:5px;border-radius:50%;background:currentColor;flex-shrink:0}
-.oact{display:flex;gap:5px;flex-wrap:wrap}
+.mono{font-family:var(--fm);font-size:.66rem;color:var(--text3)}
+.ostatus{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:99px;font-size:.56rem;font-weight:600;border:1px solid;white-space:nowrap}
+.osdot{width:4px;height:4px;border-radius:50%;background:currentColor;flex-shrink:0}
+.oact{display:flex;gap:4px;flex-wrap:wrap}
 
 /* Courier card */
-.cc{padding:12px 16px;border-bottom:1px solid var(--b);display:flex;align-items:center;gap:12px;transition:background var(--tf)}
-.cc:hover{background:rgba(99,102,241,.03)}
+.cc{padding:11px 14px;border-bottom:1px solid var(--b);display:flex;align-items:center;gap:10px;transition:background var(--tf)}
+.cc:hover{background:rgba(99,102,241,.025)}
 .cc:last-child{border-bottom:none}
-.cav{width:34px;height:34px;border-radius:50%;background:var(--accd);border:1.5px solid var(--accg);display:flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:700;color:var(--acc2);flex-shrink:0;overflow:hidden}
+.cav{width:32px;height:32px;border-radius:50%;background:var(--accd);border:1.5px solid var(--accg);display:flex;align-items:center;justify-content:center;font-size:.6rem;font-weight:700;color:var(--acc2);flex-shrink:0;overflow:hidden}
 .cav img{width:100%;height:100%;object-fit:cover}
 
 /* Activity */
-.af{padding:10px 16px;border-bottom:1px solid var(--b);display:flex;align-items:flex-start;gap:11px}
+.af{padding:9px 14px;border-bottom:1px solid var(--b);display:flex;align-items:flex-start;gap:10px}
 .af:last-child{border-bottom:none}
 .af:hover{background:rgba(99,102,241,.02)}
-.af-ico{width:28px;height:28px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:.7rem;flex-shrink:0}
-.af-txt{font-size:.72rem;color:var(--text2);line-height:1.4;margin-bottom:2px}
+.af-ico{width:26px;height:26px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:.68rem;flex-shrink:0}
+.af-txt{font-size:.7rem;color:var(--text2);line-height:1.4;margin-bottom:2px}
 .af-txt strong{color:var(--text)}
-.af-time{font-family:var(--fm);font-size:.56rem;color:var(--text3)}
+.af-time{font-family:var(--fm);font-size:.54rem;color:var(--text3)}
 
 /* Sparkline */
-.spark{display:flex;align-items:flex-end;gap:3px;height:100%}
-.bar{flex:1;background:var(--muted2);border-radius:2px 2px 0 0;min-height:2px;cursor:pointer;transition:background .2s}
+.spark{display:flex;align-items:flex-end;gap:2px;height:100%}
+.bar{flex:1;background:var(--muted2);border-radius:2px 2px 0 0;min-height:2px;cursor:pointer;transition:background .15s}
 .bar:hover{background:var(--acc)}
-.bar.g{background:rgba(16,185,129,.4)}
+.bar.g{background:rgba(16,185,129,.35)}
 .bar.g:hover{background:var(--green)}
 
 /* Donut */
-.donut-wrap{display:flex;align-items:center;gap:16px;padding:14px 18px}
-.donut-chart{position:relative;width:90px;height:90px;flex-shrink:0}
+.donut-wrap{display:flex;align-items:center;gap:14px;padding:12px 16px}
+.donut-chart{position:relative;width:84px;height:84px;flex-shrink:0}
 .donut-chart svg{transform:rotate(-90deg)}
 .dc-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
-.dc-val{font-family:var(--fd);font-weight:800;font-size:1rem;color:#fff;line-height:1}
-.dc-lbl{font-size:.44rem;color:var(--text3);text-transform:uppercase;letter-spacing:.12em;margin-top:2px}
-.dl{display:flex;align-items:center;margin-bottom:7px;font-size:.66rem}
-.dl-dot{width:8px;height:8px;border-radius:2px;flex-shrink:0;margin-right:7px}
+.dc-val{font-family:var(--fd);font-weight:800;font-size:.95rem;color:#fff;line-height:1}
+.dc-lbl{font-size:.42rem;color:var(--text3);text-transform:uppercase;letter-spacing:.12em;margin-top:2px}
+.dl{display:flex;align-items:center;margin-bottom:6px;font-size:.64rem}
+.dl-dot{width:7px;height:7px;border-radius:2px;flex-shrink:0;margin-right:6px}
 
 /* Tickets */
-.ticket{padding:12px 16px;border-bottom:1px solid var(--b);cursor:pointer;transition:background var(--tf)}
+.ticket{padding:11px 14px;border-bottom:1px solid var(--b);cursor:pointer;transition:background var(--tf)}
 .ticket:hover{background:rgba(99,102,241,.03)}
 .ticket:last-child{border-bottom:none}
-.tk-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:5px;flex-wrap:wrap}
-.tk-id{font-family:var(--fm);font-size:.58rem;color:var(--text3)}
-.tk-pri{font-size:.52rem;font-weight:700;padding:2px 8px;border-radius:99px;border:1px solid;letter-spacing:.06em;text-transform:uppercase}
-.tk-subj{font-size:.76rem;font-weight:600;color:var(--text);margin-bottom:3px}
-.tk-meta{font-size:.62rem;color:var(--text3);display:flex;gap:8px;flex-wrap:wrap}
-.tk-unread-dot{width:7px;height:7px;border-radius:50%;background:var(--red);flex-shrink:0}
+.tk-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:4px;flex-wrap:wrap}
+.tk-id{font-family:var(--fm);font-size:.56rem;color:var(--text3)}
+.tk-pri{font-size:.5rem;font-weight:700;padding:2px 7px;border-radius:99px;border:1px solid;letter-spacing:.06em;text-transform:uppercase}
+.tk-subj{font-size:.72rem;font-weight:600;color:var(--text);margin-bottom:3px}
+.tk-meta{font-size:.6rem;color:var(--text3);display:flex;gap:7px;flex-wrap:wrap}
+.tk-unread-dot{width:6px;height:6px;border-radius:50%;background:var(--red);flex-shrink:0}
 
-/* Ticket chat thread (admin detail panel) */
+/* Ticket chat thread */
 .tk-detail-wrap{display:flex;flex-direction:column;height:100%}
-.tk-client-row{display:flex;align-items:center;gap:10px;padding:14px 18px;border-bottom:1px solid var(--b)}
-.tk-client-av{width:36px;height:36px;border-radius:50%;background:var(--accd);border:1.5px solid var(--accg);display:flex;align-items:center;justify-content:center;color:var(--acc2);font-weight:700;font-size:.72rem;flex-shrink:0}
+.tk-client-row{display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid var(--b)}
+.tk-client-av{width:34px;height:34px;border-radius:50%;background:var(--accd);border:1.5px solid var(--accg);display:flex;align-items:center;justify-content:center;color:var(--acc2);font-weight:700;font-size:.7rem;flex-shrink:0}
 .tk-client-body{flex:1;min-width:0}
-.tk-client-name{font-weight:700;font-size:.8rem;color:var(--text)}
-.tk-client-phone{font-size:.66rem;color:var(--text3);margin-top:1px}
-.tk-status-pill{font-size:.56rem;font-weight:700;padding:4px 10px;border-radius:99px;border:1px solid;letter-spacing:.04em;text-transform:uppercase;flex-shrink:0}
+.tk-client-name{font-weight:700;font-size:.78rem;color:var(--text)}
+.tk-client-phone{font-size:.64rem;color:var(--text3);margin-top:1px}
+.tk-status-pill{font-size:.54rem;font-weight:700;padding:3px 9px;border-radius:99px;border:1px solid;letter-spacing:.04em;text-transform:uppercase;flex-shrink:0}
 .tk-status-pill.open{color:var(--yellow);border-color:var(--yellow);background:var(--yellowd)}
 .tk-status-pill.in_progress{color:var(--acc2);border-color:var(--acc2);background:var(--accd)}
 .tk-status-pill.resolved{color:var(--green);border-color:var(--green);background:var(--greend)}
-
-.tk-order-chip{display:flex;align-items:center;gap:9px;background:var(--s2);border:1px solid var(--b);border-radius:10px;padding:10px 13px;margin:12px 18px 0;font-size:.72rem;color:var(--text2);cursor:pointer;transition:border-color var(--tf)}
+.tk-order-chip{display:flex;align-items:center;gap:8px;background:var(--s2);border:1px solid var(--b);border-radius:9px;padding:9px 12px;margin:10px 16px 0;font-size:.7rem;color:var(--text2);cursor:pointer;transition:border-color var(--tf)}
 .tk-order-chip:hover{border-color:var(--bh)}
 .tk-order-chip svg{color:var(--acc2);flex-shrink:0}
 .tk-order-chip-num{font-weight:700;color:var(--text)}
 .tk-order-chip-arrow{margin-left:auto;color:var(--text3);flex-shrink:0}
-
-.tk-chat-messages{flex:1;overflow-y:auto;padding:14px 18px;display:flex;flex-direction:column;gap:8px;min-height:180px;max-height:360px}
-.tk-msg{max-width:78%;padding:8px 12px;border-radius:12px;font-size:.75rem;line-height:1.5;word-wrap:break-word;white-space:pre-wrap}
+.tk-chat-messages{flex:1;overflow-y:auto;padding:12px 16px;display:flex;flex-direction:column;gap:7px;min-height:160px;max-height:320px}
+.tk-msg{max-width:78%;padding:7px 11px;border-radius:11px;font-size:.72rem;line-height:1.5;word-wrap:break-word;white-space:pre-wrap}
 .tk-msg-client{align-self:flex-start;background:var(--s2);border:1px solid var(--b);color:var(--text)}
 .tk-msg-admin{align-self:flex-end;background:linear-gradient(135deg,var(--acc),var(--acc2));color:#fff}
-.tk-msg-time{font-size:.56rem;opacity:.6;margin-top:3px;display:block}
-
-.tk-chat-reply-row{display:flex;gap:8px;padding:12px 18px;border-top:1px solid var(--b);align-items:flex-end;flex-shrink:0}
-.tk-chat-reply-input{flex:1;resize:none;max-height:90px;border:1px solid var(--b);border-radius:9px;padding:9px 12px;font-family:var(--fs);font-size:.76rem;background:var(--s2);color:var(--text);outline:none;transition:border-color var(--tf)}
+.tk-msg-time{font-size:.54rem;opacity:.6;margin-top:3px;display:block}
+.tk-chat-reply-row{display:flex;gap:7px;padding:10px 16px;border-top:1px solid var(--b);align-items:flex-end;flex-shrink:0}
+.tk-chat-reply-input{flex:1;resize:none;max-height:80px;border:1px solid var(--b);border-radius:8px;padding:8px 11px;font-family:var(--fs);font-size:.72rem;background:var(--s2);color:var(--text);outline:none;transition:border-color var(--tf)}
 .tk-chat-reply-input:focus{border-color:var(--acc)}
-.tk-chat-send{width:36px;height:36px;border-radius:9px;background:var(--acc);border:none;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:opacity var(--tf)}
+.tk-chat-send{width:34px;height:34px;border-radius:8px;background:var(--acc);border:none;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:opacity var(--tf)}
 .tk-chat-send:disabled{opacity:.4;cursor:default}
-
-.tk-actions-row{display:flex;gap:8px;padding:12px 18px;border-top:1px solid var(--b);flex-wrap:wrap;flex-shrink:0}
-
-/* Map */
-.map-ph{background:var(--s2);height:200px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
-.map-grid{position:absolute;inset:0;background-image:linear-gradient(var(--b) 1px,transparent 1px),linear-gradient(90deg,var(--b) 1px,transparent 1px);background-size:30px 30px}
-.map-dot{position:absolute;width:10px;height:10px;border-radius:50%;animation:mapP 2s ease-in-out infinite}
-.map-dot::after{content:'';position:absolute;inset:-4px;border-radius:50%;border:2px solid currentColor;opacity:.4;animation:mapR 2s ease-in-out infinite}
-@keyframes mapP{0%,100%{transform:scale(1)}50%{transform:scale(1.3)}}
-@keyframes mapR{0%{transform:scale(.6);opacity:.6}100%{transform:scale(2.5);opacity:0}}
+.tk-actions-row{display:flex;gap:7px;padding:10px 16px;border-top:1px solid var(--b);flex-wrap:wrap;flex-shrink:0}
 
 /* Modal */
-.mo{position:fixed;inset:0;z-index:999;background:rgba(2,3,10,.85);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;visibility:hidden;transition:all .25s var(--ease)}
+.mo{position:fixed;inset:0;z-index:999;background:rgba(2,3,10,.88);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;padding:16px;opacity:0;visibility:hidden;transition:all .22s var(--ease)}
 .mo.open{opacity:1;visibility:visible}
-.modal{background:var(--s1);border:1px solid var(--bh);border-radius:16px;width:100%;max-width:520px;max-height:90svh;overflow:hidden;display:flex;flex-direction:column;transform:translateY(16px) scale(.97);transition:transform .25s var(--spring)}
+.modal{background:var(--s1);border:1px solid var(--bh);border-radius:14px;width:100%;max-width:500px;max-height:90svh;overflow:hidden;display:flex;flex-direction:column;transform:translateY(14px) scale(.97);transition:transform .22s var(--spring)}
 .mo.open .modal{transform:none}
-.modal-head{padding:18px 22px;border-bottom:1px solid var(--b);display:flex;align-items:center;justify-content:space-between;gap:12px}
-.modal-title{font-family:var(--fd);font-weight:800;font-size:.9rem;color:#fff}
-.modal-x{background:none;border:none;cursor:pointer;color:var(--text3);width:28px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;transition:all var(--tf)}
+.modal-head{padding:16px 20px;border-bottom:1px solid var(--b);display:flex;align-items:center;justify-content:space-between;gap:12px}
+.modal-title{font-family:var(--fd);font-weight:800;font-size:.86rem;color:#fff}
+.modal-x{background:none;border:none;cursor:pointer;color:var(--text3);width:26px;height:26px;border-radius:6px;display:flex;align-items:center;justify-content:center;transition:all var(--tf)}
 .modal-x:hover{background:var(--s2);color:var(--text)}
-.modal-body{padding:20px 22px;overflow-y:auto;flex:1}
-.modal-foot{padding:14px 22px;border-top:1px solid var(--b);display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}
-.mf{margin-bottom:14px}
-.ml{font-size:.5rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:5px}
-.mi{width:100%;background:var(--s2);border:1px solid var(--b);border-radius:8px;color:var(--text);font-family:var(--fs);font-size:.8rem;padding:9px 12px;outline:none;transition:border-color var(--tf)}
+.modal-body{padding:18px 20px;overflow-y:auto;flex:1}
+.modal-foot{padding:12px 20px;border-top:1px solid var(--b);display:flex;gap:7px;justify-content:flex-end;flex-wrap:wrap}
+.mf{margin-bottom:12px}
+.ml{font-size:.48rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:4px}
+.mi{width:100%;background:var(--s2);border:1px solid var(--b);border-radius:7px;color:var(--text);font-family:var(--fs);font-size:.76rem;padding:8px 11px;outline:none;transition:border-color var(--tf)}
 .mi:focus{border-color:var(--acc);box-shadow:0 0 0 3px var(--accd)}
 .mi::placeholder{color:var(--muted)}
 select.mi{cursor:pointer}
-textarea.mi{resize:vertical;min-height:80px}
-.mr{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+textarea.mi{resize:vertical;min-height:76px}
+.mr{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 
 /* Tabs */
-.tabs{display:flex;gap:2px;padding:4px;background:var(--s2);border-radius:8px;border:1px solid var(--b)}
-.tab{padding:6px 12px;border-radius:6px;border:none;background:none;cursor:pointer;font-size:.66rem;font-weight:500;font-family:var(--fs);color:var(--text3);transition:all var(--tf)}
+.tabs{display:flex;gap:2px;padding:3px;background:var(--s2);border-radius:7px;border:1px solid var(--b)}
+.tab{padding:5px 10px;border-radius:5px;border:none;background:none;cursor:pointer;font-size:.62rem;font-weight:500;font-family:var(--fs);color:var(--text3);transition:all var(--tf)}
 .tab.active{background:var(--accd);color:var(--acc2);border:1px solid var(--accg)}
 .tab:hover:not(.active){color:var(--text2)}
 
 /* Filter pills */
-.fb{display:flex;align-items:center;gap:8px;padding:12px 16px;border-bottom:1px solid var(--b);flex-wrap:wrap}
-.fp{padding:5px 11px;border-radius:99px;border:1px solid var(--b);background:none;cursor:pointer;font-size:.64rem;font-family:var(--fs);color:var(--text3);transition:all var(--tf)}
+.fb{display:flex;align-items:center;gap:6px;padding:10px 14px;border-bottom:1px solid var(--b);flex-wrap:wrap}
+.fp{padding:4px 10px;border-radius:99px;border:1px solid var(--b);background:none;cursor:pointer;font-size:.6rem;font-family:var(--fs);color:var(--text3);transition:all var(--tf)}
 .fp:hover{border-color:var(--bh);color:var(--text2)}
 .fp.active{background:var(--accd);border-color:var(--accg);color:var(--acc2)}
 .fp.g.active{background:var(--greend);border-color:var(--greeng);color:var(--green)}
 .fp.r.active{background:var(--redd);border-color:rgba(244,63,94,.2);color:var(--red)}
 
 /* Empty/Load */
-.er{text-align:center;padding:40px 20px;color:var(--text3)}
-.er-ico{font-size:2rem;opacity:.2;margin-bottom:8px}
-.pload{display:flex;align-items:center;justify-content:center;padding:40px;gap:8px;color:var(--text3);font-size:.74rem}
-.spin{width:14px;height:14px;border-radius:50%;border:2px solid var(--muted2);border-top-color:var(--acc);animation:sp .7s linear infinite}
+.er{text-align:center;padding:36px 20px;color:var(--text3)}
+.er-ico{font-size:1.8rem;opacity:.18;margin-bottom:7px}
+.pload{display:flex;align-items:center;justify-content:center;padding:36px;gap:8px;color:var(--text3);font-size:.7rem}
+.spin{width:13px;height:13px;border-radius:50%;border:1.5px solid var(--muted2);border-top-color:var(--acc);animation:sp .65s linear infinite}
 @keyframes sp{to{transform:rotate(360deg)}}
 
 /* Toast */
-.toast-wrap{position:fixed;bottom:22px;right:20px;z-index:9999;display:flex;flex-direction:column;gap:6px;pointer-events:none}
-.toast{background:rgba(9,11,24,.97);backdrop-filter:blur(20px);border:1px solid var(--bh);border-radius:10px;padding:10px 14px;display:flex;align-items:center;gap:8px;font-size:.72rem;color:var(--text);animation:tIn .28s var(--ease) both,tOut .28s var(--ease) forwards;animation-delay:0s,3s;pointer-events:all;max-width:280px;box-shadow:0 8px 32px rgba(0,0,0,.5)}
-@keyframes tIn{from{opacity:0;transform:translateY(8px) scale(.96)}to{opacity:1;transform:none}}
-@keyframes tOut{to{opacity:0;transform:translateY(8px)}}
-.tdot{width:6px;height:6px;border-radius:50%;flex-shrink:0;background:var(--acc2)}
+.toast-wrap{position:fixed;bottom:20px;right:18px;z-index:9999;display:flex;flex-direction:column;gap:5px;pointer-events:none}
+.toast{background:rgba(9,11,24,.97);backdrop-filter:blur(20px);border:1px solid var(--bh);border-radius:9px;padding:9px 13px;display:flex;align-items:center;gap:7px;font-size:.7rem;color:var(--text);animation:tIn .26s var(--ease) both,tOut .26s var(--ease) forwards;animation-delay:0s,3s;pointer-events:all;max-width:270px;box-shadow:0 8px 28px rgba(0,0,0,.5)}
+@keyframes tIn{from{opacity:0;transform:translateY(6px) scale(.96)}to{opacity:1;transform:none}}
+@keyframes tOut{to{opacity:0;transform:translateY(6px)}}
+.tdot{width:5px;height:5px;border-radius:50%;flex-shrink:0;background:var(--acc2)}
 .toast.ok .tdot{background:var(--green)}.toast.err .tdot{background:var(--red)}.toast.info .tdot{background:var(--acc2)}.toast.warn .tdot{background:var(--yellow)}
 
-/* Mobile */
+/* Mobile overlay */
 .sb-overlay{display:none;position:fixed;inset:0;z-index:199;background:rgba(0,0,0,.7);backdrop-filter:blur(4px)}
+
+/* ── RESPONSIVE ── */
 @media(max-width:900px){
+  :root{--sw:220px}
   .sb{position:fixed;left:0;top:0;bottom:0;z-index:200;transform:translateX(-110%)}
-  .sb.open{transform:translateX(0);box-shadow:16px 0 60px rgba(0,0,0,.6)}
+  .sb.open{transform:translateX(0);box-shadow:20px 0 60px rgba(0,0,0,.7)}
   .sb-overlay.open{display:block}
   .mob-btn{display:flex}
   .tb-search{display:none}
-  .page{padding:14px 14px 28px}
+  .page{padding:12px 12px 28px}
   .two-col{grid-template-columns:1fr}
   .three-col{grid-template-columns:1fr 1fr}
-  .kpi-grid{grid-template-columns:repeat(2,1fr)}
+  .kpi-grid{grid-template-columns:repeat(2,1fr);gap:8px}
+  .kpi-val{font-size:1.25rem}
+  .modal{max-width:100%;margin:0}
+  .mo{align-items:flex-end;padding:0}
+  .modal{border-radius:14px 14px 0 0;max-height:92svh}
+  .ot th,.ot td{padding:8px 10px}
 }
-@media(max-width:500px){.kpi-grid{grid-template-columns:1fr 1fr}.three-col{grid-template-columns:1fr}}
+@media(max-width:500px){
+  .kpi-grid{grid-template-columns:1fr 1fr}
+  .three-col{grid-template-columns:1fr}
+  .two-col{grid-template-columns:1fr}
+  .topbar{padding:0 12px;gap:8px}
+  .tb-time{display:none}
+  .tb-sep:last-of-type{display:none}
+}
 </style>
 </head>
 <body>
@@ -324,7 +325,7 @@ textarea.mi{resize:vertical;min-height:80px}
 <!-- ═══ SIDEBAR ═══ -->
 <aside class="sb" id="sidebar">
   <div class="sb-logo">
-    <div class="sb-mark"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5M2 12l10 5 10-5"/></svg></div>
+    <div class="sb-mark"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5M2 12l10 5 10-5"/></svg></div>
     <div><div class="sb-brand">Galelium <em>Admin</em></div><div class="sb-brand-sub">Control Center</div></div>
   </div>
   <div class="sb-admin">
@@ -340,14 +341,14 @@ textarea.mi{resize:vertical;min-height:80px}
     <button class="ni" data-page="clients" onclick="goPage('clients')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>Клиенты</button>
     <div class="nav-grp">Управление</div>
     <button class="ni" data-page="support" onclick="goPage('support')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>Поддержка<span class="ni-badge" id="sb-tkt-b" style="display:none">0</span></button>
-    <button class="ni" data-page="catalog" onclick="goPage('catalog')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>Каталог</button>
+    <button class="ni" data-page="catalog" onclick="goPage('catalog')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>Каталог</button>
     <button class="ni" data-page="analytics" onclick="goPage('analytics')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>Аналитика</button>
     <div class="nav-grp">Система</div>
     <button class="ni" data-page="staff" onclick="goPage('staff')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Сотрудники</button>
     <button class="ni" data-page="settings" onclick="goPage('settings')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>Настройки</button>
   </nav>
   <div class="sb-bottom">
-    <button class="sb-logout" onclick="doLogout()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/></svg>Выйти из системы</button>
+    <button class="sb-logout" onclick="doLogout()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/></svg>Выйти</button>
   </div>
 </aside>
 
@@ -358,7 +359,7 @@ textarea.mi{resize:vertical;min-height:80px}
     <div class="tb-title" id="tb-title">Обзор</div>
     <div class="tb-search"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg><input type="text" id="search-inp" placeholder="Поиск заказов, клиентов, курьеров…" oninput="onSearch(this.value)"/></div>
     <div class="tb-sep"></div>
-    <button class="tb-btn" onclick="refreshAll()" title="Обновить"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 11-2.12-9.36L23 10"/></svg></button>
+    <button class="tb-btn" onclick="refreshAll()" title="Обновить"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 11-2.12-9.36L23 10"/></svg></button>
     <div class="tb-sep"></div>
     <div class="tb-time" id="tb-time">--:--:--</div>
   </div>
@@ -368,35 +369,34 @@ textarea.mi{resize:vertical;min-height:80px}
     <!-- OVERVIEW -->
     <div class="page active" id="page-overview">
       <div class="sh">
-        <div><div class="sh-tag">Мониторинг · Сегодня</div><div class="sh-title">Обзор <em>системы</em></div></div>
-        <div class="sh-actions"><div class="tabs"><button class="tab active" onclick="setPeriod('today',this)">Сегодня</button><button class="tab" onclick="setPeriod('week',this)">Неделя</button><button class="tab" onclick="setPeriod('month',this)">Месяц</button></div></div>
+        <div><div class="sh-tag">Мониторинг · Реальное время</div><div class="sh-title">Обзор <em>системы</em></div></div>
       </div>
       <div class="kpi-grid">
-        <div class="kpi acc"><div class="kpi-label">Заказов <span class="kpi-trend up" id="kt-ord">—</span></div><div class="kpi-val" id="kv-ord">—</div><div class="kpi-sub">Всего за период</div><div class="kpi-ico">📦</div><div class="kpi-spark"><div class="spark" id="sp-ord"></div></div></div>
-        <div class="kpi green"><div class="kpi-label">Выручка <span class="kpi-trend up" id="kt-rev">—</span></div><div class="kpi-val" id="kv-rev">—</div><div class="kpi-sub">Сумма заказов</div><div class="kpi-ico">💰</div><div class="kpi-spark"><div class="spark" id="sp-rev"></div></div></div>
-        <div class="kpi yellow"><div class="kpi-label">Среднее время</div><div class="kpi-val" id="kv-time">35</div><div class="kpi-sub">Доставки (мин)</div><div class="kpi-ico">⏱</div></div>
+        <div class="kpi acc"><div class="kpi-label">Заказов всего</div><div class="kpi-val" id="kv-ord">—</div><div class="kpi-sub">За всё время</div><div class="kpi-ico">📦</div><div class="kpi-spark"><div class="spark" id="sp-ord"></div></div></div>
+        <div class="kpi green"><div class="kpi-label">Выручка</div><div class="kpi-val" id="kv-rev">—</div><div class="kpi-sub">Без отменённых</div><div class="kpi-ico">💰</div><div class="kpi-spark"><div class="spark" id="sp-rev"></div></div></div>
         <div class="kpi cyan"><div class="kpi-label">Курьеры онлайн</div><div class="kpi-val" id="kv-cur">—</div><div class="kpi-sub">Из <span id="kv-curtot">—</span> всего</div><div class="kpi-ico">🚴</div></div>
         <div class="kpi blue"><div class="kpi-label">Клиентов</div><div class="kpi-val" id="kv-cli">—</div><div class="kpi-sub">Зарегистрированных</div><div class="kpi-ico">👤</div></div>
-        <div class="kpi red"><div class="kpi-label">Отменено <span class="kpi-trend down" id="kt-can">—</span></div><div class="kpi-val" id="kv-can">—</div><div class="kpi-sub">Заказов отменено</div><div class="kpi-ico">❌</div></div>
-        <div class="kpi acc"><div class="kpi-label">Очередь</div><div class="kpi-val" id="kv-pend">—</div><div class="kpi-sub">Ждут курьера</div><div class="kpi-ico">⏳</div></div>
+        <div class="kpi yellow"><div class="kpi-label">Очередь</div><div class="kpi-val" id="kv-pend">—</div><div class="kpi-sub">Ждут курьера</div><div class="kpi-ico">⏳</div></div>
         <div class="kpi green"><div class="kpi-label">Доставлено</div><div class="kpi-val" id="kv-done">—</div><div class="kpi-sub">Успешных</div><div class="kpi-ico">✅</div></div>
+        <div class="kpi red"><div class="kpi-label">Отменено <span class="kpi-trend down" id="kt-can">—</span></div><div class="kpi-val" id="kv-can">—</div><div class="kpi-sub">Заказов отменено</div><div class="kpi-ico">❌</div></div>
+        <div class="kpi acc"><div class="kpi-label">В процессе</div><div class="kpi-val" id="kv-active">—</div><div class="kpi-sub">Готовятся / в пути</div><div class="kpi-ico">🔄</div></div>
       </div>
       <div class="two-col">
         <div class="panel">
           <div class="panel-head"><div class="panel-title"><div class="pdot" style="background:var(--acc);animation:rtP 2s infinite"></div>Активные заказы</div><button class="btn btn-secondary btn-sm" onclick="goPage('orders')">Все →</button></div>
           <div style="overflow-x:auto"><table class="ot" id="live-ot"><thead><tr><th>Заказ</th><th>Клиент</th><th>Адрес</th><th>Статус</th><th>Сумма</th><th>Действия</th></tr></thead><tbody id="live-ob"><tr><td colspan="6"><div class="pload"><div class="spin"></div></div></td></tr></tbody></table></div>
         </div>
-        <div style="display:flex;flex-direction:column;gap:14px">
+        <div style="display:flex;flex-direction:column;gap:12px">
           <div class="panel">
             <div class="panel-head"><div class="panel-title">Статусы заказов</div></div>
             <div class="donut-wrap">
               <div class="donut-chart">
-                <svg width="90" height="90" viewBox="0 0 90 90">
-                  <circle cx="45" cy="45" r="35" fill="none" stroke="var(--muted2)" stroke-width="10"/>
-                  <circle cx="45" cy="45" r="35" fill="none" stroke="var(--acc)" stroke-width="10" stroke-dasharray="0 220" id="d-acc" style="transition:stroke-dasharray .8s var(--ease)"/>
-                  <circle cx="45" cy="45" r="35" fill="none" stroke="var(--green)" stroke-width="10" stroke-dasharray="0 220" id="d-grn" style="transition:all .8s var(--ease) .1s"/>
-                  <circle cx="45" cy="45" r="35" fill="none" stroke="var(--yellow)" stroke-width="10" stroke-dasharray="0 220" id="d-yel" style="transition:all .8s var(--ease) .2s"/>
-                  <circle cx="45" cy="45" r="35" fill="none" stroke="var(--red)" stroke-width="10" stroke-dasharray="0 220" id="d-red" style="transition:all .8s var(--ease) .3s"/>
+                <svg width="84" height="84" viewBox="0 0 84 84">
+                  <circle cx="42" cy="42" r="33" fill="none" stroke="var(--muted2)" stroke-width="9"/>
+                  <circle cx="42" cy="42" r="33" fill="none" stroke="var(--acc)" stroke-width="9" stroke-dasharray="0 207" id="d-acc" style="transition:stroke-dasharray .8s var(--ease)"/>
+                  <circle cx="42" cy="42" r="33" fill="none" stroke="var(--green)" stroke-width="9" stroke-dasharray="0 207" id="d-grn" style="transition:all .8s var(--ease) .1s"/>
+                  <circle cx="42" cy="42" r="33" fill="none" stroke="var(--yellow)" stroke-width="9" stroke-dasharray="0 207" id="d-yel" style="transition:all .8s var(--ease) .2s"/>
+                  <circle cx="42" cy="42" r="33" fill="none" stroke="var(--red)" stroke-width="9" stroke-dasharray="0 207" id="d-red" style="transition:all .8s var(--ease) .3s"/>
                 </svg>
                 <div class="dc-center"><div class="dc-val" id="d-tot">0</div><div class="dc-lbl">Всего</div></div>
               </div>
@@ -404,21 +404,14 @@ textarea.mi{resize:vertical;min-height:80px}
             </div>
           </div>
           <div class="panel">
-            <div class="panel-head"><div class="panel-title"><div class="pdot" style="background:var(--green);animation:rtP 2s infinite"></div>Онлайн курьеры</div><button class="btn btn-secondary btn-sm" onclick="goPage('couriers')">Все →</button></div>
+            <div class="panel-head"><div class="panel-title"><div class="pdot" style="background:var(--green);animation:rtP 2s infinite"></div>Курьеры онлайн</div><button class="btn btn-secondary btn-sm" onclick="goPage('couriers')">Все →</button></div>
             <div id="online-clist"><div class="pload"><div class="spin"></div></div></div>
           </div>
         </div>
       </div>
-      <div class="two-col">
-        <div class="panel"><div class="panel-head"><div class="panel-title">Лента активности</div></div><div id="act-feed"><div class="pload" style="padding:24px"><div class="spin"></div> Ожидаем…</div></div></div>
-        <div class="panel"><div class="panel-head"><div class="panel-title">Карта доставок</div></div>
-          <div class="map-ph"><div class="map-grid"></div>
-            <div class="map-dot" style="background:var(--acc);color:var(--acc);top:38%;left:28%"></div>
-            <div class="map-dot" style="background:var(--green);color:var(--green);top:58%;left:54%;animation-delay:.7s"></div>
-            <div class="map-dot" style="background:var(--yellow);color:var(--yellow);top:25%;left:66%;animation-delay:1.4s"></div>
-            <div style="position:relative;z-index:1;text-align:center;font-size:.68rem;color:var(--text3)">Интеграция с картами — в разработке</div>
-          </div>
-        </div>
+      <div class="panel" style="margin-bottom:12px">
+        <div class="panel-head"><div class="panel-title">Лента активности</div></div>
+        <div id="act-feed"><div class="pload" style="padding:20px"><div class="spin"></div> Ожидаем…</div></div>
       </div>
     </div>
 
@@ -428,7 +421,7 @@ textarea.mi{resize:vertical;min-height:80px}
         <div><div class="sh-tag">Управление</div><div class="sh-title">Заказы</div></div>
         <div class="sh-actions">
           <div class="tabs"><button class="tab active" onclick="fOrders('all',this)">Все</button><button class="tab" onclick="fOrders('pending',this)">Ожидают</button><button class="tab" onclick="fOrders('delivering',this)">В пути</button><button class="tab" onclick="fOrders('delivered',this)">Доставлено</button><button class="tab" onclick="fOrders('cancelled',this)">Отменено</button></div>
-          <button class="btn btn-secondary btn-sm" onclick="exportOrders()"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg> CSV</button>
+          <button class="btn btn-secondary btn-sm" onclick="exportOrders()"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg> CSV</button>
         </div>
       </div>
       <div class="panel"><div style="overflow-x:auto"><table class="ot"><thead><tr><th>№</th><th>Клиент</th><th>Адрес</th><th>Курьер</th><th>Статус</th><th>Сумма</th><th>Время</th><th>Действия</th></tr></thead><tbody id="all-ob"><tr><td colspan="8"><div class="pload"><div class="spin"></div></div></td></tr></tbody></table></div></div>
@@ -445,7 +438,7 @@ textarea.mi{resize:vertical;min-height:80px}
 
     <!-- CLIENTS -->
     <div class="page" id="page-clients">
-      <div class="sh"><div><div class="sh-tag">База</div><div class="sh-title">Клиенты</div></div><div class="sh-actions"><button class="btn btn-secondary btn-sm" onclick="exportClients()">CSV</button></div></div>
+      <div class="sh"><div><div class="sh-tag">База</div><div class="sh-title">Клиенты</div></div><div class="sh-actions"><button class="btn btn-secondary btn-sm" onclick="exportClients()"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg> CSV</button></div></div>
       <div class="panel"><div style="overflow-x:auto"><table class="ot"><thead><tr><th>Клиент</th><th>Email</th><th>Телефон</th><th>Адрес</th><th>Заказов</th><th>Потрачено</th><th>Дата</th><th></th></tr></thead><tbody id="cli-ob"><tr><td colspan="8"><div class="pload"><div class="spin"></div></div></td></tr></tbody></table></div></div>
     </div>
 
@@ -457,27 +450,27 @@ textarea.mi{resize:vertical;min-height:80px}
           <div class="fb"><button class="fp active" onclick="fTickets('all',this)">Все</button><button class="fp r" onclick="fTickets('urgent',this)">Срочные</button><button class="fp" onclick="fTickets('open',this)">Открытые</button><button class="fp g" onclick="fTickets('resolved',this)">Решённые</button></div>
           <div id="tickets-list"></div>
         </div>
-        <div class="panel" id="ticket-detail"><div class="panel-head"><div class="panel-title">Детали обращения</div></div><div style="padding:40px 24px;text-align:center;color:var(--text3);font-size:.74rem"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" style="opacity:.2;margin-bottom:12px"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg><div>Выберите обращение из списка</div></div></div>
+        <div class="panel" id="ticket-detail"><div class="panel-head"><div class="panel-title">Детали обращения</div></div><div style="padding:36px 20px;text-align:center;color:var(--text3);font-size:.72rem"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" style="opacity:.18;margin-bottom:10px"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg><div>Выберите обращение из списка</div></div></div>
       </div>
     </div>
 
     <!-- CATALOG -->
     <div class="page" id="page-catalog">
       <div class="sh"><div><div class="sh-tag">Управление</div><div class="sh-title">Каталог <em>товаров</em></div></div><div class="sh-actions"><button class="btn btn-primary" onclick="openAddProduct()">+ Товар</button></div></div>
-      <div class="panel"><div style="overflow-x:auto"><table class="ot"><thead><tr><th>Товар</th><th>Категория</th><th>Цена</th><th>Статус</th><th>Действия</th></tr></thead><tbody id="cat-ob"><tr><td colspan="5"><div class="pload"><div class="spin"></div></div></td></tr></tbody></table></div></div>
+      <div class="panel"><div style="overflow-x:auto"><table class="ot"><thead><tr><th>Товар</th><th>Категория</th><th>Цена</th><th>Штрих-код</th><th>Статус</th><th>Действия</th></tr></thead><tbody id="cat-ob"><tr><td colspan="6"><div class="pload"><div class="spin"></div></div></td></tr></tbody></table></div></div>
     </div>
 
     <!-- ANALYTICS -->
     <div class="page" id="page-analytics">
       <div class="sh"><div><div class="sh-tag">Отчёты</div><div class="sh-title">Аналитика</div></div></div>
-      <div class="three-col" style="margin-bottom:14px">
-        <div class="panel"><div class="panel-head"><div class="panel-title">Заказы по часам</div></div><div style="padding:14px 16px"><div style="display:flex;align-items:flex-end;gap:2px;height:80px" id="ch-hourly"></div><div style="display:flex;justify-content:space-between;font-family:var(--fm);font-size:.5rem;color:var(--text3);margin-top:6px"><span>00</span><span>06</span><span>12</span><span>18</span><span>23</span></div></div></div>
-        <div class="panel"><div class="panel-head"><div class="panel-title">Заказы по дням</div></div><div style="padding:14px 16px"><div style="display:flex;align-items:flex-end;gap:4px;height:80px" id="ch-daily"></div><div style="display:flex;justify-content:space-between;font-family:var(--fm);font-size:.5rem;color:var(--text3);margin-top:6px" id="ch-dlbls"></div></div></div>
+      <div class="three-col" style="margin-bottom:12px">
+        <div class="panel"><div class="panel-head"><div class="panel-title">Заказы по часам</div></div><div style="padding:12px 14px"><div style="display:flex;align-items:flex-end;gap:2px;height:72px" id="ch-hourly"></div><div style="display:flex;justify-content:space-between;font-family:var(--fm);font-size:.48rem;color:var(--text3);margin-top:5px"><span>00</span><span>06</span><span>12</span><span>18</span><span>23</span></div></div></div>
+        <div class="panel"><div class="panel-head"><div class="panel-title">Заказы по дням (7 дней)</div></div><div style="padding:12px 14px"><div style="display:flex;align-items:flex-end;gap:4px;height:72px" id="ch-daily"></div><div style="display:flex;justify-content:space-between;font-family:var(--fm);font-size:.48rem;color:var(--text3);margin-top:5px" id="ch-dlbls"></div></div></div>
         <div class="panel"><div class="panel-head"><div class="panel-title">Топ категорий</div></div><div id="top-cats"></div></div>
       </div>
       <div class="two-col">
         <div class="panel"><div class="panel-head"><div class="panel-title">Топ курьеров</div></div><div id="top-couriers"></div></div>
-        <div class="panel"><div class="panel-head"><div class="panel-title">Сводка</div></div><div id="period-sum" style="padding:16px 18px"></div></div>
+        <div class="panel"><div class="panel-head"><div class="panel-title">Сводка</div></div><div id="period-sum" style="padding:14px 16px"></div></div>
       </div>
     </div>
 
@@ -491,30 +484,21 @@ textarea.mi{resize:vertical;min-height:80px}
     <div class="page" id="page-settings">
       <div class="sh"><div><div class="sh-tag">Конфигурация</div><div class="sh-title">Настройки</div></div></div>
       <div class="two-col">
-        <div style="display:flex;flex-direction:column;gap:14px">
-          <div class="panel"><div class="panel-head"><div class="panel-title">Параметры доставки</div></div>
-            <div style="padding:18px">
-              <div class="mf"><label class="ml">Стоимость доставки (₽)</label><input class="mi" type="number" id="s-fee" value="149"/></div>
-              <div class="mf"><label class="ml">Минимальная сумма (₽)</label><input class="mi" type="number" id="s-min" value="200"/></div>
-              <div class="mf"><label class="ml">Радиус доставки (км)</label><input class="mi" type="number" id="s-rad" value="15"/></div>
-              <button class="btn btn-primary" onclick="saveSettings()">Сохранить</button>
-            </div>
-          </div>
-          <div class="panel"><div class="panel-head"><div class="panel-title">Уведомления</div></div>
-            <div style="padding:18px;display:flex;flex-direction:column;gap:12px">
-              <label style="display:flex;align-items:center;justify-content:space-between;font-size:.76rem;color:var(--text2);cursor:pointer">Новый заказ<input type="checkbox" checked style="accent-color:var(--acc)"/></label>
-              <label style="display:flex;align-items:center;justify-content:space-between;font-size:.76rem;color:var(--text2);cursor:pointer">Отмена заказа<input type="checkbox" checked style="accent-color:var(--acc)"/></label>
-              <label style="display:flex;align-items:center;justify-content:space-between;font-size:.76rem;color:var(--text2);cursor:pointer">Новое обращение<input type="checkbox" checked style="accent-color:var(--acc)"/></label>
-            </div>
+        <div class="panel"><div class="panel-head"><div class="panel-title">Параметры доставки</div></div>
+          <div style="padding:16px">
+            <div class="mf"><label class="ml">Стоимость доставки (₽)</label><input class="mi" type="number" id="s-fee" value="149"/></div>
+            <div class="mf"><label class="ml">Минимальная сумма (₽)</label><input class="mi" type="number" id="s-min" value="200"/></div>
+            <div class="mf"><label class="ml">Радиус доставки (км)</label><input class="mi" type="number" id="s-rad" value="15"/></div>
+            <button class="btn btn-primary" onclick="saveSettings()">Сохранить</button>
           </div>
         </div>
         <div class="panel"><div class="panel-head"><div class="panel-title">О системе</div></div>
-          <div style="padding:18px;font-size:.74rem;color:var(--text2);line-height:2.2">
+          <div style="padding:16px;font-size:.72rem;color:var(--text2);line-height:2.2">
             <div><span style="color:var(--text3)">Версия:</span> Admin v2.0</div>
             <div><span style="color:var(--text3)">База данных:</span> Firebase Firestore</div>
             <div><span style="color:var(--text3)">Проект:</span> delivery-galelium</div>
             <div><span style="color:var(--text3)">Статус:</span> <span style="color:var(--green)">● Работает</span></div>
-            <div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--b)"><span style="color:var(--text3)">Домены:</span><br><span style="font-family:var(--fm);font-size:.64rem;color:var(--acc2)">delivery.galelium.com/main<br>courier.delivery.galelium.com/courier<br>admin.delivery.galelium.com/dashboard</span></div>
+            <div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--b)"><span style="color:var(--text3)">Домены:</span><br><span style="font-family:var(--fm);font-size:.62rem;color:var(--acc2)">delivery.galelium.com/main<br>courier.delivery.galelium.com/courier<br>admin.delivery.galelium.com/dashboard</span></div>
           </div>
         </div>
       </div>
@@ -544,7 +528,6 @@ const actLog=[];
 const SL={pending:'Ожидает',confirmed:'Подтверждён',preparing:'Готовится',delivering:'В пути',delivered:'Доставлен',cancelled:'Отменён'};
 const SC={pending:'var(--yellow)',confirmed:'var(--acc)',preparing:'#a855f7',delivering:'var(--cyan)',delivered:'var(--green)',cancelled:'var(--red)'};
 const ROLES={admin:'👑 Администратор',support:'🎧 Поддержка',moderator:'🛡️ Модератор'};
-const VT={bicycle:'🚴 Велосипед',scooter:'🛵 Самокат',car:'🚗 Авто',foot:'🚶 Пешком'};
 
 /* ── CLOCK ── */
 setInterval(()=>{const el=document.getElementById('tb-time');if(el)el.textContent=new Date().toLocaleTimeString('ru-RU');},1000);
@@ -657,6 +640,7 @@ function renderKPI(){
   const tot=allOrders.length;
   const del=allOrders.filter(o=>o.status==='delivered').length;
   const can=allOrders.filter(o=>o.status==='cancelled').length;
+  const active=allOrders.filter(o=>['preparing','delivering'].includes(o.status)).length;
   const rev=allOrders.filter(o=>o.status!=='cancelled').reduce((s,o)=>s+(o.total||0),0);
   const pend=allOrders.filter(o=>['pending','confirmed'].includes(o.status)).length;
   set('kv-ord',tot);
@@ -665,6 +649,7 @@ function renderKPI(){
   set('kv-can',can);
   set('kv-pend',pend);
   set('kv-done',del);
+  set('kv-active',active);
   set('kt-can',tot?Math.round(can/tot*100)+'%':'0%');
   renderSpark('sp-ord',genData(7));
   renderSpark('sp-rev',genData(7),'g');
@@ -673,7 +658,9 @@ function renderKPI(){
 
 function updateKPI(){
   const pend=liveOrders.filter(o=>['pending','confirmed'].includes(o.status)).length;
+  const active=liveOrders.filter(o=>['preparing','delivering'].includes(o.status)).length;
   set('kv-pend',pend);
+  set('kv-active',active);
   updateOrdBadge();
 }
 
@@ -701,7 +688,7 @@ function set(id,val){const el=document.getElementById(id);if(el)el.textContent=v
 
 /* ── DONUT ── */
 function renderDonut(){
-  const R=35,C=2*Math.PI*R;
+  const R=33,C=2*Math.PI*R;
   const cnt={pending:0,active:0,done:0,cancelled:0};
   liveOrders.forEach(o=>{
     if(['pending','confirmed'].includes(o.status))cnt.pending++;
@@ -730,7 +717,7 @@ function renderDonut(){
     {l:'В пути',v:cnt.active,c:'var(--yellow)'},
     {l:'Доставлено',v:cnt.done,c:'var(--green)'},
     {l:'Отменено',v:cnt.cancelled,c:'var(--red)'},
-  ].map(i=>`<div class="dl"><div class="dl-dot" style="background:${i.c}"></div><span style="color:var(--text2);flex:1">${i.l}</span><span style="font-family:var(--fm);font-size:.64rem;color:var(--text3)">${i.v}</span></div>`).join('');
+  ].map(i=>`<div class="dl"><div class="dl-dot" style="background:${i.c}"></div><span style="color:var(--text2);flex:1">${i.l}</span><span style="font-family:var(--fm);font-size:.62rem;color:var(--text3)">${i.v}</span></div>`).join('');
 }
 
 /* ── ACTIVITY ── */
@@ -741,10 +728,10 @@ function pushAct(text,status){
 }
 function renderAct(){
   const el=document.getElementById('act-feed');if(!el)return;
-  if(!actLog.length){el.innerHTML=`<div style="padding:20px;text-align:center;font-size:.72rem;color:var(--text3)">Ожидаем активность…</div>`;return;}
+  if(!actLog.length){el.innerHTML=`<div style="padding:18px;text-align:center;font-size:.7rem;color:var(--text3)">Ожидаем активность…</div>`;return;}
   const ico={pending:'⏳',confirmed:'✅',preparing:'👨‍🍳',delivering:'🚴',delivered:'🎉',cancelled:'❌'};
   const bc={pending:'var(--yellowd)',confirmed:'var(--accd)',preparing:'rgba(168,85,247,.1)',delivering:'var(--cyand)',delivered:'var(--greend)',cancelled:'var(--redd)'};
-  el.innerHTML=actLog.slice(0,10).map(a=>`<div class="af"><div class="af-ico" style="background:${bc[a.status]||'var(--s2)'}">${ico[a.status]||'📋'}</div><div><div class="af-txt">${a.text}</div><div class="af-time">${a.time}</div></div></div>`).join('');
+  el.innerHTML=actLog.slice(0,8).map(a=>`<div class="af"><div class="af-ico" style="background:${bc[a.status]||'var(--s2)'}">${ico[a.status]||'📋'}</div><div><div class="af-txt">${a.text}</div><div class="af-time">${a.time}</div></div></div>`).join('');
 }
 
 /* ── LIVE ORDERS TABLE ── */
@@ -758,11 +745,10 @@ function renderLiveOrders(){
 function oRow(o,live=false){
   const date=o.createdAt?.toDate?o.createdAt.toDate().toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'}):'—';
   const c=SC[o.status]||'#888';const l=SL[o.status]||o.status;
-  const pay=o.paymentMethod==='cash'?'💵':o.paymentMethod==='card'?'💳':'🌐';
   return `<tr>
     <td><span class="mono">#${o.id.slice(-6).toUpperCase()}</span></td>
     <td style="color:var(--text);font-weight:500">${o.clientName||'—'}</td>
-    <td style="max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--text2)">${o.address||'—'}</td>
+    <td style="max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--text2)">${o.address||'—'}</td>
     ${live?`<td><span class="ostatus" style="color:${c};border-color:${c}30;background:${c}10"><span class="osdot"></span>${l}</span></td><td><span style="font-family:var(--fm)">${o.total||0} ₽</span></td>`:`<td>${o.courierName||'<span style="color:var(--text3)">—</span>'}</td><td><span class="ostatus" style="color:${c};border-color:${c}30;background:${c}10"><span class="osdot"></span>${l}</span></td><td><span style="font-family:var(--fm)">${o.total||0} ₽</span></td>`}
     <td><div class="oact">
       <button class="btn btn-secondary btn-sm" onclick="openOrderModal('${o.id}')">Детали</button>
@@ -784,7 +770,7 @@ function renderAllOrders(){
     return `<tr>
       <td><span class="mono">#${o.id.slice(-6).toUpperCase()}</span></td>
       <td style="color:var(--text);font-weight:500">${o.clientName||'—'}</td>
-      <td style="max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${o.address||'—'}</td>
+      <td style="max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${o.address||'—'}</td>
       <td style="color:var(--text2)">${o.courierName||'—'}</td>
       <td><span class="ostatus" style="color:${c};border-color:${c}30;background:${c}10"><span class="osdot"></span>${l}</span></td>
       <td><span style="font-family:var(--fm);color:var(--text2)">${o.total||0} ₽</span></td>
@@ -817,24 +803,24 @@ function renderCouriersPage(){
     const st=c.currentOrderId?'В доставке':c.isOnline?'Онлайн':'Офлайн';
     const sc=c.currentOrderId?'var(--yellow)':c.isOnline?'var(--green)':'var(--text3)';
     return `<div class="panel" style="overflow:hidden">
-      <div style="padding:16px 18px;border-bottom:1px solid var(--b);display:flex;align-items:center;gap:12px">
-        <div style="width:44px;height:44px;border-radius:50%;background:var(--accd);border:1.5px solid var(--accg);display:flex;align-items:center;justify-content:center;font-size:.76rem;font-weight:700;color:var(--acc2);flex-shrink:0;overflow:hidden">
+      <div style="padding:14px 16px;border-bottom:1px solid var(--b);display:flex;align-items:center;gap:10px">
+        <div style="width:40px;height:40px;border-radius:50%;background:var(--accd);border:1.5px solid var(--accg);display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:700;color:var(--acc2);flex-shrink:0;overflow:hidden">
           ${c.avatarUrl?`<img src="${c.avatarUrl}" style="width:100%;height:100%;object-fit:cover">`:`<span>${init}</span>`}
         </div>
         <div style="flex:1;min-width:0">
-          <div style="font-size:.8rem;font-weight:700;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${c.displayName||'—'}</div>
-          <div style="font-size:.64rem;color:var(--text3);margin-top:2px">${c.phone||c.email||'—'}</div>
+          <div style="font-size:.78rem;font-weight:700;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${c.displayName||'—'}</div>
+          <div style="font-size:.62rem;color:var(--text3);margin-top:2px">${c.phone||c.email||'—'}</div>
         </div>
-        <div style="display:flex;align-items:center;gap:5px;font-size:.6rem;font-weight:600;color:${sc};flex-shrink:0">
-          <div style="width:6px;height:6px;border-radius:50%;background:${sc}"></div>${st}
+        <div style="display:flex;align-items:center;gap:4px;font-size:.58rem;font-weight:600;color:${sc};flex-shrink:0">
+          <div style="width:5px;height:5px;border-radius:50%;background:${sc}"></div>${st}
         </div>
       </div>
       <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1px;background:var(--b)">
-        <div style="background:var(--s2);padding:10px;text-align:center"><div style="font-family:var(--fd);font-weight:800;font-size:1rem;color:var(--acc2)">${c.totalDeliveries||0}</div><div style="font-size:.44rem;color:var(--text3);text-transform:uppercase;letter-spacing:.1em;margin-top:2px">Доставок</div></div>
-        <div style="background:var(--s2);padding:10px;text-align:center"><div style="font-family:var(--fd);font-weight:800;font-size:1rem;color:var(--green)">${c.earnings||0}₽</div><div style="font-size:.44rem;color:var(--text3);text-transform:uppercase;letter-spacing:.1em;margin-top:2px">Заработок</div></div>
-        <div style="background:var(--s2);padding:10px;text-align:center"><div style="font-size:.9rem">${{bicycle:'🚴',scooter:'🛵',car:'🚗',foot:'🚶'}[c.vehicle||'foot']||'🚴'}</div><div style="font-size:.44rem;color:var(--text3);text-transform:uppercase;letter-spacing:.1em;margin-top:2px">Транспорт</div></div>
+        <div style="background:var(--s2);padding:9px;text-align:center"><div style="font-family:var(--fd);font-weight:800;font-size:.95rem;color:var(--acc2)">${c.totalDeliveries||0}</div><div style="font-size:.42rem;color:var(--text3);text-transform:uppercase;letter-spacing:.1em;margin-top:2px">Доставок</div></div>
+        <div style="background:var(--s2);padding:9px;text-align:center"><div style="font-family:var(--fd);font-weight:800;font-size:.95rem;color:var(--green)">${c.earnings||0}₽</div><div style="font-size:.42rem;color:var(--text3);text-transform:uppercase;letter-spacing:.1em;margin-top:2px">Заработок</div></div>
+        <div style="background:var(--s2);padding:9px;text-align:center"><div style="font-size:.85rem">${{bicycle:'🚴',scooter:'🛵',car:'🚗',foot:'🚶'}[c.vehicle||'foot']||'🚴'}</div><div style="font-size:.42rem;color:var(--text3);text-transform:uppercase;letter-spacing:.1em;margin-top:2px">Транспорт</div></div>
       </div>
-      <div style="padding:10px 14px;display:flex;gap:7px;flex-wrap:wrap">
+      <div style="padding:9px 12px;display:flex;gap:6px;flex-wrap:wrap">
         ${c.currentOrderId?`<button class="btn btn-secondary btn-sm" onclick="openOrderModal('${c.currentOrderId}')">Заказ</button>`:''}
         <button class="btn btn-${c.isOnline?'danger':'success'} btn-sm" onclick="toggleCOnline('${c.id}',${!c.isOnline})">${c.isOnline?'Офлайн':'Онлайн'}</button>
       </div>
@@ -845,15 +831,15 @@ function renderCouriersPage(){
 function renderOnlineCouriers(){
   const el=document.getElementById('online-clist');if(!el)return;
   const list=allCouriers.filter(c=>c.isOnline).slice(0,5);
-  if(!list.length){el.innerHTML=`<div style="padding:16px;text-align:center;font-size:.72rem;color:var(--text3)">Нет курьеров онлайн</div>`;return;}
+  if(!list.length){el.innerHTML=`<div style="padding:14px;text-align:center;font-size:.7rem;color:var(--text3)">Нет курьеров онлайн</div>`;return;}
   el.innerHTML=list.map(c=>{
     const init=(c.displayName||'?').split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
     const st=c.currentOrderId?'В доставке':'Свободен';
     const sc=c.currentOrderId?'var(--yellow)':'var(--green)';
     return `<div class="cc">
       <div class="cav">${c.avatarUrl?`<img src="${c.avatarUrl}" alt="">`:`<span>${init}</span>`}</div>
-      <div style="flex:1;min-width:0"><div style="font-size:.76rem;font-weight:600;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${c.displayName||'—'}</div><div style="font-size:.62rem;color:var(--text3);margin-top:1px">${c.totalDeliveries||0} доставок</div></div>
-      <div style="display:flex;align-items:center;gap:5px;font-size:.6rem;font-weight:600;color:${sc};flex-shrink:0"><div style="width:6px;height:6px;border-radius:50%;background:${sc}"></div>${st}</div>
+      <div style="flex:1;min-width:0"><div style="font-size:.72rem;font-weight:600;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${c.displayName||'—'}</div><div style="font-size:.6rem;color:var(--text3);margin-top:1px">${c.totalDeliveries||0} доставок</div></div>
+      <div style="display:flex;align-items:center;gap:4px;font-size:.58rem;font-weight:600;color:${sc};flex-shrink:0"><div style="width:5px;height:5px;border-radius:50%;background:${sc}"></div>${st}</div>
     </div>`;
   }).join('');
 }
@@ -879,12 +865,12 @@ function renderClients(){
     const date=c.createdAt?.toDate?c.createdAt.toDate().toLocaleDateString('ru-RU'):'—';
     return `<tr>
       <td style="color:var(--text);font-weight:500">${c.displayName||'—'}</td>
-      <td class="mono" style="font-size:.66rem">${c.email||'—'}</td>
+      <td class="mono" style="font-size:.64rem">${c.email||'—'}</td>
       <td>${c.phone||'—'}</td>
-      <td style="max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${c.address||'—'}</td>
+      <td style="max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${c.address||'—'}</td>
       <td style="font-family:var(--fm)">${orders.length}</td>
       <td style="font-family:var(--fm);color:var(--green)">${spent.toLocaleString('ru-RU')} ₽</td>
-      <td class="mono" style="font-size:.64rem">${date}</td>
+      <td class="mono" style="font-size:.62rem">${date}</td>
       <td><button class="btn btn-secondary btn-sm" onclick="viewClient('${c.uid}')">Профиль</button></td>
     </tr>`;
   }).join('');
@@ -896,14 +882,14 @@ window.viewClient=function(uid){
   const spent=orders.filter(o=>o.status!=='cancelled').reduce((s,o)=>s+(o.total||0),0);
   document.getElementById('m-order-title').textContent=c.displayName||c.email||'Клиент';
   document.getElementById('m-order-body').innerHTML=`
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">
-      <div class="mf"><label class="ml">Email</label><div style="font-size:.8rem;color:var(--text)">${c.email||'—'}</div></div>
-      <div class="mf"><label class="ml">Телефон</label><div style="font-size:.8rem;color:var(--text)">${c.phone||'—'}</div></div>
-      <div class="mf"><label class="ml">Адрес</label><div style="font-size:.8rem;color:var(--text)">${c.address||'—'}</div></div>
-      <div class="mf"><label class="ml">Заказов / Потрачено</label><div style="font-size:.8rem;color:var(--text)">${orders.length} / ${spent.toLocaleString('ru-RU')} ₽</div></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">
+      <div class="mf"><label class="ml">Email</label><div style="font-size:.76rem;color:var(--text)">${c.email||'—'}</div></div>
+      <div class="mf"><label class="ml">Телефон</label><div style="font-size:.76rem;color:var(--text)">${c.phone||'—'}</div></div>
+      <div class="mf"><label class="ml">Адрес</label><div style="font-size:.76rem;color:var(--text)">${c.address||'—'}</div></div>
+      <div class="mf"><label class="ml">Заказов / Потрачено</label><div style="font-size:.76rem;color:var(--text)">${orders.length} / ${spent.toLocaleString('ru-RU')} ₽</div></div>
     </div>
-    <div style="font-size:.5rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-bottom:10px">Последние заказы</div>
-    ${orders.slice(0,6).map(o=>{const c2=SC[o.status]||'#888';return `<div style="display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid var(--b);font-size:.74rem"><span class="mono">#${o.id.slice(-6).toUpperCase()}</span><span style="color:var(--text2);max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${o.address||'—'}</span><span class="ostatus" style="color:${c2};border-color:${c2}30;background:${c2}10;font-size:.52rem">${SL[o.status]||o.status}</span><span style="font-family:var(--fm);color:var(--green);font-size:.68rem">${o.total}₽</span></div>`;}).join('')||'<div style="color:var(--text3);font-size:.74rem;text-align:center;padding:16px">Нет заказов</div>'}
+    <div style="font-size:.48rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-bottom:8px">Последние заказы</div>
+    ${orders.slice(0,6).map(o=>{const c2=SC[o.status]||'#888';return `<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--b);font-size:.72rem"><span class="mono">#${o.id.slice(-6).toUpperCase()}</span><span style="color:var(--text2);max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${o.address||'—'}</span><span class="ostatus" style="color:${c2};border-color:${c2}30;background:${c2}10;font-size:.5rem">${SL[o.status]||o.status}</span><span style="font-family:var(--fm);color:var(--green);font-size:.66rem">${o.total}₽</span></div>`;}).join('')||'<div style="color:var(--text3);font-size:.72rem;text-align:center;padding:14px">Нет заказов</div>'}
   `;
   document.getElementById('m-order-foot').innerHTML=`<button class="btn btn-secondary" onclick="closeMo('order-modal')">Закрыть</button>`;
   openMo('order-modal');
@@ -919,21 +905,21 @@ window.openOrderModal=async function(oid){
   const c=SC[o.status]||'#888';const l=SL[o.status]||o.status;
   document.getElementById('m-order-title').innerHTML=`Заказ <span style="font-family:var(--fm);color:var(--acc2)">#${o.id.slice(-6).toUpperCase()}</span>`;
   document.getElementById('m-order-body').innerHTML=`
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:8px">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px">
       <span class="ostatus" style="color:${c};border-color:${c}30;background:${c}10"><span class="osdot"></span>${l}</span>
-      <span class="mono" style="font-size:.62rem;color:var(--text3)">${date}</span>
+      <span class="mono" style="font-size:.6rem;color:var(--text3)">${date}</span>
     </div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px">
-      <div><div style="font-size:.46rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted2);margin-bottom:3px">Клиент</div><div style="font-size:.78rem;color:var(--text)">${o.clientName||'—'}</div></div>
-      <div><div style="font-size:.46rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted2);margin-bottom:3px">Курьер</div><div style="font-size:.78rem;color:var(--text)">${o.courierName||'Не назначен'}</div></div>
-      <div style="grid-column:1/-1"><div style="font-size:.46rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted2);margin-bottom:3px">Адрес</div><div style="font-size:.78rem;color:var(--text)">${o.address||'—'}</div></div>
-      <div><div style="font-size:.46rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted2);margin-bottom:3px">Оплата</div><div style="font-size:.78rem;color:var(--text)">${pay}</div></div>
-      <div><div style="font-size:.46rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted2);margin-bottom:3px">Комментарий</div><div style="font-size:.78rem;color:var(--text)">${o.comment||'Нет'}</div></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:14px">
+      <div><div style="font-size:.44rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted2);margin-bottom:3px">Клиент</div><div style="font-size:.76rem;color:var(--text)">${o.clientName||'—'}</div></div>
+      <div><div style="font-size:.44rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted2);margin-bottom:3px">Курьер</div><div style="font-size:.76rem;color:var(--text)">${o.courierName||'Не назначен'}</div></div>
+      <div style="grid-column:1/-1"><div style="font-size:.44rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted2);margin-bottom:3px">Адрес</div><div style="font-size:.76rem;color:var(--text)">${o.address||'—'}</div></div>
+      <div><div style="font-size:.44rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted2);margin-bottom:3px">Оплата</div><div style="font-size:.76rem;color:var(--text)">${pay}</div></div>
+      <div><div style="font-size:.44rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted2);margin-bottom:3px">Комментарий</div><div style="font-size:.76rem;color:var(--text)">${o.comment||'Нет'}</div></div>
     </div>
-    <div style="font-size:.5rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted2);margin-bottom:8px">Состав заказа</div>
-    <div style="background:var(--s2);border:1px solid var(--b);border-radius:8px;overflow:hidden;margin-bottom:14px">
-      ${(o.items||[]).map(i=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 12px;border-bottom:1px solid var(--b);font-size:.74rem"><span style="color:var(--text)">${i.name}</span><span style="color:var(--text3);font-family:var(--fm)">×${i.quantity}</span><span style="color:var(--green);font-family:var(--fm)">${i.price*i.quantity} ₽</span></div>`).join('')}
-      <div style="display:flex;justify-content:space-between;padding:10px 12px;font-weight:600;font-size:.8rem"><span style="color:var(--text2)">Итого</span><span style="font-family:var(--fm);color:var(--text)">${o.total} ₽</span></div>
+    <div style="font-size:.48rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted2);margin-bottom:7px">Состав заказа</div>
+    <div style="background:var(--s2);border:1px solid var(--b);border-radius:7px;overflow:hidden;margin-bottom:12px">
+      ${(o.items||[]).map(i=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:7px 11px;border-bottom:1px solid var(--b);font-size:.72rem"><span style="color:var(--text)">${i.name}</span><span style="color:var(--text3);font-family:var(--fm)">×${i.quantity}</span><span style="color:var(--green);font-family:var(--fm)">${i.price*i.quantity} ₽</span></div>`).join('')}
+      <div style="display:flex;justify-content:space-between;padding:9px 11px;font-weight:600;font-size:.78rem"><span style="color:var(--text2)">Итого</span><span style="font-family:var(--fm);color:var(--text)">${o.total} ₽</span></div>
     </div>
     <div class="mf"><label class="ml">Изменить статус</label>
       <select class="mi" id="m-status-sel">
@@ -993,8 +979,8 @@ function renderCatalog(){
   const body=document.getElementById('cat-ob');if(!body)return;
   if(!allProducts.length){body.innerHTML=`<tr><td colspan="6"><div class="er"><div class="er-ico">🍽️</div>Нет товаров</div></td></tr>`;return;}
   body.innerHTML=allProducts.map(p=>`<tr>
-    <td style="display:flex;align-items:center;gap:10px;color:var(--text);font-weight:500">
-      <div style="width:30px;height:30px;background:var(--s2);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:.8rem;flex-shrink:0;overflow:hidden">
+    <td style="display:flex;align-items:center;gap:9px;color:var(--text);font-weight:500">
+      <div style="width:28px;height:28px;background:var(--s2);border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:.76rem;flex-shrink:0;overflow:hidden">
         ${p.imageUrl?`<img src="${p.imageUrl}" style="width:100%;height:100%;object-fit:cover">`:'🍽️'}
       </div>${p.name}
     </td>
@@ -1002,8 +988,8 @@ function renderCatalog(){
     <td style="font-family:var(--fm);color:var(--green)">${p.price} ₽</td>
     <td>
       ${p.barcode
-        ? `<span style="font-family:var(--fm);font-size:.66rem;color:var(--acc2);background:var(--accd);border:1px solid var(--accg);padding:2px 8px;border-radius:5px;letter-spacing:.06em">${p.barcode}</span>`
-        : `<span style="font-size:.62rem;color:var(--text3)">—</span>`}
+        ? `<span style="font-family:var(--fm);font-size:.62rem;color:var(--acc2);background:var(--accd);border:1px solid var(--accg);padding:2px 7px;border-radius:4px;letter-spacing:.06em">${p.barcode}</span>`
+        : `<span style="font-size:.6rem;color:var(--text3)">—</span>`}
     </td>
     <td><span class="ostatus" style="color:${p.available!==false?'var(--green)':'var(--red)'};border-color:${p.available!==false?'var(--greeng)':'rgba(244,63,94,.2)'};background:${p.available!==false?'var(--greend)':'var(--redd)'}"><span class="osdot"></span>${p.available!==false?'Доступен':'Скрыт'}</span></td>
     <td><div class="oact">
@@ -1024,18 +1010,13 @@ window.openAddProduct=function(){
     </div>
     <div class="mf"><label class="ml">URL изображения</label><input class="mi" id="p-im" placeholder="https://…"/></div>
     <div class="mf">
-      <label class="ml" style="display:flex;align-items:center;gap:6px">
-        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="2" y="4" width="3" height="16" rx="1"/><rect x="7" y="4" width="1.5" height="16" rx=".5"/><rect x="10" y="4" width="3" height="16" rx="1"/><rect x="15" y="4" width="1.5" height="16" rx=".5"/><rect x="18" y="4" width="3" height="16" rx="1"/></svg>
-        Штрих-код (EAN-13, QR и др.)
-      </label>
-      <div style="display:flex;gap:8px">
+      <label class="ml">Штрих-код (EAN-13, QR и др.)</label>
+      <div style="display:flex;gap:7px">
         <input class="mi" id="p-bc" placeholder="4607086561315" inputmode="numeric" style="flex:1;letter-spacing:.06em"/>
-        <button class="btn btn-secondary" onclick="scanBarcodeAdmin()" title="Сканировать" style="flex-shrink:0;padding:0 14px;display:flex;align-items:center;gap:5px">
+        <button class="btn btn-secondary" onclick="scanBarcodeAdmin()" title="Сканировать" style="flex-shrink:0;padding:0 12px">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="3" height="16" rx="1"/><rect x="7" y="4" width="1.5" height="16" rx=".5"/><rect x="10" y="4" width="3" height="16" rx="1"/><rect x="15" y="4" width="1.5" height="16" rx=".5"/><rect x="18" y="4" width="3" height="16" rx="1"/></svg>
-          Скан
         </button>
       </div>
-      <div style="font-size:.6rem;color:var(--muted);margin-top:4px">Необязательно. Используется курьером при сборке заказа для верификации товара.</div>
     </div>
   `;
   document.getElementById('m-order-foot').innerHTML=`<button class="btn btn-secondary" onclick="closeMo('order-modal')">Отмена</button><button class="btn btn-primary" onclick="saveNewProd()">Добавить</button>`;
@@ -1054,18 +1035,13 @@ window.editProduct=function(id){
     </div>
     <div class="mf"><label class="ml">URL изображения</label><input class="mi" id="p-im" value="${p.imageUrl||''}"/></div>
     <div class="mf">
-      <label class="ml" style="display:flex;align-items:center;gap:6px">
-        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="2" y="4" width="3" height="16" rx="1"/><rect x="7" y="4" width="1.5" height="16" rx=".5"/><rect x="10" y="4" width="3" height="16" rx="1"/><rect x="15" y="4" width="1.5" height="16" rx=".5"/><rect x="18" y="4" width="3" height="16" rx="1"/></svg>
-        Штрих-код (EAN-13, QR и др.)
-      </label>
-      <div style="display:flex;gap:8px">
+      <label class="ml">Штрих-код</label>
+      <div style="display:flex;gap:7px">
         <input class="mi" id="p-bc" value="${p.barcode||''}" placeholder="4607086561315" inputmode="numeric" style="flex:1;letter-spacing:.06em"/>
-        <button class="btn btn-secondary" onclick="scanBarcodeAdmin()" title="Сканировать" style="flex-shrink:0;padding:0 14px;display:flex;align-items:center;gap:5px">
+        <button class="btn btn-secondary" onclick="scanBarcodeAdmin()" title="Сканировать" style="flex-shrink:0;padding:0 12px">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="3" height="16" rx="1"/><rect x="7" y="4" width="1.5" height="16" rx=".5"/><rect x="10" y="4" width="3" height="16" rx="1"/><rect x="15" y="4" width="1.5" height="16" rx=".5"/><rect x="18" y="4" width="3" height="16" rx="1"/></svg>
-          Скан
         </button>
       </div>
-      <div style="font-size:.6rem;color:var(--muted);margin-top:4px">Используется курьером при сборке заказа для верификации товара.</div>
     </div>
   `;
   document.getElementById('m-order-foot').innerHTML=`<button class="btn btn-danger" onclick="deleteProd('${id}')">Удалить</button><button class="btn btn-secondary" onclick="closeMo('order-modal')">Отмена</button><button class="btn btn-primary" onclick="saveEditProd('${id}')">Сохранить</button>`;
@@ -1083,24 +1059,39 @@ window.saveNewProd=async function(){
   }catch{toast('Ошибка','err');}
 };
 
-// Сканер штрихкода в админке (через BarcodeDetector + камера)
+window.saveEditProd=async function(id){
+  const barcode=document.getElementById('p-bc')?.value.trim()||'';
+  try{
+    await updateDoc(doc(db,'products',id),{name:document.getElementById('p-nm')?.value.trim()||'',description:document.getElementById('p-ds')?.value.trim()||'',price:parseFloat(document.getElementById('p-pr')?.value||'0'),categoryId:document.getElementById('p-ct')?.value.trim()||'',imageUrl:document.getElementById('p-im')?.value.trim()||'',barcode,updatedAt:serverTimestamp()});
+    toast('Товар обновлён','ok');closeMo('order-modal');await loadProducts();
+  }catch{toast('Ошибка','err');}
+};
+
+window.toggleProd=async function(id,val){
+  try{await updateDoc(doc(db,'products',id),{available:val,updatedAt:serverTimestamp()});toast(val?'Товар активирован':'Товар скрыт','ok');await loadProducts();}catch{toast('Ошибка','err');}
+};
+
+window.deleteProd=async function(id){
+  if(!confirm('Удалить товар?'))return;
+  try{await deleteDoc(doc(db,'products',id));toast('Удалён','ok');closeMo('order-modal');await loadProducts();}catch{toast('Ошибка','err');}
+};
+
 window.scanBarcodeAdmin = async function() {
   if (!('BarcodeDetector' in window)) {
-    toast('BarcodeDetector не поддерживается браузером. Введите вручную.','warn');
+    toast('BarcodeDetector не поддерживается. Введите вручную.','warn');
     return;
   }
-  // Создаём мини-оверлей
   let div = document.getElementById('admin-scan-ov');
   if (!div) { div = document.createElement('div'); div.id = 'admin-scan-ov'; document.body.appendChild(div); }
   div.innerHTML = `
-    <div style="position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.92);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px">
-      <div style="font-size:.9rem;color:#fff;font-weight:600">Наведите камеру на штрих-код</div>
-      <div style="position:relative;width:min(320px,90vw);aspect-ratio:4/3;overflow:hidden;border-radius:14px">
+    <div style="position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.92);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px">
+      <div style="font-size:.86rem;color:#fff;font-weight:600">Наведите камеру на штрих-код</div>
+      <div style="position:relative;width:min(300px,90vw);aspect-ratio:4/3;overflow:hidden;border-radius:12px">
         <video id="asv" autoplay playsinline muted style="width:100%;height:100%;object-fit:cover"></video>
-        <div style="position:absolute;left:10%;right:10%;height:2px;background:rgba(62,207,142,.9);animation:laserMove 2s ease-in-out infinite;top:50%"></div>
+        <div style="position:absolute;left:10%;right:10%;height:2px;background:rgba(99,102,241,.9);animation:laserMove 2s ease-in-out infinite;top:50%"></div>
       </div>
-      <div id="as-hint" style="font-size:.76rem;color:rgba(255,255,255,.6)">Ожидаем сканирования…</div>
-      <button onclick="closeAdminScan()" style="padding:9px 24px;background:#1f2a21;border:1px solid rgba(62,207,142,.3);color:#3ecf8e;border-radius:8px;cursor:pointer;font-size:.76rem">Отмена</button>
+      <div id="as-hint" style="font-size:.72rem;color:rgba(255,255,255,.6)">Ожидаем сканирования…</div>
+      <button onclick="closeAdminScan()" style="padding:8px 22px;background:var(--accd);border:1px solid var(--accg);color:var(--acc2);border-radius:7px;cursor:pointer;font-size:.72rem">Отмена</button>
     </div>`;
   let stream, raf;
   const detector = new BarcodeDetector({formats:['ean_13','ean_8','upc_a','code_128','code_39','qr_code']});
@@ -1118,7 +1109,7 @@ window.scanBarcodeAdmin = async function() {
         div.innerHTML='';
         const inp = document.getElementById('p-bc');
         if (inp) { inp.value = code; inp.focus(); }
-        toast('Штрих-код отсканирован: '+code,'ok');
+        toast('Штрих-код: '+code,'ok');
         return;
       }
     } catch {}
@@ -1130,23 +1121,6 @@ window.scanBarcodeAdmin = async function() {
     stream.getTracks().forEach(t=>t.stop());
     div.innerHTML='';
   };
-};
-
-window.saveEditProd=async function(id){
-  const barcode=document.getElementById('p-bc')?.value.trim()||'';
-  try{
-    await updateDoc(doc(db,'products',id),{name:document.getElementById('p-nm')?.value.trim()||'',description:document.getElementById('p-ds')?.value.trim()||'',price:parseFloat(document.getElementById('p-pr')?.value||'0'),categoryId:document.getElementById('p-ct')?.value.trim()||'',imageUrl:document.getElementById('p-im')?.value.trim()||'',barcode,updatedAt:serverTimestamp()});
-    toast('Товар обновлён','ok');closeMo('order-modal');await loadProducts();
-  }catch{toast('Ошибка','err');}
-};
-
-window.toggleProd=async function(id,val){
-  try{await updateDoc(doc(db,'products',id),{available:val,updatedAt:serverTimestamp()});toast(val?'Товар активирован':'Товар скрыт','ok');await loadProducts();}catch{toast('Ошибка','err');}
-};
-
-window.deleteProd=async function(id){
-  if(!confirm('Удалить товар?'))return;
-  try{await deleteDoc(doc(db,'products',id));toast('Удалён','ok');closeMo('order-modal');await loadProducts();}catch{toast('Ошибка','err');}
 };
 
 /* ── ANALYTICS ── */
@@ -1172,17 +1146,17 @@ function renderAnalytics(){
   const catCnt={};
   allOrders.forEach(o=>(o.items||[]).forEach(i=>{catCnt[i.categoryId||'other']=(catCnt[i.categoryId||'other']||0)+i.quantity;}));
   const topCats=document.getElementById('top-cats');
-  if(topCats)topCats.innerHTML=Object.entries(catCnt).sort((a,b)=>b[1]-a[1]).slice(0,6).map(([cat,cnt])=>`<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 16px;border-bottom:1px solid var(--b);font-size:.74rem"><span style="color:var(--text2)">${cat}</span><span style="font-family:var(--fm);color:var(--acc2)">${cnt}</span></div>`).join('')||`<div style="padding:16px;text-align:center;color:var(--text3);font-size:.74rem">Нет данных</div>`;
+  if(topCats)topCats.innerHTML=Object.entries(catCnt).sort((a,b)=>b[1]-a[1]).slice(0,6).map(([cat,cnt])=>`<div style="display:flex;align-items:center;justify-content:space-between;padding:7px 14px;border-bottom:1px solid var(--b);font-size:.7rem"><span style="color:var(--text2)">${cat}</span><span style="font-family:var(--fm);color:var(--acc2)">${cnt}</span></div>`).join('')||`<div style="padding:14px;text-align:center;color:var(--text3);font-size:.7rem">Нет данных</div>`;
 
   const topC=document.getElementById('top-couriers');
-  if(topC)topC.innerHTML=[...allCouriers].sort((a,b)=>(b.totalDeliveries||0)-(a.totalDeliveries||0)).slice(0,6).map((c,i)=>`<div style="display:flex;align-items:center;gap:12px;padding:10px 16px;border-bottom:1px solid var(--b)"><div style="font-family:var(--fm);font-size:.7rem;color:var(--text3);width:16px">#${i+1}</div><div style="flex:1;font-size:.76rem;font-weight:500;color:var(--text)">${c.displayName||'—'}</div><div style="font-family:var(--fm);font-size:.7rem;color:var(--acc2)">${c.totalDeliveries||0} дост.</div><div style="font-family:var(--fm);font-size:.7rem;color:var(--green)">${c.earnings||0}₽</div></div>`).join('')||`<div style="padding:16px;text-align:center;color:var(--text3);font-size:.74rem">Нет данных</div>`;
+  if(topC)topC.innerHTML=[...allCouriers].sort((a,b)=>(b.totalDeliveries||0)-(a.totalDeliveries||0)).slice(0,6).map((c,i)=>`<div style="display:flex;align-items:center;gap:10px;padding:9px 14px;border-bottom:1px solid var(--b)"><div style="font-family:var(--fm);font-size:.66rem;color:var(--text3);width:14px">#${i+1}</div><div style="flex:1;font-size:.72rem;font-weight:500;color:var(--text)">${c.displayName||'—'}</div><div style="font-family:var(--fm);font-size:.66rem;color:var(--acc2)">${c.totalDeliveries||0} дост.</div><div style="font-family:var(--fm);font-size:.66rem;color:var(--green)">${c.earnings||0}₽</div></div>`).join('')||`<div style="padding:14px;text-align:center;color:var(--text3);font-size:.7rem">Нет данных</div>`;
 
   const ps=document.getElementById('period-sum');
   if(ps){
     const rev=allOrders.filter(o=>o.status!=='cancelled').reduce((s,o)=>s+(o.total||0),0);
     const del=allOrders.filter(o=>o.status==='delivered').length;
     const can=allOrders.filter(o=>o.status==='cancelled').length;
-    ps.innerHTML=`<div style="display:flex;flex-direction:column;gap:12px;font-size:.78rem">
+    ps.innerHTML=`<div style="display:flex;flex-direction:column;gap:11px;font-size:.76rem">
       <div style="display:flex;justify-content:space-between"><span style="color:var(--text3)">Всего заказов</span><span style="font-family:var(--fm);color:var(--text)">${allOrders.length}</span></div>
       <div style="display:flex;justify-content:space-between"><span style="color:var(--text3)">Выручка</span><span style="font-family:var(--fm);color:var(--green)">${rev.toLocaleString('ru-RU')} ₽</span></div>
       <div style="display:flex;justify-content:space-between"><span style="color:var(--text3)">Доставлено</span><span style="font-family:var(--fm);color:var(--acc2)">${del}</span></div>
@@ -1202,10 +1176,10 @@ function renderStaff(){
     const date=s.lastLoginAt?.toDate?s.lastLoginAt.toDate().toLocaleDateString('ru-RU',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'}):'—';
     return `<tr>
       <td style="color:var(--text);font-weight:500">${s.displayName||'—'}</td>
-      <td class="mono" style="font-size:.66rem">${s.email||'—'}</td>
-      <td><span style="font-size:.6rem;padding:3px 10px;border-radius:99px;background:var(--accd);color:${rc[s.role]||'var(--text2)'};border:1px solid var(--accg)">${ROLES[s.role]||s.role||'—'}</span></td>
-      <td class="mono" style="font-size:.64rem">${date}</td>
-      <td>${s.uid!==CU.uid?`<button class="btn btn-secondary btn-sm" onclick="editStaff('${s.uid}')">Роль</button>`:`<span style="font-size:.62rem;color:var(--text3)">Это вы</span>`}</td>
+      <td class="mono" style="font-size:.64rem">${s.email||'—'}</td>
+      <td><span style="font-size:.58rem;padding:2px 9px;border-radius:99px;background:var(--accd);color:${rc[s.role]||'var(--text2)'};border:1px solid var(--accg)">${ROLES[s.role]||s.role||'—'}</span></td>
+      <td class="mono" style="font-size:.62rem">${date}</td>
+      <td>${s.uid!==CU.uid?`<button class="btn btn-secondary btn-sm" onclick="editStaff('${s.uid}')">Роль</button>`:`<span style="font-size:.6rem;color:var(--text3)">Это вы</span>`}</td>
     </tr>`;
   }).join('');
 }
@@ -1213,7 +1187,7 @@ function renderStaff(){
 window.openAddStaff=function(){
   document.getElementById('m-order-title').textContent='Добавить сотрудника';
   document.getElementById('m-order-body').innerHTML=`
-    <div style="padding:10px 14px;background:var(--yellowd);border:1px solid rgba(245,158,11,.2);border-radius:8px;font-size:.72rem;color:var(--yellow);margin-bottom:16px">⚠️ Сотрудник должен сначала зарегистрироваться через страницу входа. Здесь вы изменяете роль по email.</div>
+    <div style="padding:9px 12px;background:var(--yellowd);border:1px solid rgba(245,158,11,.2);border-radius:7px;font-size:.7rem;color:var(--yellow);margin-bottom:14px">⚠️ Сотрудник должен сначала зарегистрироваться через страницу входа. Здесь вы меняете роль по email.</div>
     <div class="mf"><label class="ml">Email сотрудника</label><input class="mi" id="st-em" placeholder="admin@galelium.com"/></div>
     <div class="mf"><label class="ml">Роль</label><select class="mi" id="st-rl"><option value="support">🎧 Поддержка</option><option value="moderator">🛡️ Модератор</option><option value="admin">👑 Администратор</option></select></div>
   `;
@@ -1247,7 +1221,7 @@ window.updateStaffRole=async function(uid){
   try{await setDoc(doc(db,'users',uid),{role,updatedAt:serverTimestamp()},{merge:true});toast('Роль обновлена','ok');closeMo('order-modal');await loadStaff();}catch{toast('Ошибка','err');}
 };
 
-/* ── SUPPORT TICKETS (реальные данные из Firestore) ── */
+/* ── SUPPORT TICKETS ── */
 let TICKETS = [];
 let unsubTickets = null;
 let currentTicketId = null;
@@ -1261,7 +1235,7 @@ function listenTickets() {
   unsubTickets = onSnapshot(q, snap => {
     TICKETS = snap.docs.map(d => ({ id: d.id, ...d.data() }));
     renderTickets();
-  }, () => { /* индекс ещё не создан — тихо игнорируем, страница просто пуста */ });
+  }, () => {});
 }
 
 function renderTickets() {
@@ -1284,10 +1258,10 @@ function renderTickets() {
     const c = sc[t.status] || 'var(--text3)';
     return `<div class="ticket" onclick="openTicket('${t.id}')" style="${currentTicketId === t.id ? 'background:rgba(99,102,241,.06)' : ''}">
       <div class="tk-head"><span class="tk-id">${num}</span><span class="tk-pri" style="color:${c};border-color:${c}30;background:${c}10">${sl[t.status] || t.status}</span></div>
-      <div class="tk-subj">${hasUnread ? '<span class="tk-unread-dot" style="display:inline-block;margin-right:6px;vertical-align:middle"></span>' : ''}${escHtmlAdm(t.subject)}</div>
+      <div class="tk-subj">${hasUnread ? '<span class="tk-unread-dot" style="display:inline-block;margin-right:5px;vertical-align:middle"></span>' : ''}${escHtmlAdm(t.subject)}</div>
       <div class="tk-meta"><span>${escHtmlAdm(t.clientName)}</span>${t.orderNumber ? `<span>· #${escHtmlAdm(t.orderNumber)}</span>` : ''}<span>· ${time}</span></div>
     </div>`;
-  }).join('') || `<div class="er"><div class="er-ico"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div>Нет обращений</div>`;
+  }).join('') || `<div class="er"><div class="er-ico"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div>Нет обращений</div>`;
 }
 
 window.fTickets = function (f, btn) {
@@ -1299,7 +1273,7 @@ window.fTickets = function (f, btn) {
 
 window.openTicket = async function (id) {
   currentTicketId = id;
-  renderTickets(); // подсветить выбранный тикет в списке
+  renderTickets();
 
   const t = TICKETS.find(x => x.id === id); if (!t) return;
 
@@ -1308,9 +1282,9 @@ window.openTicket = async function (id) {
 
   const orderHtml = t.orderId ? `
     <div class="tk-order-chip" onclick="openOrderModal('${t.orderId}')">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
       <span>Заказ <span class="tk-order-chip-num">#${escHtmlAdm(t.orderNumber || '')}</span></span>
-      <svg class="tk-order-chip-arrow" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+      <svg class="tk-order-chip-arrow" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
     </div>` : '';
 
   document.getElementById('ticket-detail').innerHTML = `
@@ -1327,13 +1301,13 @@ window.openTicket = async function (id) {
         </div>
       </div>
       ${orderHtml}
-      <div class="tk-chat-messages" id="tk-chat-messages"><div style="padding:30px;text-align:center;color:var(--text3);font-size:.72rem">Загрузка…</div></div>
+      <div class="tk-chat-messages" id="tk-chat-messages"><div style="padding:28px;text-align:center;color:var(--text3);font-size:.7rem">Загрузка…</div></div>
       <div class="tk-chat-reply-row">
         <textarea class="tk-chat-reply-input" id="tk-reply-input" rows="1" placeholder="Ваш ответ…"
-          oninput="this.style.height='auto';this.style.height=Math.min(this.scrollHeight,90)+'px'"
+          oninput="this.style.height='auto';this.style.height=Math.min(this.scrollHeight,80)+'px'"
           onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendTicketReply('${id}');}"></textarea>
         <button class="tk-chat-send" id="tk-send-btn" onclick="sendTicketReply('${id}')">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
         </button>
       </div>
       <div class="tk-actions-row">
@@ -1342,9 +1316,7 @@ window.openTicket = async function (id) {
       </div>
     </div>`;
 
-  // Гасим непрочитанные для админа при открытии
   updateDoc(doc(db, 'supportTickets', id), { adminUnread: 0 }).catch(() => {});
-
   listenTicketMessages(id);
 };
 
@@ -1359,7 +1331,7 @@ function listenTicketMessages(ticketId) {
 function renderTicketMessages(msgs) {
   const el = document.getElementById('tk-chat-messages'); if (!el) return;
   if (msgs.length === 0) {
-    el.innerHTML = '<div style="padding:30px;text-align:center;color:var(--text3);font-size:.72rem">Нет сообщений</div>';
+    el.innerHTML = '<div style="padding:28px;text-align:center;color:var(--text3);font-size:.7rem">Нет сообщений</div>';
     return;
   }
   el.innerHTML = msgs.map(m => {
@@ -1375,18 +1347,17 @@ window.sendTicketReply = async function (ticketId) {
   const text = inp.value.trim(); if (!text) return;
   inp.value = ''; inp.style.height = 'auto';
   const btn = document.getElementById('tk-send-btn'); if (btn) btn.disabled = true;
-
   try {
     await addDoc(collection(db, 'supportTickets', ticketId, 'messages'), {
-      text, senderId: CU.uid, senderRole: 'admin', senderName: AD?.displayName || 'Дастгирӣ', createdAt: serverTimestamp(),
+      text, senderId: CU.uid, senderRole: 'admin', senderName: AD?.displayName || 'Поддержка', createdAt: serverTimestamp(),
     });
     await updateDoc(doc(db, 'supportTickets', ticketId), {
-      clientUnread:          increment(1),
-      lastMessage:           text.slice(0, 120),
-      lastMessageAt:         serverTimestamp(),
+      clientUnread: increment(1),
+      lastMessage: text.slice(0, 120),
+      lastMessageAt: serverTimestamp(),
       lastMessageSenderRole: 'admin',
-      status:                'in_progress',
-      updatedAt:             serverTimestamp(),
+      status: 'in_progress',
+      updatedAt: serverTimestamp(),
     });
   } catch (e) { toast('Ошибка отправки', 'err'); }
   if (btn) btn.disabled = false;
@@ -1396,18 +1367,13 @@ window.sendTicketReply = async function (ticketId) {
 window.setTicketStatus = async function (ticketId, status) {
   try {
     await updateDoc(doc(db, 'supportTickets', ticketId), { status, updatedAt: serverTimestamp() });
-    toast(status === 'resolved' ? 'Обращение закрыто' : status === 'in_progress' ? 'Взято в работу' : 'Обращение переоткрыто', 'ok');
+    toast(status === 'resolved' ? 'Обращение закрыто' : status === 'in_progress' ? 'Взято в работу' : 'Переоткрыто', 'ok');
     openTicket(ticketId);
   } catch (e) { toast('Ошибка', 'err'); }
 };
 
 /* ── SETTINGS ── */
 window.saveSettings=function(){toast('Настройки сохранены','ok');};
-window.setPeriod=function(p,btn){
-  document.querySelectorAll('#page-overview .tabs .tab').forEach(t=>t.classList.remove('active'));
-  btn.classList.add('active');
-  toast('Период: '+{today:'сегодня',week:'неделя',month:'месяц'}[p],'info');
-};
 
 /* ── EXPORT ── */
 window.exportOrders=function(){
@@ -1439,7 +1405,7 @@ window.onSearch=function(v){
 window.refreshAll=async function(){
   toast('Обновляем…','info');
   await loadAll();
-  toast('Данные обновлены ✓','ok');
+  toast('Обновлено ✓','ok');
 };
 
 /* ── MODALS ── */

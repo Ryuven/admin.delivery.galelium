@@ -427,7 +427,10 @@ textarea.mi{resize:vertical;min-height:76px}
     <div class="page" id="page-couriers">
       <div class="sh">
         <div><div class="sh-tag">Управление</div><div class="sh-title">Курьеры</div></div>
-        <div class="sh-actions"><div class="tabs"><button class="tab active" onclick="fCouriers('all',this)">Все</button><button class="tab" onclick="fCouriers('online',this)">Онлайн</button><button class="tab" onclick="fCouriers('busy',this)">Заняты</button><button class="tab" onclick="fCouriers('offline',this)">Офлайн</button></div></div>
+        <div class="sh-actions">
+          <div class="tabs"><button class="tab active" onclick="fCouriers('all',this)">Все</button><button class="tab" onclick="fCouriers('online',this)">Онлайн</button><button class="tab" onclick="fCouriers('busy',this)">Заняты</button><button class="tab" onclick="fCouriers('offline',this)">Офлайн</button></div>
+          <div class="tabs"><button class="tab active" onclick="fCouriersVerif('all',this)">Все</button><button class="tab" onclick="fCouriersVerif('pending',this)">⏳ Ожидают</button><button class="tab" onclick="fCouriersVerif('verified',this)">✓ Верифицированы</button><button class="tab" onclick="fCouriersVerif('blocked',this)">✕ Заблокированы</button></div>
+        </div>
       </div>
       <div class="three-col" id="couriers-grid"><div class="pload" style="grid-column:1/-1"><div class="spin"></div></div></div>
     </div>
@@ -515,7 +518,7 @@ const app=initializeApp(cfg),auth=getAuth(app),db=getFirestore(app);
 let CU=null,AD=null;
 let allOrders=[],allCouriers=[],allClients=[],allProducts=[],allStaff=[];
 let liveOrders=[];
-let ordFilt='all',curFilt='all',tktFilt='all';
+let ordFilt='all',curFilt='all',tktFilt='all',verifFilt='all';
 let assignOid=null;
 let unsubOrders=null,unsubCouriers=null;
 const actLog=[];
@@ -792,11 +795,20 @@ function renderCouriersPage(){
   if(curFilt==='online')list=list.filter(c=>c.isOnline);
   else if(curFilt==='busy')list=list.filter(c=>c.currentOrderId);
   else if(curFilt==='offline')list=list.filter(c=>!c.isOnline);
+  if(verifFilt!=='all')list=list.filter(c=>(c.verificationStatus||'pending')===verifFilt);
   if(!list.length){g.innerHTML=`<div class="er" style="grid-column:1/-1"><div class="er-ico">🚴</div>Нет курьеров</div>`;return;}
+
+  const VS={
+    verified:  {label:'Верифицирован', color:'var(--green)',  bg:'var(--greend)',  border:'var(--greeng)'},
+    pending:   {label:'На проверке',   color:'var(--yellow)', bg:'var(--yellowd)', border:'rgba(245,158,11,.25)'},
+    blocked:   {label:'Заблокирован',  color:'var(--red)',    bg:'var(--redd)',    border:'rgba(244,63,94,.25)'},
+  };
+
   g.innerHTML=list.map(c=>{
     const init=(c.displayName||'?').split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
     const st=c.currentOrderId?'В доставке':c.isOnline?'Онлайн':'Офлайн';
     const sc=c.currentOrderId?'var(--yellow)':c.isOnline?'var(--green)':'var(--text3)';
+    const vs=VS[c.verificationStatus||'pending']||VS.pending;
     return `<div class="panel" style="overflow:hidden">
       <div style="padding:14px 16px;border-bottom:1px solid var(--b);display:flex;align-items:center;gap:10px">
         <div style="width:40px;height:40px;border-radius:50%;background:var(--accd);border:1.5px solid var(--accg);display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:700;color:var(--acc2);flex-shrink:0;overflow:hidden">
@@ -806,8 +818,11 @@ function renderCouriersPage(){
           <div style="font-size:.78rem;font-weight:700;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${c.displayName||'—'}</div>
           <div style="font-size:.62rem;color:var(--text3);margin-top:2px">${c.phone||c.email||'—'}</div>
         </div>
-        <div style="display:flex;align-items:center;gap:4px;font-size:.58rem;font-weight:600;color:${sc};flex-shrink:0">
-          <div style="width:5px;height:5px;border-radius:50%;background:${sc}"></div>${st}
+        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0">
+          <div style="display:flex;align-items:center;gap:4px;font-size:.58rem;font-weight:600;color:${sc}">
+            <div style="width:5px;height:5px;border-radius:50%;background:${sc}"></div>${st}
+          </div>
+          <span style="font-size:.5rem;font-weight:700;padding:2px 7px;border-radius:99px;background:${vs.bg};color:${vs.color};border:1px solid ${vs.border};letter-spacing:.04em">${vs.label}</span>
         </div>
       </div>
       <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1px;background:var(--b)">
@@ -815,9 +830,10 @@ function renderCouriersPage(){
         <div style="background:var(--s2);padding:9px;text-align:center"><div style="font-family:var(--fd);font-weight:800;font-size:.95rem;color:var(--green)">${c.earnings||0}₽</div><div style="font-size:.42rem;color:var(--text3);text-transform:uppercase;letter-spacing:.1em;margin-top:2px">Заработок</div></div>
         <div style="background:var(--s2);padding:9px;text-align:center"><div style="font-size:.85rem">${{bicycle:'🚴',scooter:'🛵',car:'🚗',foot:'🚶'}[c.vehicle||'foot']||'🚴'}</div><div style="font-size:.42rem;color:var(--text3);text-transform:uppercase;letter-spacing:.1em;margin-top:2px">Транспорт</div></div>
       </div>
-      <div style="padding:9px 12px;display:flex;gap:6px;flex-wrap:wrap">
+      <div style="padding:9px 12px;display:flex;gap:6px;flex-wrap:wrap;align-items:center">
         ${c.currentOrderId?`<button class="btn btn-secondary btn-sm" onclick="openOrderModal('${c.currentOrderId}')">Заказ</button>`:''}
         <button class="btn btn-${c.isOnline?'danger':'success'} btn-sm" onclick="toggleCOnline('${c.id}',${!c.isOnline})">${c.isOnline?'Офлайн':'Онлайн'}</button>
+        <button class="btn btn-secondary btn-sm" style="margin-left:auto" onclick="openVerifModal('${c.id}','${c.verificationStatus||'pending'}','${(c.displayName||'').replace(/'/g,'')}')" >Статус ▾</button>
       </div>
     </div>`;
   }).join('');
@@ -848,6 +864,87 @@ window.fCouriers=function(f,btn){
 
 window.toggleCOnline=async function(id,val){
   try{await setDoc(doc(db,'couriers',id),{isOnline:val,updatedAt:serverTimestamp()},{merge:true});toast(val?'Курьер онлайн':'Курьер офлайн','ok');}catch{toast('Ошибка','err');}
+};
+
+window.fCouriersVerif=function(f,btn){
+  verifFilt=f;
+  document.querySelectorAll('#page-couriers .sh-actions .tabs:last-child .tab').forEach(t=>t.classList.remove('active'));
+  btn.classList.add('active');
+  renderCouriersPage();
+};
+
+window.openVerifModal=function(id,current,name){
+  document.getElementById('m-order-title').textContent='Статус верификации';
+  document.getElementById('m-order-body').innerHTML=`
+    <div style="font-size:.76rem;color:var(--text2);margin-bottom:16px">Курьер: <strong style="color:var(--text)">${name}</strong></div>
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <label onclick="selectVerif('verified')" id="vo-verified" style="display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:8px;border:1px solid ${current==='verified'?'var(--greeng)':'var(--b)'};background:${current==='verified'?'var(--greend)':'var(--s2)'};cursor:pointer;transition:all .15s">
+        <div style="width:16px;height:16px;border-radius:50%;border:2px solid ${current==='verified'?'var(--green)':'var(--muted)'};display:flex;align-items:center;justify-content:center;flex-shrink:0">
+          ${current==='verified'?'<div style="width:8px;height:8px;border-radius:50%;background:var(--green)"></div>':''}
+        </div>
+        <div>
+          <div style="font-size:.74rem;font-weight:600;color:var(--green)">Верифицирован</div>
+          <div style="font-size:.62rem;color:var(--text3);margin-top:1px">Курьер прошёл проверку, может принимать заказы</div>
+        </div>
+      </label>
+      <label onclick="selectVerif('pending')" id="vo-pending" style="display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:8px;border:1px solid ${current==='pending'?'rgba(245,158,11,.25)':'var(--b)'};background:${current==='pending'?'var(--yellowd)':'var(--s2)'};cursor:pointer;transition:all .15s">
+        <div style="width:16px;height:16px;border-radius:50%;border:2px solid ${current==='pending'?'var(--yellow)':'var(--muted)'};display:flex;align-items:center;justify-content:center;flex-shrink:0">
+          ${current==='pending'?'<div style="width:8px;height:8px;border-radius:50%;background:var(--yellow)"></div>':''}
+        </div>
+        <div>
+          <div style="font-size:.74rem;font-weight:600;color:var(--yellow)">На проверке</div>
+          <div style="font-size:.62rem;color:var(--text3);margin-top:1px">Документы на рассмотрении, заказы недоступны</div>
+        </div>
+      </label>
+      <label onclick="selectVerif('blocked')" id="vo-blocked" style="display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:8px;border:1px solid ${current==='blocked'?'rgba(244,63,94,.25)':'var(--b)'};background:${current==='blocked'?'var(--redd)':'var(--s2)'};cursor:pointer;transition:all .15s">
+        <div style="width:16px;height:16px;border-radius:50%;border:2px solid ${current==='blocked'?'var(--red)':'var(--muted)'};display:flex;align-items:center;justify-content:center;flex-shrink:0">
+          ${current==='blocked'?'<div style="width:8px;height:8px;border-radius:50%;background:var(--red)"></div>':''}
+        </div>
+        <div>
+          <div style="font-size:.74rem;font-weight:600;color:var(--red)">Заблокирован</div>
+          <div style="font-size:.62rem;color:var(--text3);margin-top:1px">Аккаунт заблокирован, доступ запрещён</div>
+        </div>
+      </label>
+    </div>
+    <input type="hidden" id="verif-selected" value="${current}"/>
+    <input type="hidden" id="verif-courier-id" value="${id}"/>
+  `;
+  document.getElementById('m-order-foot').innerHTML=`
+    <button class="btn btn-secondary" onclick="closeMo('order-modal')">Отмена</button>
+    <button class="btn btn-primary" onclick="saveVerifStatus()">Сохранить</button>
+  `;
+  openMo('order-modal');
+};
+
+window.selectVerif=function(val){
+  const colors={
+    verified:{border:'var(--greeng)',bg:'var(--greend)',dot:'var(--green)',rb:'var(--green)'},
+    pending: {border:'rgba(245,158,11,.25)',bg:'var(--yellowd)',dot:'var(--yellow)',rb:'var(--yellow)'},
+    blocked: {border:'rgba(244,63,94,.25)',bg:'var(--redd)',dot:'var(--red)',rb:'var(--red)'},
+  };
+  ['verified','pending','blocked'].forEach(s=>{
+    const el=document.getElementById('vo-'+s);if(!el)return;
+    const c=colors[s];
+    const active=s===val;
+    el.style.borderColor=active?c.border:'var(--b)';
+    el.style.background=active?c.bg:'var(--s2)';
+    const rb=el.querySelector('div');
+    rb.style.borderColor=active?c.rb:'var(--muted)';
+    rb.innerHTML=active?`<div style="width:8px;height:8px;border-radius:50%;background:${c.dot}"></div>`:'';
+  });
+  document.getElementById('verif-selected').value=val;
+};
+
+window.saveVerifStatus=async function(){
+  const id=document.getElementById('verif-courier-id')?.value;
+  const status=document.getElementById('verif-selected')?.value;
+  if(!id||!status)return;
+  const labels={verified:'Верифицирован',pending:'На проверке',blocked:'Заблокирован'};
+  try{
+    await setDoc(doc(db,'couriers',id),{verificationStatus:status,updatedAt:serverTimestamp()},{merge:true});
+    toast('Статус: '+labels[status],'ok');
+    closeMo('order-modal');
+  }catch(e){toast('Ошибка сохранения','err');}
 };
 
 /* ── CLIENTS ── */

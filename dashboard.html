@@ -262,6 +262,13 @@ textarea.mi{resize:vertical;min-height:76px}
 /* Mobile overlay — position:fixed, z-index строго ниже сайдбара */
 .sb-overlay{display:none;position:fixed;inset:0;z-index:190;background:rgba(0,0,0,.65)}
 
+/* ── NEWS MODULE ── */
+.news-cover-th{width:52px;height:40px;border-radius:6px;object-fit:cover;display:block;background:var(--muted2);flex-shrink:0}
+.news-cover-ph{width:52px;height:40px;border-radius:6px;background:var(--muted2);display:flex;align-items:center;justify-content:center;color:var(--text3);flex-shrink:0}
+.ns-pub{color:var(--green);border-color:rgba(34,197,94,.2);background:var(--greend)}
+.ns-drft{color:var(--text3);border-color:var(--b);background:var(--muted2)}
+.cover-preview-box{width:100%;height:148px;border-radius:8px;border:1px solid var(--b);object-fit:cover;margin-bottom:10px;display:none}
+
 /* ── RESPONSIVE ── */
 @media(max-width:900px){
   :root{--sw:220px}
@@ -317,6 +324,48 @@ textarea.mi{resize:vertical;min-height:76px}
   </div>
 </div>
 
+<!-- NEWS MODAL -->
+<div class="mo" id="news-modal">
+  <div class="modal" style="max-width:560px">
+    <div class="modal-head">
+      <div class="modal-title" id="news-modal-title">Новая статья</div>
+      <button class="modal-x" onclick="closeMo('news-modal')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+    </div>
+    <div class="modal-body">
+      <div class="mr">
+        <div class="mf"><label class="ml">Статус</label>
+          <select class="mi" id="ni-status"><option value="published">✓ Опубликовать</option><option value="draft">📝 Черновик</option></select>
+        </div>
+        <div class="mf"><label class="ml">Категория</label>
+          <select class="mi" id="ni-cat">
+            <option value="актуали">🔥 Актуалӣ</option>
+            <option value="ҷомеа">👥 Ҷомеа</option>
+            <option value="иқтисод">💼 Иқтисод</option>
+            <option value="варзиш">⚽ Варзиш</option>
+            <option value="технология">💻 Технология</option>
+          </select>
+        </div>
+      </div>
+      <div class="mf"><label class="ml">Заголовок *</label><input class="mi" id="ni-title" placeholder="Введите заголовок…"/></div>
+      <div class="mf"><label class="ml">Подзаголовок</label><input class="mi" id="ni-subtitle" placeholder="Краткое описание…"/></div>
+      <div class="mr">
+        <div class="mf"><label class="ml">Автор</label><input class="mi" id="ni-author" placeholder="Имя автора"/></div>
+        <div class="mf"><label class="ml">Время чтения (мин)</label><input class="mi" type="number" id="ni-rtime" value="3" min="1" max="120"/></div>
+      </div>
+      <div class="mf"><label class="ml">Обложка — URL</label><input class="mi" id="ni-cover" placeholder="https://…" oninput="previewNewscover(this.value)"/></div>
+      <img id="ni-cover-preview" class="cover-preview-box" src="" alt="Превью"/>
+      <div class="mf"><label class="ml">Текст статьи *</label>
+        <textarea class="mi" id="ni-content" rows="10" style="min-height:180px" placeholder="Первый абзац…&#10;&#10;Второй абзац…"></textarea>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-secondary" onclick="closeMo('news-modal')">Отмена</button>
+      <button class="btn btn-primary" id="ni-save-btn" onclick="saveNews()">Сохранить</button>
+    </div>
+  </div>
+</div>
+
+
 <div class="app">
 <div class="sb-overlay" id="sb-overlay"></div>
 <!-- ═══ SIDEBAR ═══ -->
@@ -338,7 +387,8 @@ textarea.mi{resize:vertical;min-height:76px}
     <div class="nav-grp">Управление</div>
     <button class="ni" data-page="support" onclick="goPage('support')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>Поддержка<span class="ni-badge" id="sb-tkt-b" style="display:none">0</span></button>
     <button class="ni" data-page="catalog" onclick="goPage('catalog')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>Каталог</button>
-    <button class="ni" data-page="analytics" onclick="goPage('analytics')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>Аналитика</button>
+    <button class="ni" data-page="news" onclick="goPage('news')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 22h16a2 2 0 002-2V4a2 2 0 00-2-2H8L2 8v12a2 2 0 002 2z"/><polyline points="10 2 10 8 2 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="13" y2="17"/></svg>Новости<span class="ni-badge info" id="sb-news-b" style="display:none">0</span></button>
+        <button class="ni" data-page="analytics" onclick="goPage('analytics')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>Аналитика</button>
     <div class="nav-grp">Система</div>
     <button class="ni" data-page="staff" onclick="goPage('staff')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Сотрудники</button>
     <button class="ni" data-page="settings" onclick="goPage('settings')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>Настройки</button>
@@ -459,6 +509,31 @@ textarea.mi{resize:vertical;min-height:76px}
       <div class="panel"><div style="overflow-x:auto"><table class="ot"><thead><tr><th>Товар</th><th>Категория</th><th>Цена</th><th>Штрих-код</th><th>Статус</th><th>Действия</th></tr></thead><tbody id="cat-ob"><tr><td colspan="6"><div class="pload"><div class="spin"></div></div></td></tr></tbody></table></div></div>
     </div>
 
+
+    <!-- NEWS -->
+    <div class="page" id="page-news">
+      <div class="sh">
+        <div><div class="sh-tag">Контент</div><div class="sh-title">Новости <em>&amp; Статьи</em></div></div>
+        <div class="sh-actions">
+          <div class="tabs">
+            <button class="tab active" onclick="fNews('all',this)">Все</button>
+            <button class="tab" onclick="fNews('published',this)">Опубликованы</button>
+            <button class="tab" onclick="fNews('draft',this)">Черновики</button>
+          </div>
+          <button class="btn btn-primary" onclick="openNewsModal()"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Статья</button>
+        </div>
+      </div>
+      <div id="news-stats" style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap"></div>
+      <div class="panel">
+        <div style="overflow-x:auto">
+          <table class="ot">
+            <thead><tr><th>Статья</th><th>Категория</th><th>Автор</th><th>Статус</th><th>Просмотры</th><th>Дата</th><th>Действия</th></tr></thead>
+            <tbody id="news-ob"><tr><td colspan="7"><div class="pload"><div class="spin"></div></div></td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
     <!-- ANALYTICS -->
     <div class="page" id="page-analytics">
       <div class="sh"><div><div class="sh-tag">Отчёты</div><div class="sh-title">Аналитика</div></div></div>
@@ -517,6 +592,7 @@ const app=initializeApp(cfg),auth=getAuth(app),db=getFirestore(app);
 /* ── STATE ── */
 let CU=null,AD=null;
 let allOrders=[],allCouriers=[],allClients=[],allProducts=[],allStaff=[];
+let allNews=[],newsFilt='all',editingNewsId=null;
 let liveOrders=[];
 let ordFilt='all',curFilt='all',tktFilt='all',verifFilt='all';
 let assignOid=null;
@@ -525,6 +601,12 @@ const actLog=[];
 
 const SL={pending:'Ожидает',confirmed:'Подтверждён',preparing:'Готовится',delivering:'В пути',delivered:'Доставлен',cancelled:'Отменён'};
 const SC={pending:'var(--yellow)',confirmed:'var(--acc)',preparing:'#a855f7',delivering:'var(--cyan)',delivered:'var(--green)',cancelled:'var(--red)'};
+
+const NEWS_CAT_LABELS={'актуали':'Актуалӣ','ҷомеа':'Ҷомеа','иқтисод':'Иқтисод','варзиш':'Варзиш','технология':'Технология'};
+const NEWS_CAT_EMOJI={'актуали':'🔥','ҷомеа':'👥','иқтисод':'💼','варзиш':'⚽','технология':'💻'};
+function nCatLbl(c){return NEWS_CAT_LABELS[(c||'').toLowerCase()]||(c||'—');}
+function nCatEmoji(c){return NEWS_CAT_EMOJI[(c||'').toLowerCase()]||'📰';}
+
 const ROLES={admin:'👑 Администратор',support:'🎧 Поддержка',moderator:'🛡️ Модератор'};
 
 /* ── CLOCK ── */
@@ -597,7 +679,7 @@ function startListeners(){
 
 /* ── LOAD ALL ── */
 async function loadAll(){
-  await Promise.all([loadOrders(),loadClients(),loadProducts(),loadStaff()]);
+  await Promise.all([loadOrders(),loadClients(),loadProducts(),loadStaff(),loadNewsAdmin()]);
   renderKPI();
   renderAnalytics();
   renderTickets();
@@ -1215,6 +1297,117 @@ window.scanBarcodeAdmin = async function() {
   };
 };
 
+
+/* ── NEWS ADMIN ── */
+async function loadNewsAdmin(){
+  try{
+    const q=query(collection(db,'news'),orderBy('createdAt','desc'),limit(100));
+    const snap=await getDocs(q);
+    allNews=snap.docs.map(d=>({id:d.id,...d.data()}));
+    const pub=allNews.filter(a=>a.status==='published').length;
+    const badge=document.getElementById('sb-news-b');
+    if(badge){badge.textContent=pub;badge.style.display=pub?'':'none';}
+    if(document.getElementById('page-news').classList.contains('active')){renderNewsTable();renderNewsStats();}
+  }catch(e){console.error('News:',e);}
+}
+
+function renderNewsStats(){
+  const el=document.getElementById('news-stats');if(!el)return;
+  const total=allNews.length,pub=allNews.filter(a=>a.status==='published').length,
+        draft=allNews.filter(a=>a.status==='draft').length,
+        views=allNews.reduce((s,a)=>s+(a.views||0),0);
+  const kpi=(lbl,val,col)=>`<div style="background:var(--s1);border:1px solid var(--b);border-radius:9px;padding:10px 16px;min-width:110px"><div style="font-size:.44rem;letter-spacing:.2em;text-transform:uppercase;color:var(--text3);margin-bottom:3px">${lbl}</div><div style="font-family:var(--fd);font-size:1.1rem;font-weight:800;color:${col}">${val}</div></div>`;
+  el.innerHTML=kpi('Всего',total,'var(--text)')+kpi('Опубликовано',pub,'var(--green)')+kpi('Черновики',draft,'var(--text3)')+kpi('Просмотры',views.toLocaleString(),'var(--cyan)');
+}
+
+function renderNewsTable(){
+  const ob=document.getElementById('news-ob');if(!ob)return;
+  renderNewsStats();
+  const list=newsFilt==='all'?allNews:allNews.filter(a=>a.status===newsFilt);
+  if(!list.length){ob.innerHTML=`<tr><td colspan="7"><div class="er"><div class="er-ico">📰</div>Статей нет</div></td></tr>`;return;}
+  ob.innerHTML=list.map(a=>{
+    const date=a.createdAt?.toDate?a.createdAt.toDate().toLocaleDateString('ru-RU',{day:'numeric',month:'short',year:'numeric'}):'—';
+    const cov=a.coverUrl?`<img class="news-cover-th" src="${escHtmlAdm(a.coverUrl)}" alt="" onerror="this.style.display='none'">`:`<div class="news-cover-ph"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>`;
+    const st=a.status==='published'?`<span class="ostatus ns-pub"><span class="osdot"></span>Опубликована</span>`:`<span class="ostatus ns-drft"><span class="osdot"></span>Черновик</span>`;
+    return `<tr><td><div style="display:flex;align-items:center;gap:10px">${cov}<div><div style="font-weight:600;font-size:.72rem;color:var(--text);max-width:240px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${escHtmlAdm(a.title||'—')}</div>${a.subtitle?`<div style="font-size:.6rem;color:var(--text3);margin-top:2px;max-width:240px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${escHtmlAdm(a.subtitle)}</div>`:''}</div></div></td><td><span style="font-size:.62rem">${nCatEmoji(a.category)} ${escHtmlAdm(nCatLbl(a.category))}</span></td><td style="font-size:.68rem;color:var(--text2)">${escHtmlAdm(a.author||'—')}</td><td>${st}</td><td><span class="mono">${(a.views||0).toLocaleString()}</span></td><td><span class="mono" style="font-size:.6rem">${date}</span></td><td><div class="oact"><button class="btn btn-secondary btn-sm" onclick="editNews('${a.id}')">✏️</button><button class="btn ${a.status==='published'?'btn-secondary':'btn-success'} btn-sm" onclick="toggleNewsPublish('${a.id}','${a.status}')">${a.status==='published'?'📥':'✓'}</button><button class="btn btn-danger btn-sm" onclick="deleteNews('${a.id}')">🗑</button></div></td></tr>`;
+  }).join('');
+}
+
+window.fNews=function(f,btn){newsFilt=f;document.querySelectorAll('#page-news .tab').forEach(b=>b.classList.remove('active'));btn.classList.add('active');renderNewsTable();};
+
+window.openNewsModal=function(){
+  editingNewsId=null;
+  document.getElementById('news-modal-title').textContent='Новая статья';
+  document.getElementById('ni-save-btn').textContent='Опубликовать';
+  ['ni-title','ni-subtitle','ni-cover','ni-content'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  document.getElementById('ni-author').value=AD?.displayName||'Редакция';
+  document.getElementById('ni-rtime').value='3';
+  document.getElementById('ni-status').value='published';
+  document.getElementById('ni-cat').value='актуали';
+  const prev=document.getElementById('ni-cover-preview');if(prev){prev.style.display='none';prev.src='';}
+  openMo('news-modal');
+};
+
+window.editNews=function(id){
+  const a=allNews.find(x=>x.id===id);if(!a)return;
+  editingNewsId=id;
+  document.getElementById('news-modal-title').textContent='Редактировать статью';
+  document.getElementById('ni-save-btn').textContent='Сохранить';
+  document.getElementById('ni-title').value=a.title||'';
+  document.getElementById('ni-subtitle').value=a.subtitle||'';
+  document.getElementById('ni-author').value=a.author||'';
+  document.getElementById('ni-rtime').value=a.readingTime||'3';
+  document.getElementById('ni-cover').value=a.coverUrl||'';
+  document.getElementById('ni-content').value=a.content||'';
+  document.getElementById('ni-status').value=a.status||'draft';
+  document.getElementById('ni-cat').value=a.category||'актуали';
+  previewNewscover(a.coverUrl||'');
+  openMo('news-modal');
+};
+
+window.previewNewscover=function(url){
+  const img=document.getElementById('ni-cover-preview');if(!img)return;
+  if(url&&url.startsWith('http')){img.src=url;img.style.display='block';img.onerror=()=>{img.style.display='none';};}
+  else{img.style.display='none';img.src='';}
+};
+
+window.saveNews=async function(){
+  const title=document.getElementById('ni-title').value.trim();
+  const content=document.getElementById('ni-content').value.trim();
+  if(!title){toast('Заголовок обязателен','err');return;}
+  if(!content){toast('Добавьте текст статьи','err');return;}
+  const btn=document.getElementById('ni-save-btn');btn.disabled=true;btn.textContent='Сохраняем…';
+  const data={
+    title,subtitle:document.getElementById('ni-subtitle').value.trim(),content,
+    author:document.getElementById('ni-author').value.trim()||'Редакция',
+    readingTime:parseInt(document.getElementById('ni-rtime').value)||3,
+    coverUrl:document.getElementById('ni-cover').value.trim(),
+    status:document.getElementById('ni-status').value,
+    category:document.getElementById('ni-cat').value,
+    authorId:CU?.uid||'',updatedAt:serverTimestamp()
+  };
+  try{
+    if(editingNewsId){await updateDoc(doc(db,'news',editingNewsId),data);toast('Статья обновлена ✓','ok');}
+    else{data.createdAt=serverTimestamp();data.views=0;await addDoc(collection(db,'news'),data);toast('Статья опубликована ✓','ok');}
+    closeMo('news-modal');await loadNewsAdmin();
+  }catch(e){console.error(e);toast('Ошибка: '+e.message,'err');}
+  btn.disabled=false;btn.textContent=editingNewsId?'Сохранить':'Опубликовать';
+};
+
+window.toggleNewsPublish=async function(id,cur){
+  const ns=cur==='published'?'draft':'published';
+  try{await updateDoc(doc(db,'news',id),{status:ns,updatedAt:serverTimestamp()});
+  toast(ns==='published'?'Статья опубликована ✓':'Убрана в черновики','ok');await loadNewsAdmin();}
+  catch(e){toast('Ошибка: '+e.message,'err');}
+};
+
+window.deleteNews=async function(id){
+  const a=allNews.find(x=>x.id===id);
+  if(!confirm('Удалить статью «'+(a?.title||id)+'»?'))return;
+  try{await deleteDoc(doc(db,'news',id));toast('Статья удалена','ok');await loadNewsAdmin();}
+  catch(e){toast('Ошибка: '+e.message,'err');}
+};
+
 /* ── ANALYTICS ── */
 function renderAnalytics(){
   const hourly=Array(24).fill(0);
@@ -1253,7 +1446,7 @@ function renderAnalytics(){
       <div style="display:flex;justify-content:space-between"><span style="color:var(--text3)">Выручка</span><span style="font-family:var(--fm);color:var(--green)">${rev.toLocaleString('ru-RU')} ₽</span></div>
       <div style="display:flex;justify-content:space-between"><span style="color:var(--text3)">Доставлено</span><span style="font-family:var(--fm);color:var(--acc2)">${del}</span></div>
       <div style="display:flex;justify-content:space-between"><span style="color:var(--text3)">Отменено</span><span style="font-family:var(--fm);color:var(--red)">${can}</span></div>
-      <div style="display:flex;justify-content:space-between"><span style="color:var(--text3)">Клиентов</span><span style="font-family:var(--fm);color:var(--text)">${allClients.length}</span></div>
+      <div style="display:flex;justify-content:space-between"><span style="color:var(--text3)">Клиентов</span><span style="font-family:var(--fm);color:var(--text)">${allClients.length}</span></div><div style="display:flex;justify-content:space-between"><span style="color:var(--text3)">Статей опубликовано</span><span style="font-family:var(--fm);color:var(--cyan)">${allNews.filter(a=>a.status==='published').length}</span></div>
       <div style="display:flex;justify-content:space-between"><span style="color:var(--text3)">Курьеров</span><span style="font-family:var(--fm);color:var(--text)">${allCouriers.length}</span></div>
     </div>`;
   }
@@ -1490,6 +1683,7 @@ window.onSearch=function(v){
   if(fc){goPage('clients');toast('Клиент найден: '+fc.displayName,'info');return;}
   const fr=allCouriers.find(c=>c.displayName?.toLowerCase().includes(q));
   if(fr){goPage('couriers');toast('Курьер найден: '+fr.displayName,'info');return;}
+  const fn=allNews.find(a=>a.title?.toLowerCase().includes(q));if(fn){goPage('news');toast('Статья: '+fn.title,'info');return;}
   toast('Ничего не найдено по «'+v+'»','info');
 };
 
@@ -1512,13 +1706,14 @@ window.goPage=function(page){
   document.querySelectorAll('.ni').forEach(n=>n.classList.remove('active'));
   document.getElementById('page-'+page)?.classList.add('active');
   document.querySelector(`.ni[data-page="${page}"]`)?.classList.add('active');
-  const T={overview:'Обзор',orders:'Заказы',couriers:'Курьеры',clients:'Клиенты',support:'Поддержка',catalog:'Каталог',analytics:'Аналитика',staff:'Сотрудники',settings:'Настройки'};
+  const T={overview:'Обзор',orders:'Заказы',couriers:'Курьеры',clients:'Клиенты',support:'Поддержка',catalog:'Каталог',news:'Новости',analytics:'Аналитика',staff:'Сотрудники',settings:'Настройки'};
   const el=document.getElementById('tb-title');if(el)el.textContent=T[page]||page;
   if(page==='couriers')renderCouriersPage();
   if(page==='support'){renderTickets();}
   if(page==='analytics')renderAnalytics();
   if(page==='staff')renderStaff();
   if(page==='overview'){renderDonut();renderLiveOrders();renderAct();}
+  if(page==='news'){renderNewsTable();}
   closeSB();
   document.getElementById('pages')?.scrollTo(0,0);
 };

@@ -366,6 +366,67 @@ textarea.mi{resize:vertical;min-height:76px}
 </div>
 
 
+<!-- HR MODAL -->
+<div class="mo" id="hr-modal">
+  <div class="modal" style="max-width:540px">
+    <div class="modal-head">
+      <div class="modal-title" id="hr-modal-title">Новая вакансия</div>
+      <button class="modal-x" onclick="closeMo('hr-modal')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+    </div>
+    <div class="modal-body">
+      <div class="mr">
+        <div class="mf"><label class="ml">Должность *</label><input class="mi" id="hv-title" placeholder="Frontend Developer"/></div>
+        <div class="mf"><label class="ml">Зарплата</label><input class="mi" id="hv-salary" placeholder="2 000 – 3 000 TJS"/></div>
+      </div>
+      <div class="mr">
+        <div class="mf"><label class="ml">Отдел</label>
+          <select class="mi" id="hv-dept">
+            <option value="Технологии">💻 Технологии</option>
+            <option value="Операции">⚙️ Операции</option>
+            <option value="Маркетинг">📣 Маркетинг</option>
+            <option value="Финансы">💰 Финансы</option>
+            <option value="Дизайн">🎨 Дизайн</option>
+            <option value="HR">👥 HR</option>
+          </select>
+        </div>
+        <div class="mf"><label class="ml">Тип занятости</label>
+          <select class="mi" id="hv-type">
+            <option value="full-time">Полный день</option>
+            <option value="part-time">Частичная занятость</option>
+            <option value="internship">Стажировка</option>
+          </select>
+        </div>
+      </div>
+      <div class="mf"><label class="ml">Локация</label><input class="mi" id="hv-location" placeholder="Душанбе / Remote"/></div>
+      <div class="mf"><label class="ml">Описание должности</label><textarea class="mi" id="hv-desc" rows="3" placeholder="Краткое описание задач и обязанностей…"></textarea></div>
+      <div class="mf"><label class="ml">Требования</label><textarea class="mi" id="hv-req" rows="3" placeholder="Необходимые навыки и опыт…"></textarea></div>
+      <div class="mf"><label class="ml">Статус</label>
+        <select class="mi" id="hv-status">
+          <option value="open">✓ Открытая</option>
+          <option value="closed">✕ Закрытая</option>
+        </select>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-danger btn-sm" id="hv-del-btn" onclick="deleteVacancy()" style="display:none;margin-right:auto">Удалить</button>
+      <button class="btn btn-secondary" onclick="closeMo('hr-modal')">Отмена</button>
+      <button class="btn btn-primary" onclick="saveVacancy()">Сохранить</button>
+    </div>
+  </div>
+</div>
+
+<!-- APPLICATIONS MODAL -->
+<div class="mo" id="hr-apps-modal">
+  <div class="modal" style="max-width:560px">
+    <div class="modal-head">
+      <div class="modal-title" id="hr-apps-title">Заявки</div>
+      <button class="modal-x" onclick="closeMo('hr-apps-modal')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+    </div>
+    <div class="modal-body" id="hr-apps-body" style="padding:0"></div>
+    <div class="modal-foot"><button class="btn btn-secondary" onclick="closeMo('hr-apps-modal')">Закрыть</button></div>
+  </div>
+</div>
+
 <div class="app">
 <div class="sb-overlay" id="sb-overlay"></div>
 <!-- ═══ SIDEBAR ═══ -->
@@ -389,6 +450,7 @@ textarea.mi{resize:vertical;min-height:76px}
     <button class="ni" data-page="catalog" onclick="goPage('catalog')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>Каталог</button>
     <button class="ni" data-page="news" onclick="goPage('news')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 22h16a2 2 0 002-2V4a2 2 0 00-2-2H8L2 8v12a2 2 0 002 2z"/><polyline points="10 2 10 8 2 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="13" y2="17"/></svg>Новости<span class="ni-badge info" id="sb-news-b" style="display:none">0</span></button>
         <button class="ni" data-page="analytics" onclick="goPage('analytics')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>Аналитика</button>
+        <button class="ni" data-page="hr" onclick="goPage('hr')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/><path d="M2 13a20 20 0 0020 0"/></svg>HR / Вакансии<span class="ni-badge info" id="sb-hr-b" style="display:none">0</span></button>
     <div class="nav-grp">Система</div>
     <button class="ni" data-page="staff" onclick="goPage('staff')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Сотрудники</button>
     <button class="ni" data-page="settings" onclick="goPage('settings')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>Настройки</button>
@@ -577,6 +639,55 @@ textarea.mi{resize:vertical;min-height:76px}
       </div>
     </div>
 
+    <!-- HR / VACANCIES -->
+    <div class="page" id="page-hr">
+      <div class="sh">
+        <div><div class="sh-tag">Кадры</div><div class="sh-title">HR / <em>Вакансии</em></div></div>
+        <div class="sh-actions">
+          <div class="tabs">
+            <button class="tab active" onclick="fHr('all',this)">Все</button>
+            <button class="tab" onclick="fHr('open',this)">Открытые</button>
+            <button class="tab" onclick="fHr('closed',this)">Закрытые</button>
+          </div>
+          <button class="btn btn-primary" onclick="openHrModal()">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Вакансия
+          </button>
+        </div>
+      </div>
+
+      <!-- HR KPIs -->
+      <div class="kpi-grid" style="margin-bottom:14px">
+        <div class="kpi green"><div class="kpi-label">Открытых вакансий</div><div class="kpi-val" id="hr-kv-open">—</div><div class="kpi-sub">Активных позиций</div><div class="kpi-ico">💼</div></div>
+        <div class="kpi blue"><div class="kpi-label">Заявок всего</div><div class="kpi-val" id="hr-kv-apps">—</div><div class="kpi-sub">На все вакансии</div><div class="kpi-ico">📩</div></div>
+        <div class="kpi yellow"><div class="kpi-label">Отделов</div><div class="kpi-val" id="hr-kv-depts">—</div><div class="kpi-sub">С открытыми вакансиями</div><div class="kpi-ico">🏢</div></div>
+        <div class="kpi acc"><div class="kpi-label">Закрытых</div><div class="kpi-val" id="hr-kv-closed">—</div><div class="kpi-sub">Позиций закрыто</div><div class="kpi-ico">✅</div></div>
+      </div>
+
+      <!-- Vacancies table -->
+      <div class="panel">
+        <div style="overflow-x:auto">
+          <table class="ot">
+            <thead>
+              <tr>
+                <th>Должность</th>
+                <th>Отдел</th>
+                <th>Тип</th>
+                <th>Зарплата</th>
+                <th>Заявок</th>
+                <th>Статус</th>
+                <th>Создано</th>
+                <th>Действия</th>
+              </tr>
+            </thead>
+            <tbody id="hr-ob">
+              <tr><td colspan="8"><div class="pload"><div class="spin"></div></div></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
   </div>
 </div>
 </div>
@@ -593,6 +704,7 @@ const app=initializeApp(cfg),auth=getAuth(app),db=getFirestore(app);
 let CU=null,AD=null;
 let allOrders=[],allCouriers=[],allClients=[],allProducts=[],allStaff=[];
 let allNews=[],newsFilt='all',editingNewsId=null;
+let allVacancies=[],hrFilt='all',editingVacId=null;
 let liveOrders=[];
 let ordFilt='all',curFilt='all',tktFilt='all',verifFilt='all';
 let assignOid=null;
@@ -679,7 +791,7 @@ function startListeners(){
 
 /* ── LOAD ALL ── */
 async function loadAll(){
-  await Promise.all([loadOrders(),loadClients(),loadProducts(),loadStaff(),loadNewsAdmin()]);
+  await Promise.all([loadOrders(),loadClients(),loadProducts(),loadStaff(),loadNewsAdmin(),loadVacancies()]);
   renderKPI();
   renderAnalytics();
   renderTickets();
@@ -1660,6 +1772,192 @@ window.setTicketStatus = async function (ticketId, status) {
 /* ── SETTINGS ── */
 window.saveSettings=function(){toast('Настройки сохранены','ok');};
 
+/* ════════════════════════════════════════════════════
+   HR / VACANCIES MODULE
+════════════════════════════════════════════════════ */
+
+async function loadVacancies(){
+  try{
+    const snap=await getDocs(query(collection(db,'vacancies'),orderBy('createdAt','desc')));
+    allVacancies=snap.docs.map(d=>({id:d.id,...d.data()}));
+    updateHrBadge();
+    if(document.getElementById('page-hr').classList.contains('active'))renderHrPage();
+  }catch(e){console.error('Vacancies:',e);}
+}
+
+function updateHrBadge(){
+  const open=allVacancies.filter(v=>v.status==='open').length;
+  const b=document.getElementById('sb-hr-b');
+  if(b){b.textContent=open;b.style.display=open>0?'':'none';}
+}
+
+function renderHrPage(){
+  renderHrKPIs();
+  renderHrTable();
+}
+
+function renderHrKPIs(){
+  const open=allVacancies.filter(v=>v.status==='open').length;
+  const closed=allVacancies.filter(v=>v.status==='closed').length;
+  const totalApps=allVacancies.reduce((s,v)=>s+(v.applications||0),0);
+  const depts=new Set(allVacancies.filter(v=>v.status==='open').map(v=>v.department)).size;
+  set('hr-kv-open',open);
+  set('hr-kv-apps',totalApps);
+  set('hr-kv-depts',depts);
+  set('hr-kv-closed',closed);
+  updateHrBadge();
+}
+
+function renderHrTable(){
+  const body=document.getElementById('hr-ob');if(!body)return;
+  const list=hrFilt==='all'?allVacancies:allVacancies.filter(v=>v.status===hrFilt);
+  if(!list.length){
+    body.innerHTML=`<tr><td colspan="8"><div class="er"><div class="er-ico">💼</div>Вакансии не найдены</div></td></tr>`;
+    return;
+  }
+  const TYPE={'full-time':'Полный день','part-time':'Частичная','internship':'Стажировка'};
+  const DEPT_ICO={'Технологии':'💻','Операции':'⚙️','Маркетинг':'📣','Финансы':'💰','Дизайн':'🎨','HR':'👥'};
+  body.innerHTML=list.map(v=>{
+    const date=v.createdAt?.toDate?v.createdAt.toDate().toLocaleDateString('ru-RU',{day:'2-digit',month:'short',year:'2-digit'}):'—';
+    const isOpen=v.status==='open';
+    const sc=isOpen?'var(--green)':'var(--text3)';
+    const sb=isOpen?'var(--greend)':'var(--muted2)';
+    const sbr=isOpen?'rgba(34,197,94,.2)':'var(--b)';
+    const ico=DEPT_ICO[v.department]||'💼';
+    return `<tr>
+      <td style="min-width:150px">
+        <div style="font-weight:700;color:var(--text);font-size:.76rem">${escHtmlAdm(v.title||'—')}</div>
+        ${v.location?`<div style="font-size:.6rem;color:var(--text3);margin-top:2px">📍 ${escHtmlAdm(v.location)}</div>`:''}
+      </td>
+      <td><span style="font-size:.6rem;background:var(--s2);border:1px solid var(--b);padding:2px 8px;border-radius:5px">${ico} ${escHtmlAdm(v.department||'—')}</span></td>
+      <td style="font-size:.66rem;color:var(--text2)">${TYPE[v.type]||v.type||'—'}</td>
+      <td style="font-family:var(--fm);font-size:.66rem;color:var(--green);white-space:nowrap">${escHtmlAdm(v.salary||'—')}</td>
+      <td style="text-align:center">
+        <span style="font-family:var(--fm);font-size:.74rem;color:var(--text2);font-weight:600">${v.applications||0}</span>
+      </td>
+      <td>
+        <span class="ostatus" style="color:${sc};background:${sb};border-color:${sbr}">
+          <span class="osdot"></span>${isOpen?'Открытая':'Закрытая'}
+        </span>
+      </td>
+      <td class="mono" style="font-size:.6rem">${date}</td>
+      <td>
+        <div class="oact">
+          <button class="btn btn-secondary btn-sm" onclick="viewApplications('${v.id}')">Заявки (${v.applications||0})</button>
+          <button class="btn btn-secondary btn-sm" onclick="openHrModal('${v.id}')">✎ Изменить</button>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+window.fHr=function(filter,btn){
+  hrFilt=filter;
+  document.querySelectorAll('#page-hr .tab').forEach(t=>t.classList.remove('active'));
+  if(btn)btn.classList.add('active');
+  renderHrTable();
+};
+
+window.openHrModal=function(id){
+  editingVacId=id||null;
+  const isEdit=!!id;
+  document.getElementById('hr-modal-title').textContent=isEdit?'Редактировать вакансию':'Новая вакансия';
+  const delBtn=document.getElementById('hv-del-btn');
+  if(delBtn)delBtn.style.display=isEdit?'':'none';
+  if(isEdit){
+    const v=allVacancies.find(x=>x.id===id);
+    if(v){
+      document.getElementById('hv-title').value=v.title||'';
+      document.getElementById('hv-salary').value=v.salary||'';
+      document.getElementById('hv-dept').value=v.department||'Технологии';
+      document.getElementById('hv-type').value=v.type||'full-time';
+      document.getElementById('hv-location').value=v.location||'';
+      document.getElementById('hv-desc').value=v.description||'';
+      document.getElementById('hv-req').value=v.requirements||'';
+      document.getElementById('hv-status').value=v.status||'open';
+    }
+  }else{
+    ['hv-title','hv-salary','hv-location','hv-desc','hv-req'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+    document.getElementById('hv-dept').value='Технологии';
+    document.getElementById('hv-type').value='full-time';
+    document.getElementById('hv-status').value='open';
+  }
+  openMo('hr-modal');
+};
+
+window.saveVacancy=async function(){
+  const title=document.getElementById('hv-title').value.trim();
+  if(!title){toast('Укажите должность','err');return;}
+  const data={
+    title,
+    salary:document.getElementById('hv-salary').value.trim(),
+    department:document.getElementById('hv-dept').value,
+    type:document.getElementById('hv-type').value,
+    location:document.getElementById('hv-location').value.trim(),
+    description:document.getElementById('hv-desc').value.trim(),
+    requirements:document.getElementById('hv-req').value.trim(),
+    status:document.getElementById('hv-status').value,
+    updatedAt:serverTimestamp(),
+  };
+  try{
+    if(editingVacId){
+      await updateDoc(doc(db,'vacancies',editingVacId),data);
+      toast('Вакансия обновлена ✓','ok');
+    }else{
+      data.applications=0;
+      data.createdAt=serverTimestamp();
+      await addDoc(collection(db,'vacancies'),data);
+      toast('Вакансия создана ✓','ok');
+    }
+    closeMo('hr-modal');
+    await loadVacancies();
+    renderHrPage();
+  }catch(e){toast('Ошибка: '+e.message,'err');}
+};
+
+window.deleteVacancy=async function(){
+  if(!editingVacId)return;
+  const v=allVacancies.find(x=>x.id===editingVacId);
+  if(!confirm('Удалить вакансию «'+(v?.title||editingVacId)+'»?'))return;
+  try{
+    await deleteDoc(doc(db,'vacancies',editingVacId));
+    toast('Вакансия удалена','ok');
+    closeMo('hr-modal');
+    await loadVacancies();
+    renderHrPage();
+  }catch(e){toast('Ошибка удаления: '+e.message,'err');}
+};
+
+window.viewApplications=async function(vacId){
+  const v=allVacancies.find(x=>x.id===vacId);
+  document.getElementById('hr-apps-title').textContent=(v?.title||'Вакансия')+' — заявки';
+  const body=document.getElementById('hr-apps-body');
+  body.innerHTML='<div class="pload"><div class="spin"></div></div>';
+  openMo('hr-apps-modal');
+  try{
+    const snap=await getDocs(query(collection(db,'vacancies',vacId,'applications'),orderBy('createdAt','desc')));
+    const apps=snap.docs.map(d=>({id:d.id,...d.data()}));
+    if(!apps.length){
+      body.innerHTML='<div class="er" style="padding:36px"><div class="er-ico">📭</div>Заявок пока нет</div>';
+      return;
+    }
+    body.innerHTML=apps.map(a=>{
+      const date=a.createdAt?.toDate?a.createdAt.toDate().toLocaleDateString('ru-RU',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'}):'—';
+      return `<div style="padding:13px 18px;border-bottom:1px solid var(--b)">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:5px;gap:10px;flex-wrap:wrap">
+          <div style="font-weight:700;font-size:.78rem;color:var(--text)">${escHtmlAdm(a.name||'—')}</div>
+          <span class="mono" style="font-size:.58rem;color:var(--text3)">${date}</span>
+        </div>
+        <div style="font-size:.68rem;color:var(--text3);display:flex;gap:14px;flex-wrap:wrap;margin-bottom:${a.message?'7px':'0'}">
+          ${a.phone?`<span>📞 ${escHtmlAdm(a.phone)}</span>`:''}
+          ${a.link?`<a href="${escHtmlAdm(a.link)}" target="_blank" style="color:var(--acc2);text-decoration:underline">🔗 Резюме</a>`:''}
+        </div>
+        ${a.message?`<div style="font-size:.7rem;color:var(--text2);background:var(--s2);border-radius:7px;padding:8px 11px;line-height:1.5">${escHtmlAdm(a.message)}</div>`:''}
+      </div>`;
+    }).join('');
+  }catch(e){body.innerHTML=`<div class="er" style="padding:36px">Ошибка загрузки заявок</div>`;}
+};
+
 /* ── EXPORT ── */
 window.exportOrders=function(){
   const csv=['ID,Клиент,Адрес,Курьер,Статус,Сумма,Дата',...allOrders.map(o=>`${o.id.slice(-6)},${o.clientName||''},${(o.address||'').replace(/,/g,' ')},${o.courierName||''},${o.status},${o.total||0},${o.createdAt?.toDate?o.createdAt.toDate().toLocaleDateString('ru-RU'):''}`)].join('\n');
@@ -1706,7 +2004,7 @@ window.goPage=function(page){
   document.querySelectorAll('.ni').forEach(n=>n.classList.remove('active'));
   document.getElementById('page-'+page)?.classList.add('active');
   document.querySelector(`.ni[data-page="${page}"]`)?.classList.add('active');
-  const T={overview:'Обзор',orders:'Заказы',couriers:'Курьеры',clients:'Клиенты',support:'Поддержка',catalog:'Каталог',news:'Новости',analytics:'Аналитика',staff:'Сотрудники',settings:'Настройки'};
+  const T={overview:'Обзор',orders:'Заказы',couriers:'Курьеры',clients:'Клиенты',support:'Поддержка',catalog:'Каталог',news:'Новости',analytics:'Аналитика',staff:'Сотрудники',settings:'Настройки',hr:'HR / Вакансии'};
   const el=document.getElementById('tb-title');if(el)el.textContent=T[page]||page;
   if(page==='couriers')renderCouriersPage();
   if(page==='support'){renderTickets();}
@@ -1714,6 +2012,7 @@ window.goPage=function(page){
   if(page==='staff')renderStaff();
   if(page==='overview'){renderDonut();renderLiveOrders();renderAct();}
   if(page==='news'){renderNewsTable();}
+  if(page==='hr'){renderHrPage();}
   closeSB();
   document.getElementById('pages')?.scrollTo(0,0);
 };

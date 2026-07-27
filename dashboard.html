@@ -427,6 +427,18 @@ textarea.mi{resize:vertical;min-height:76px}
   </div>
 </div>
 
+<!-- FORUM THREAD MODAL -->
+<div class="mo" id="forum-thread-modal">
+  <div class="modal" style="max-width:680px">
+    <div class="modal-head">
+      <div class="modal-title" id="ftm-title" style="max-width:520px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Тема форума</div>
+      <button class="modal-x" onclick="closeMo('forum-thread-modal')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+    </div>
+    <div class="modal-body" id="ftm-body" style="max-height:68vh;overflow-y:auto"></div>
+    <div class="modal-foot" id="ftm-foot" style="flex-wrap:wrap;gap:6px"></div>
+  </div>
+</div>
+
 <div class="app">
 <div class="sb-overlay" id="sb-overlay"></div>
 <!-- ═══ SIDEBAR ═══ -->
@@ -450,6 +462,7 @@ textarea.mi{resize:vertical;min-height:76px}
     <button class="ni" data-page="catalog" onclick="goPage('catalog')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>Каталог</button>
     <button class="ni" data-page="stores" onclick="goPage('stores')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>Магазины</button>
     <button class="ni" data-page="news" onclick="goPage('news')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 22h16a2 2 0 002-2V4a2 2 0 00-2-2H8L2 8v12a2 2 0 002 2z"/><polyline points="10 2 10 8 2 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="13" y2="17"/></svg>Новости<span class="ni-badge info" id="sb-news-b" style="display:none">0</span></button>
+        <button class="ni" data-page="forum" onclick="goPage('forum')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/><circle cx="9" cy="10" r="1" fill="currentColor"/><circle cx="13" cy="10" r="1" fill="currentColor"/><circle cx="17" cy="10" r="1" fill="currentColor"/></svg>Форум<span class="ni-badge info" id="sb-forum-b" style="display:none">0</span></button>
         <button class="ni" data-page="analytics" onclick="goPage('analytics')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>Аналитика</button>
         <button class="ni" data-page="hr" onclick="goPage('hr')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/><path d="M2 13a20 20 0 0020 0"/></svg>HR / Вакансии<span class="ni-badge info" id="sb-hr-b" style="display:none">0</span></button>
     <div class="nav-grp">Система</div>
@@ -696,6 +709,75 @@ textarea.mi{resize:vertical;min-height:76px}
               <tr><td colspan="8"><div class="pload"><div class="spin"></div></div></td></tr>
             </tbody>
           </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- FORUM -->
+    <div class="page" id="page-forum">
+      <div class="sh">
+        <div><div class="sh-tag">Сообщество</div><div class="sh-title">Форум <em>— управление</em></div></div>
+        <div class="sh-actions">
+          <div class="tabs">
+            <button class="tab active" onclick="fForum('all',this)">Все темы</button>
+            <button class="tab" onclick="fForum('pinned',this)">📌 Закреплённые</button>
+            <button class="tab" onclick="fForum('locked',this)">🔒 Закрытые</button>
+          </div>
+          <button class="btn btn-secondary btn-sm" onclick="loadForum().then(renderForumPage)">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 11-2.12-9.36L23 10"/></svg>
+            Обновить
+          </button>
+        </div>
+      </div>
+
+      <div class="kpi-grid" style="margin-bottom:14px">
+        <div class="kpi acc"><div class="kpi-label">Тем всего</div><div class="kpi-val" id="f-kv-threads">—</div><div class="kpi-sub">forum_threads</div><div class="kpi-ico">💬</div></div>
+        <div class="kpi blue"><div class="kpi-label">Ответов всего</div><div class="kpi-val" id="f-kv-replies">—</div><div class="kpi-sub">Суммарно</div><div class="kpi-ico">📝</div></div>
+        <div class="kpi green"><div class="kpi-label">Лайков</div><div class="kpi-val" id="f-kv-likes">—</div><div class="kpi-sub">Суммарно</div><div class="kpi-ico">❤️</div></div>
+        <div class="kpi yellow"><div class="kpi-label">Просмотров</div><div class="kpi-val" id="f-kv-views">—</div><div class="kpi-sub">Суммарно</div><div class="kpi-ico">👁️</div></div>
+      </div>
+
+      <div class="two-col">
+        <!-- Threads table -->
+        <div class="panel">
+          <div class="panel-head" style="flex-wrap:wrap;gap:8px">
+            <div class="panel-title">Темы форума</div>
+            <select class="mi" id="forum-cat-filter" onchange="renderForumThreads()" style="padding:4px 9px;font-size:.6rem;height:28px;width:auto">
+              <option value="">Все категории</option>
+            </select>
+          </div>
+          <div style="overflow-x:auto">
+            <table class="ot">
+              <thead>
+                <tr>
+                  <th>Тема</th>
+                  <th>Автор</th>
+                  <th>Категория</th>
+                  <th style="text-align:center">💬</th>
+                  <th style="text-align:center">👁</th>
+                  <th style="text-align:center">❤️</th>
+                  <th>Флаги</th>
+                  <th>Дата</th>
+                  <th>Действия</th>
+                </tr>
+              </thead>
+              <tbody id="forum-ob">
+                <tr><td colspan="9"><div class="pload"><div class="spin"></div></div></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Right sidebar -->
+        <div style="display:flex;flex-direction:column;gap:12px">
+          <div class="panel">
+            <div class="panel-head"><div class="panel-title">По категориям</div></div>
+            <div id="forum-cats-panel"><div class="pload" style="padding:18px"><div class="spin"></div></div></div>
+          </div>
+          <div class="panel">
+            <div class="panel-head"><div class="panel-title">🔥 Популярные темы</div></div>
+            <div id="forum-top-panel"><div class="pload" style="padding:18px"><div class="spin"></div></div></div>
+          </div>
         </div>
       </div>
     </div>

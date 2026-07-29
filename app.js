@@ -10,7 +10,6 @@ let CU=null,AD=null;
 let allOrders=[],allCouriers=[],allClients=[],allProducts=[],allStaff=[];
 let allNews=[],newsFilt='all',editingNewsId=null;
 let allVacancies=[],hrFilt='all',editingVacId=null;
-let allForumThreads=[],forumFilt='all',viewingThreadId=null;
 let liveOrders=[];
 let ordFilt='all',curFilt='all',tktFilt='all',verifFilt='all';
 let assignOid=null;
@@ -97,7 +96,7 @@ function startListeners(){
 
 /* ── LOAD ALL ── */
 async function loadAll(){
-  await Promise.all([loadOrders(),loadClients(),loadProducts(),loadStaff(),loadNewsAdmin(),loadVacancies(),loadStores(),loadForum()]);
+  await Promise.all([loadOrders(),loadClients(),loadProducts(),loadStaff(),loadNewsAdmin(),loadVacancies(),loadStores()]);
   renderKPI();
   renderAnalytics();
   renderTickets();
@@ -1446,7 +1445,7 @@ window.goPage=function(page){
   document.querySelectorAll('.ni').forEach(n=>n.classList.remove('active'));
   document.getElementById('page-'+page)?.classList.add('active');
   document.querySelector(`.ni[data-page="${page}"]`)?.classList.add('active');
-  const T={overview:'Обзор',orders:'Заказы',couriers:'Курьеры',clients:'Клиенты',support:'Поддержка',catalog:'Каталог',stores:'Магазины',news:'Новости',analytics:'Аналитика',staff:'Сотрудники',settings:'Настройки',hr:'HR / Вакансии',forum:'Форум — управление'};
+  const T={overview:'Обзор',orders:'Заказы',couriers:'Курьеры',clients:'Клиенты',support:'Поддержка',catalog:'Каталог',stores:'Магазины',news:'Новости',analytics:'Аналитика',staff:'Сотрудники',settings:'Настройки',hr:'HR / Вакансии',ads:'Реклама'};
   const el=document.getElementById('tb-title');if(el)el.textContent=T[page]||page;
   if(page==='couriers')renderCouriersPage();
   if(page==='support'){renderTickets();}
@@ -1455,8 +1454,8 @@ window.goPage=function(page){
   if(page==='overview'){renderDonut();renderLiveOrders();renderAct();}
   if(page==='news'){renderNewsTable();}
   if(page==='hr'){renderHrPage();}
-  if(page==='forum'){renderForumPage();}
   if(page==='stores'){renderStoresPage();}
+  if(page==='ads'){renderAdsPage();}
   closeSB();
   document.getElementById('pages')?.scrollTo(0,0);
 };
@@ -1464,6 +1463,43 @@ window.goPage=function(page){
 window.toggleSB=function(){document.getElementById('sidebar').classList.toggle('open');document.getElementById('sb-overlay').classList.toggle('open');};
 window.closeSB=function(){document.getElementById('sidebar').classList.remove('open');document.getElementById('sb-overlay').classList.remove('open');};
 document.getElementById('sb-overlay').addEventListener('click',closeSB);
+
+// ─── ADS / ПРOMO ─────────────────────────────────────────────
+window.renderAdsPage = async function() {
+  try {
+    const snap = await getDoc(doc(db, 'config', 'homePromo'));
+    const d = snap.exists() ? snap.data() : {};
+    document.getElementById('ads-active').checked   = d.active !== false;
+    document.getElementById('ads-img-url').value    = d.imageUrl  || '';
+    document.getElementById('ads-link-url').value   = d.linkUrl   || '';
+    previewPromo();
+  } catch(e) { toast('Ошибка загрузки рекламы','err'); }
+};
+
+window.previewPromo = function() {
+  const url  = document.getElementById('ads-img-url').value.trim();
+  const wrap = document.getElementById('ads-preview-wrap');
+  const img  = document.getElementById('ads-preview-img');
+  const empty= document.getElementById('ads-preview-empty');
+  if (!url) { wrap.style.display = 'none'; return; }
+  wrap.style.display = 'block';
+  img.style.display  = 'none';
+  empty.style.display= 'none';
+  img.src = url;
+};
+
+window.saveHomePromo = async function() {
+  const imageUrl = document.getElementById('ads-img-url').value.trim();
+  const linkUrl  = document.getElementById('ads-link-url').value.trim();
+  const active   = document.getElementById('ads-active').checked;
+  try {
+    await setDoc(doc(db, 'config', 'homePromo'), {
+      imageUrl, linkUrl, active,
+      updatedAt: serverTimestamp(),
+    }, { merge: true });
+    toast('Реклама сохранена ✓', 'ok');
+  } catch(e) { toast('Ошибка сохранения: ' + e.message, 'err'); }
+};
 
 window.doLogout=async function(){
   if(unsubOrders)unsubOrders();
@@ -1479,270 +1515,4 @@ window.toast=function(msg,type=''){
   el.innerHTML=`<div class="tdot"></div><span>${msg}</span>`;
   w.appendChild(el);
   setTimeout(()=>el.remove(),3500);
-};
-
-/* ══════════════════════════════════════════════════════════════
-   FORUM MODULE
-══════════════════════════════════════════════════════════════ */
-
-const FORUM_CATS=[
-  {id:'general',  name:'Умумӣ',               icon:'💬', color:'#22c55e'},
-  {id:'delivery', name:'Мушкилоти расонидан', icon:'🚚', color:'#f59e0b'},
-  {id:'ideas',    name:'Пешниҳодҳо',          icon:'💡', color:'#60a5fa'},
-  {id:'reviews',  name:'Баҳо ва шарҳ',        icon:'⭐', color:'#eab308'},
-  {id:'support',  name:'Ёрии техникӣ',        icon:'🔧', color:'#a78bfa'},
-];
-
-/* ── LOAD ── */
-window.loadForum=async function(){
-  try{
-    const snap=await getDocs(query(collection(db,'forum_threads'),orderBy('createdAt','desc')));
-    allForumThreads=snap.docs.map(d=>({id:d.id,...d.data()}));
-    const b=document.getElementById('sb-forum-b');
-    if(b){b.textContent=allForumThreads.length;b.style.display=allForumThreads.length>0?'':'none';}
-    if(document.getElementById('page-forum')?.classList.contains('active'))renderForumPage();
-  }catch(e){console.error('Forum:',e);}
-};
-
-/* ── RENDER PAGE ── */
-function renderForumPage(){
-  renderForumKPIs();
-  renderForumCatSelect();
-  renderForumCatsPanel();
-  renderForumTopPanel();
-  renderForumThreads();
-}
-
-function renderForumKPIs(){
-  const replies=allForumThreads.reduce((s,t)=>s+(t.replyCount||0),0);
-  const likes  =allForumThreads.reduce((s,t)=>s+(t.likeCount||0),0);
-  const views  =allForumThreads.reduce((s,t)=>s+(t.views||0),0);
-  set('f-kv-threads',allForumThreads.length);
-  set('f-kv-replies',replies);
-  set('f-kv-likes',likes);
-  set('f-kv-views',views);
-}
-
-function renderForumCatSelect(){
-  const sel=document.getElementById('forum-cat-filter');
-  if(!sel)return;
-  sel.innerHTML=`<option value="">Все категории</option>`+
-    FORUM_CATS.map(c=>`<option value="${c.id}">${c.icon} ${c.name}</option>`).join('');
-}
-
-function renderForumCatsPanel(){
-  const el=document.getElementById('forum-cats-panel');
-  if(!el)return;
-  if(!allForumThreads.length){el.innerHTML='<div class="er" style="padding:18px"><div class="er-ico">💬</div>Тем нет</div>';return;}
-  el.innerHTML=FORUM_CATS.map(cat=>{
-    const cnt=allForumThreads.filter(t=>t.categoryId===cat.id).length;
-    const repl=allForumThreads.filter(t=>t.categoryId===cat.id).reduce((s,t)=>s+(t.replyCount||0),0);
-    return`<div style="display:flex;align-items:center;gap:10px;padding:9px 14px;border-bottom:1px solid var(--b);cursor:pointer;transition:background var(--tf)"
-         onclick="filterForumByCat('${cat.id}')"
-         onmouseover="this.style.background='var(--s2)'" onmouseout="this.style.background=''">
-      <div style="width:30px;height:30px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:.95rem;background:var(--s2);border:1px solid var(--b);flex-shrink:0">${cat.icon}</div>
-      <div style="flex:1;min-width:0">
-        <div style="font-size:.72rem;font-weight:600;color:var(--text)">${cat.name}</div>
-        <div style="font-size:.58rem;color:var(--text3)">${repl} ответов</div>
-      </div>
-      <div style="font-family:var(--fm);font-size:.72rem;font-weight:700;color:var(--text)">${cnt}</div>
-    </div>`;
-  }).join('');
-}
-
-function renderForumTopPanel(){
-  const el=document.getElementById('forum-top-panel');
-  if(!el)return;
-  const top=[...allForumThreads].sort((a,b)=>(b.views||0)-(a.views||0)).slice(0,5);
-  if(!top.length){el.innerHTML='<div class="er" style="padding:18px"><div class="er-ico">💬</div>Тем нет</div>';return;}
-  el.innerHTML=top.map((t,i)=>`
-    <div style="padding:9px 14px;border-bottom:1px solid var(--b);cursor:pointer;transition:background var(--tf)"
-         onclick="openForumThread('${t.id}')"
-         onmouseover="this.style.background='var(--s2)'" onmouseout="this.style.background=''">
-      <div style="display:flex;align-items:center;gap:8px;margin-bottom:3px">
-        <span style="font-family:var(--fm);font-size:.58rem;color:var(--text3);width:14px;text-align:center;flex-shrink:0">${i+1}</span>
-        <div style="font-size:.7rem;font-weight:600;color:var(--text);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${escHtmlAdm(t.title||'—')}</div>
-      </div>
-      <div style="display:flex;gap:10px;margin-left:22px;font-size:.58rem;color:var(--text3)">
-        <span>👁 ${t.views||0}</span>
-        <span>💬 ${t.replyCount||0}</span>
-        <span>❤️ ${t.likeCount||0}</span>
-      </div>
-    </div>`).join('');
-}
-
-/* ── THREADS TABLE ── */
-window.renderForumThreads=function(){
-  const body=document.getElementById('forum-ob');
-  if(!body)return;
-  const catFil=document.getElementById('forum-cat-filter')?.value||'';
-  let list=[...allForumThreads];
-  if(forumFilt==='pinned')list=list.filter(t=>t.pinned);
-  else if(forumFilt==='locked')list=list.filter(t=>t.locked);
-  if(catFil)list=list.filter(t=>t.categoryId===catFil);
-  if(!list.length){
-    body.innerHTML=`<tr><td colspan="9"><div class="er"><div class="er-ico">💬</div>Тем не найдено</div></td></tr>`;
-    return;
-  }
-  body.innerHTML=list.map(t=>{
-    const cat=FORUM_CATS.find(c=>c.id===t.categoryId);
-    const date=t.createdAt?.toDate?t.createdAt.toDate().toLocaleDateString('ru-RU',{day:'2-digit',month:'short'}):'—';
-    const flags=[];
-    if(t.pinned)flags.push('<span title="Закреплено" style="font-size:.74rem">📌</span>');
-    if(t.locked)flags.push('<span title="Закрыто" style="font-size:.74rem">🔒</span>');
-    return`<tr>
-      <td style="max-width:220px">
-        <div style="font-size:.72rem;font-weight:600;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:210px;cursor:pointer"
-          onclick="openForumThread('${t.id}')" title="${escHtmlAdm(t.title||'')}">${escHtmlAdm(t.title||'—')}</div>
-        <div style="font-size:.56rem;color:var(--text3);margin-top:2px">${escHtmlAdm(t.lastReplyBy?'↩ '+t.lastReplyBy:'')}</div>
-      </td>
-      <td><div style="font-size:.66rem;color:var(--text2)">${escHtmlAdm(t.authorName||'—')}</div></td>
-      <td>${cat?`<span style="font-size:.54rem;padding:2px 8px;border-radius:99px;background:var(--s2);border:1px solid var(--b);white-space:nowrap">${cat.icon} ${escHtmlAdm(cat.name)}</span>`:'—'}</td>
-      <td class="mono" style="text-align:center">${t.replyCount||0}</td>
-      <td class="mono" style="text-align:center">${t.views||0}</td>
-      <td class="mono" style="text-align:center">${t.likeCount||0}</td>
-      <td style="min-width:46px">${flags.join(' ')||'<span style="color:var(--text3)">—</span>'}</td>
-      <td class="mono" style="font-size:.6rem;white-space:nowrap">${date}</td>
-      <td>
-        <div class="oact">
-          <button class="btn btn-secondary btn-sm" onclick="openForumThread('${t.id}')">Открыть</button>
-          <button class="btn btn-secondary btn-sm" style="padding:4px 7px" onclick="togglePinThread('${t.id}',${!t.pinned})" title="${t.pinned?'Открепить':'Закрепить'}">${t.pinned?'📌':'📎'}</button>
-          <button class="btn btn-secondary btn-sm" style="padding:4px 7px" onclick="toggleLockThread('${t.id}',${!t.locked})" title="${t.locked?'Открыть':'Закрыть'}">${t.locked?'🔓':'🔒'}</button>
-          <button class="btn btn-danger btn-sm" style="padding:4px 7px" onclick="deleteForumThread('${t.id}',false)" title="Удалить">✕</button>
-        </div>
-      </td>
-    </tr>`;
-  }).join('');
-};
-
-window.fForum=function(filter,btn){
-  forumFilt=filter;
-  document.querySelectorAll('#page-forum .tab').forEach(t=>t.classList.remove('active'));
-  if(btn)btn.classList.add('active');
-  renderForumThreads();
-};
-
-window.filterForumByCat=function(catId){
-  const sel=document.getElementById('forum-cat-filter');
-  if(sel)sel.value=catId;
-  renderForumThreads();
-};
-
-/* ── THREAD DETAIL MODAL ── */
-window.openForumThread=async function(threadId){
-  viewingThreadId=threadId;
-  const t=allForumThreads.find(x=>x.id===threadId);
-  if(!t)return;
-  const cat=FORUM_CATS.find(c=>c.id===t.categoryId);
-
-  document.getElementById('ftm-title').textContent=t.title||'Тема';
-  const body=document.getElementById('ftm-body');
-  const foot=document.getElementById('ftm-foot');
-  body.innerHTML=`<div class="pload"><div class="spin"></div> Загрузка ответов…</div>`;
-  foot.innerHTML=`
-    <button class="btn btn-secondary btn-sm" onclick="togglePinThread('${t.id}',${!t.pinned})">${t.pinned?'📌 Открепить':'📎 Закрепить'}</button>
-    <button class="btn btn-secondary btn-sm" onclick="toggleLockThread('${t.id}',${!t.locked})">${t.locked?'🔓 Открыть':'🔒 Закрыть'}</button>
-    <button class="btn btn-danger" onclick="deleteForumThread('${t.id}',true)">🗑 Удалить тему</button>
-    <button class="btn btn-secondary" style="margin-left:auto" onclick="closeMo('forum-thread-modal')">Закрыть</button>`;
-  openMo('forum-thread-modal');
-
-  try{
-    const rSnap=await getDocs(query(collection(db,'forum_replies'),where('threadId','==',threadId)));
-    const replies=rSnap.docs.map(d=>({id:d.id,...d.data()}))
-      .sort((a,b)=>(a.createdAt?.seconds||0)-(b.createdAt?.seconds||0));
-
-    const fmtDt=ts=>ts?.toDate?ts.toDate().toLocaleString('ru-RU',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'}):'—';
-    const iniStr=name=>(name||'?').trim().split(/\s+/).map(w=>w[0]||'').join('').toUpperCase().slice(0,2)||'?';
-
-    body.innerHTML=`
-      <!-- OP -->
-      <div style="background:var(--s2);border:1px solid var(--bh);border-radius:10px;padding:14px;margin-bottom:16px">
-        <div style="display:flex;align-items:center;gap:9px;margin-bottom:10px;flex-wrap:wrap">
-          <div style="width:32px;height:32px;border-radius:50%;background:var(--accd);border:1.5px solid var(--accg);display:flex;align-items:center;justify-content:center;font-size:.6rem;font-weight:700;color:var(--acc2);flex-shrink:0">${escHtmlAdm(iniStr(t.authorName))}</div>
-          <div>
-            <div style="font-size:.74rem;font-weight:700;color:var(--text)">${escHtmlAdm(t.authorName||'—')}</div>
-            <div style="font-size:.58rem;color:var(--text3)">${fmtDt(t.createdAt)}</div>
-          </div>
-          <span style="margin-left:auto;font-size:.5rem;padding:2px 8px;border-radius:99px;background:var(--greend);color:var(--green);border:1px solid var(--greeng);letter-spacing:.04em">OP</span>
-          ${cat?`<span style="font-size:.52rem;padding:2px 8px;border-radius:99px;background:var(--s3);border:1px solid var(--b)">${cat.icon} ${escHtmlAdm(cat.name)}</span>`:''}
-          ${t.pinned?'<span style="font-size:.52rem;padding:2px 8px;border-radius:99px;background:var(--accd);border:1px solid var(--b)">📌 Закреплено</span>':''}
-          ${t.locked?'<span style="font-size:.52rem;padding:2px 8px;border-radius:99px;background:var(--redd);border:1px solid rgba(244,63,94,.2);color:var(--red)">🔒 Закрыто</span>':''}
-        </div>
-        <div style="font-size:.76rem;color:var(--text2);line-height:1.65;white-space:pre-wrap;word-break:break-word">${escHtmlAdm(t.body||'')}</div>
-        <div style="display:flex;gap:14px;margin-top:12px;padding-top:10px;border-top:1px solid var(--b);font-size:.6rem;color:var(--text3)">
-          <span>👁 ${t.views||0}</span>
-          <span>❤️ ${t.likeCount||0}</span>
-          <span>💬 ${t.replyCount||0} ответов</span>
-        </div>
-      </div>
-
-      <!-- Replies -->
-      ${replies.length?`
-        <div style="font-size:.44rem;letter-spacing:.22em;text-transform:uppercase;color:var(--text3);margin-bottom:9px;font-weight:600">${replies.length} ответов</div>
-        <div id="forum-replies-list" style="display:flex;flex-direction:column;gap:7px">
-          ${replies.map(r=>`
-            <div id="fr-${r.id}" style="background:var(--s1);border:1px solid var(--b);border-radius:9px;padding:11px 13px;transition:border-color var(--tf)">
-              <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
-                <div style="width:26px;height:26px;border-radius:50%;background:var(--s2);border:1px solid var(--b);display:flex;align-items:center;justify-content:center;font-size:.54rem;font-weight:700;color:var(--text3);flex-shrink:0">${escHtmlAdm(iniStr(r.authorName))}</div>
-                <div style="flex:1;min-width:0">
-                  <div style="font-size:.68rem;font-weight:600;color:var(--text)">${escHtmlAdm(r.authorName||'—')}</div>
-                  <div style="font-size:.56rem;color:var(--text3)">${fmtDt(r.createdAt)}</div>
-                </div>
-                <div style="display:flex;align-items:center;gap:8px;flex-shrink:0">
-                  <span style="font-size:.6rem;color:var(--text3)">❤️ ${r.likeCount||0}</span>
-                  <button class="btn btn-danger btn-sm" style="padding:3px 7px" onclick="deleteForumReply('${r.id}','${threadId}')">✕</button>
-                </div>
-              </div>
-              <div style="font-size:.72rem;color:var(--text2);line-height:1.55;white-space:pre-wrap;word-break:break-word">${escHtmlAdm(r.body||'')}</div>
-            </div>`).join('')}
-        </div>`
-      :`<div class="er" style="padding:28px"><div class="er-ico">💬</div>Ответов пока нет</div>`}
-    `;
-  }catch(e){
-    body.innerHTML=`<div class="er"><div class="er-ico">⚠️</div>Ошибка загрузки ответов</div>`;
-  }
-};
-
-/* ── MODERATION ACTIONS ── */
-window.togglePinThread=async function(threadId,pinned){
-  try{
-    await updateDoc(doc(db,'forum_threads',threadId),{pinned,updatedAt:serverTimestamp()});
-    toast(pinned?'📌 Тема закреплена':'Тема откреплена','ok');
-    await loadForum();
-    if(document.getElementById('forum-thread-modal').classList.contains('open'))openForumThread(threadId);
-  }catch(e){toast('Ошибка','err');}
-};
-
-window.toggleLockThread=async function(threadId,locked){
-  try{
-    await updateDoc(doc(db,'forum_threads',threadId),{locked,updatedAt:serverTimestamp()});
-    toast(locked?'🔒 Тема закрыта':'🔓 Тема открыта','ok');
-    await loadForum();
-    if(document.getElementById('forum-thread-modal').classList.contains('open'))openForumThread(threadId);
-  }catch(e){toast('Ошибка','err');}
-};
-
-window.deleteForumThread=async function(threadId,fromModal){
-  const t=allForumThreads.find(x=>x.id===threadId);
-  if(!confirm(`Удалить тему «${t?.title||threadId}» и все ответы к ней?`))return;
-  try{
-    const rSnap=await getDocs(query(collection(db,'forum_replies'),where('threadId','==',threadId)));
-    await Promise.all(rSnap.docs.map(d=>deleteDoc(doc(db,'forum_replies',d.id))));
-    await deleteDoc(doc(db,'forum_threads',threadId));
-    toast(`Тема удалена вместе с ${rSnap.size} ответами`,'ok');
-    if(fromModal)closeMo('forum-thread-modal');
-    await loadForum();
-  }catch(e){toast('Ошибка удаления: '+e.message,'err');}
-};
-
-window.deleteForumReply=async function(replyId,threadId){
-  if(!confirm('Удалить этот ответ?'))return;
-  try{
-    await deleteDoc(doc(db,'forum_replies',replyId));
-    await updateDoc(doc(db,'forum_threads',threadId),{replyCount:increment(-1)});
-    const el=document.getElementById('fr-'+replyId);
-    if(el){el.style.opacity='0';el.style.transform='scale(.96)';el.style.transition='all .2s';setTimeout(()=>el.remove(),200);}
-    toast('Ответ удалён','ok');
-    await loadForum();
-  }catch(e){toast('Ошибка: '+e.message,'err');}
 };

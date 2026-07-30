@@ -8,6 +8,7 @@ const app=initializeApp(cfg),auth=getAuth(app),db=getFirestore(app);
 /* ── STATE ── */
 let CU=null,AD=null;
 let allOrders=[],allCouriers=[],allClients=[],allProducts=[],allStaff=[];
+let allGenCatalogs=[];
 let allNews=[],newsFilt='all',editingNewsId=null;
 let allVacancies=[],hrFilt='all',editingVacId=null;
 let liveOrders=[];
@@ -96,7 +97,7 @@ function startListeners(){
 
 /* ── LOAD ALL ── */
 async function loadAll(){
-  await Promise.all([loadOrders(),loadClients(),loadProducts(),loadStaff(),loadNewsAdmin(),loadVacancies(),loadStores()]);
+  await Promise.all([loadOrders(),loadClients(),loadProducts(),loadStaff(),loadNewsAdmin(),loadVacancies(),loadStores(),loadGenCatalogs()]);
   renderKPI();
   renderAnalytics();
   renderTickets();
@@ -1445,7 +1446,7 @@ window.goPage=function(page){
   document.querySelectorAll('.ni').forEach(n=>n.classList.remove('active'));
   document.getElementById('page-'+page)?.classList.add('active');
   document.querySelector(`.ni[data-page="${page}"]`)?.classList.add('active');
-  const T={overview:'Обзор',orders:'Заказы',couriers:'Курьеры',clients:'Клиенты',support:'Поддержка',catalog:'Каталог',stores:'Магазины',news:'Новости',analytics:'Аналитика',staff:'Сотрудники',settings:'Настройки',hr:'HR / Вакансии',ads:'Реклама'};
+  const T={overview:'Обзор',orders:'Заказы',couriers:'Курьеры',clients:'Клиенты',support:'Поддержка',catalog:'Каталог',stores:'Магазины','gen-catalogs':'Общий каталог',news:'Новости',analytics:'Аналитика',staff:'Сотрудники',settings:'Настройки',hr:'HR / Вакансии',ads:'Реклама'};
   const el=document.getElementById('tb-title');if(el)el.textContent=T[page]||page;
   if(page==='couriers')renderCouriersPage();
   if(page==='support'){renderTickets();}
@@ -1456,6 +1457,7 @@ window.goPage=function(page){
   if(page==='hr'){renderHrPage();}
   if(page==='stores'){renderStoresPage();}
   if(page==='ads'){renderAdsPage();}
+  if(page==='gen-catalogs'){renderGenCatalogsPage();}
   closeSB();
   document.getElementById('pages')?.scrollTo(0,0);
 };
@@ -1499,6 +1501,190 @@ window.saveHomePromo = async function() {
     }, { merge: true });
     toast('Реклама сохранена ✓', 'ok');
   } catch(e) { toast('Ошибка сохранения: ' + e.message, 'err'); }
+};
+
+/* ══════════════════════════════════════════════
+   GENERAL CATALOGS (Общий каталог)
+══════════════════════════════════════════════ */
+const GC_DEFAULTS=[
+  {slug:'american',name:'Американская'},{slug:'asian',name:'Азиатская'},
+  {slug:'baby',name:'Детское'},{slug:'bakery',name:'Выпечка'},
+  {slug:'bbq',name:'BBQ'},{slug:'beauty',name:'Красота'},
+  {slug:'box-catering',name:'Кейтеринг'},{slug:'breakfast',name:'Завтраки'},
+  {slug:'bubble-tea',name:'Чай с пузырьками'},{slug:'burgers',name:'Бургеры'},
+  {slug:'caribbean',name:'Карибская'},{slug:'chinese',name:'Китайская'},
+  {slug:'coffee',name:'Кофе'},{slug:'comfort-food',name:'Домашняя'},
+  {slug:'desserts',name:'Десерты'},{slug:'electronics',name:'Электроника'},
+  {slug:'fast-food',name:'Фастфуд'},{slug:'flowers',name:'Цветы'},
+  {slug:'gifts',name:'Подарки'},{slug:'greek',name:'Греческая'},
+  {slug:'halal',name:'Халяль'},{slug:'hawaiin',name:'Гавайская'},
+  {slug:'healthy',name:'Здоровое'},{slug:'ice-cream',name:'Мороженое'},
+  {slug:'indian',name:'Индийская'},{slug:'italian',name:'Итальянская'},
+  {slug:'japanese',name:'Японская'},{slug:'korean',name:'Корейская'},
+  {slug:'kosher',name:'Кошерное'},{slug:'mexican',name:'Мексиканская'},
+  {slug:'personal-care',name:'Уход'},{slug:'pet-supplies',name:'Зоотовары'},
+  {slug:'pharmacy',name:'Аптека'},{slug:'pizza',name:'Пицца'},
+  {slug:'poke',name:'Поке'},{slug:'retail',name:'Ритейл'},
+  {slug:'salads',name:'Салаты'},{slug:'sandwiches',name:'Сэндвичи'},
+  {slug:'seafood',name:'Морепродукты'},{slug:'smoothies',name:'Смузи'},
+  {slug:'soul-food',name:'Соул-фуд'},{slug:'soup',name:'Супы'},
+  {slug:'specialty',name:'Особое'},{slug:'street-food',name:'Уличная еда'},
+  {slug:'sushi',name:'Суши'},{slug:'sweets',name:'Сладости'},
+  {slug:'taiwanese',name:'Тайваньская'},{slug:'thai',name:'Тайская'},
+  {slug:'vegan',name:'Веган'},{slug:'vietnamese',name:'Вьетнамская'},
+  {slug:'wings',name:'Крылья'},
+];
+
+async function loadGenCatalogs(){
+  try{
+    const q=query(collection(db,'generalCatalogs'),orderBy('order','asc'));
+    const snap=await getDocs(q);
+    if(snap.empty){
+      allGenCatalogs=GC_DEFAULTS.map((c,i)=>({id:c.slug,...c,order:i,active:true,_isDefault:true}));
+    }else{
+      allGenCatalogs=snap.docs.map(d=>({id:d.id,...d.data()}));
+    }
+    if(document.getElementById('page-gen-catalogs')?.classList.contains('active'))renderGenCatalogsPage();
+  }catch(e){
+    console.error('GenCatalogs:',e);
+    allGenCatalogs=GC_DEFAULTS.map((c,i)=>({id:c.slug,...c,order:i,active:true,_isDefault:true}));
+  }
+}
+
+function renderGenCatalogsPage(){
+  const grid=document.getElementById('gen-catalogs-grid');
+  if(!grid)return;
+  const active=allGenCatalogs.filter(c=>c.active!==false).length;
+  const hidden=allGenCatalogs.filter(c=>c.active===false).length;
+  set('gc-kv-active',active);set('gc-kv-hidden',hidden);set('gc-kv-total',allGenCatalogs.length);
+  if(!allGenCatalogs.length){
+    grid.innerHTML=`<div class="er" style="grid-column:1/-1"><div class="er-ico">📂</div>Нет категорий. Нажмите «Инициализировать все»</div>`;
+    return;
+  }
+  grid.innerHTML=allGenCatalogs.map(c=>{
+    const isActive=c.active!==false;
+    const statusColor=isActive?'var(--green)':'var(--text3)';
+    const statusBg=isActive?'var(--greend)':'var(--muted2)';
+    const statusLabel=isActive?'Активна':'Скрыта';
+    const isDefault=!!c._isDefault;
+    return `<div class="gc-card${isActive?'':' gc-card-hidden'}">
+      <div class="gc-card-img">
+        <img src="storage/general-catalogs/${escHtmlAdm(c.slug)}.png" alt="${escHtmlAdm(c.name||c.slug)}"
+          style="width:100%;height:100%;object-fit:cover;display:block"
+          onerror="this.style.display='none';this.parentElement.classList.add('gc-img-err')"/>
+        <div class="gc-card-status" style="color:${statusColor};background:${statusBg};border-color:${statusColor}">
+          <div style="width:4px;height:4px;border-radius:50%;background:currentColor;flex-shrink:0"></div>${statusLabel}
+        </div>
+      </div>
+      <div class="gc-card-body">
+        <div class="gc-card-name" title="${escHtmlAdm(c.name||c.slug)}">${escHtmlAdm(c.name||c.slug)}</div>
+        <div class="gc-card-slug">${escHtmlAdm(c.slug)}</div>
+        <div class="gc-card-foot">
+          <button class="btn btn-secondary btn-sm" onclick="openGcModal('${escHtmlAdm(c.id||c.slug)}')">✏️ Изменить</button>
+          <button class="btn btn-${isActive?'danger':'success'} btn-sm" onclick="toggleGc('${escHtmlAdm(c.id||c.slug)}',${!isActive})">${isActive?'Скрыть':'Показать'}</button>
+        </div>
+        ${isDefault?`<div style="font-size:.5rem;color:var(--yellow);margin-top:6px">⚠ Не сохранено в Firestore</div>`:''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+window.openGcModal=function(id){
+  const c=allGenCatalogs.find(x=>(x.id||x.slug)===id);
+  if(!c){toast('Не найдено','warn');return;}
+  document.getElementById('gc-modal-title').textContent='Редактировать категорию';
+  document.getElementById('gc-modal-body').innerHTML=`
+    <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px">
+      <img src="storage/general-catalogs/${escHtmlAdm(c.slug)}.png" alt=""
+        style="width:72px;height:72px;border-radius:12px;object-fit:cover;border:1px solid var(--b);background:var(--s2)"
+        onerror="this.style.display='none'"/>
+      <div>
+        <div style="font-family:var(--fm);font-size:.66rem;color:var(--text3);margin-bottom:3px">${escHtmlAdm(c.slug)}.png</div>
+        <div style="font-size:.62rem;color:var(--text3)">Иконка: storage/general-catalogs/</div>
+      </div>
+    </div>
+    <div class="mf"><label class="ml">Отображаемое название *</label>
+      <input class="mi" id="gc-edit-name" value="${escHtmlAdm(c.name||c.slug)}" placeholder="Например: Суши"/>
+    </div>
+    <div class="mf"><label class="ml">Порядок отображения</label>
+      <input class="mi" type="number" id="gc-edit-order" value="${c.order??0}" min="0"/>
+    </div>
+    <div class="mf" style="display:flex;align-items:center;gap:10px;padding:8px 0">
+      <input type="checkbox" id="gc-edit-active" style="width:16px;height:16px;accent-color:var(--green);cursor:pointer" ${c.active!==false?'checked':''}>
+      <label for="gc-edit-active" style="font-size:.72rem;color:var(--text2);cursor:pointer">Активна (показывается на главной)</label>
+    </div>
+    <input type="hidden" id="gc-edit-slug" value="${escHtmlAdm(c.slug)}"/>
+  `;
+  document.getElementById('gc-modal-foot').innerHTML=`
+    <button class="btn btn-secondary" onclick="closeMo('gc-modal')">Отмена</button>
+    <button class="btn btn-primary" onclick="saveGc('${escHtmlAdm(c.id||c.slug)}')">Сохранить</button>
+  `;
+  openMo('gc-modal');
+};
+
+window.saveGc=async function(id){
+  const name=document.getElementById('gc-edit-name')?.value.trim();
+  const slug=document.getElementById('gc-edit-slug')?.value.trim();
+  if(!name){toast('Введите название','warn');return;}
+  const data={
+    slug,name,
+    order:parseInt(document.getElementById('gc-edit-order')?.value||'0'),
+    active:document.getElementById('gc-edit-active')?.checked??true,
+    updatedAt:serverTimestamp(),
+  };
+  try{
+    const existing=allGenCatalogs.find(x=>(x.id||x.slug)===id&&!x._isDefault);
+    if(existing){
+      await updateDoc(doc(db,'generalCatalogs',id),data);
+    }else{
+      data.createdAt=serverTimestamp();
+      await setDoc(doc(db,'generalCatalogs',slug),data);
+    }
+    toast('Сохранено ✓','ok');closeMo('gc-modal');
+    await loadGenCatalogs();renderGenCatalogsPage();
+  }catch(e){toast('Ошибка: '+e.message,'err');}
+};
+
+window.toggleGc=async function(id,val){
+  try{
+    const existing=allGenCatalogs.find(x=>(x.id||x.slug)===id&&!x._isDefault);
+    if(existing){
+      await updateDoc(doc(db,'generalCatalogs',id),{active:val,updatedAt:serverTimestamp()});
+    }else{
+      // Нужно создать документ — инициализируем из defaults
+      const def=GC_DEFAULTS.find(x=>x.slug===id);
+      if(!def){toast('Не найдено','warn');return;}
+      const idx=GC_DEFAULTS.findIndex(x=>x.slug===id);
+      await setDoc(doc(db,'generalCatalogs',id),{
+        slug:def.slug,name:def.name,order:idx,active:val,
+        createdAt:serverTimestamp(),updatedAt:serverTimestamp(),
+      });
+    }
+    toast(val?'Активирована':'Скрыта','ok');
+    await loadGenCatalogs();renderGenCatalogsPage();
+  }catch(e){toast('Ошибка: '+e.message,'err');}
+};
+
+window.initGenCatalogs=async function(){
+  if(!confirm('Создать все 51 категорию в Firestore? Уже существующие будут пропущены.'))return;
+  toast('Инициализация…','info');
+  let created=0,skipped=0;
+  try{
+    const snap=await getDocs(collection(db,'generalCatalogs'));
+    const existing=new Set(snap.docs.map(d=>d.id));
+    const batch=[];
+    GC_DEFAULTS.forEach((c,i)=>{
+      if(existing.has(c.slug)){skipped++;return;}
+      batch.push(setDoc(doc(db,'generalCatalogs',c.slug),{
+        slug:c.slug,name:c.name,order:i,active:true,
+        createdAt:serverTimestamp(),updatedAt:serverTimestamp(),
+      }));
+      created++;
+    });
+    await Promise.all(batch);
+    toast(`✓ Создано: ${created}, пропущено: ${skipped}`,'ok');
+    await loadGenCatalogs();renderGenCatalogsPage();
+  }catch(e){toast('Ошибка: '+e.message,'err');}
 };
 
 window.doLogout=async function(){

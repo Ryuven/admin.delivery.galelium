@@ -11,6 +11,7 @@ let allOrders=[],allCouriers=[],allClients=[],allProducts=[],allStaff=[];
 let allGenCatalogs=[];
 let allNews=[],newsFilt='all',editingNewsId=null;
 let allVacancies=[],hrFilt='all',editingVacId=null;
+let allPartnerApps=[],partnerFilt='all';
 let liveOrders=[];
 let ordFilt='all',curFilt='all',tktFilt='all',verifFilt='all';
 let assignOid=null;
@@ -97,7 +98,7 @@ function startListeners(){
 
 /* ── LOAD ALL ── */
 async function loadAll(){
-  await Promise.all([loadOrders(),loadClients(),loadProducts(),loadStaff(),loadNewsAdmin(),loadVacancies(),loadStores(),loadGenCatalogs()]);
+  await Promise.all([loadOrders(),loadClients(),loadProducts(),loadStaff(),loadNewsAdmin(),loadVacancies(),loadStores(),loadGenCatalogs(),loadPartnerApps()]);
   renderKPI();
   renderAnalytics();
   renderTickets();
@@ -1446,7 +1447,7 @@ window.goPage=function(page){
   document.querySelectorAll('.ni').forEach(n=>n.classList.remove('active'));
   document.getElementById('page-'+page)?.classList.add('active');
   document.querySelector(`.ni[data-page="${page}"]`)?.classList.add('active');
-  const T={overview:'Обзор',orders:'Заказы',couriers:'Курьеры',clients:'Клиенты',support:'Поддержка',catalog:'Каталог',stores:'Магазины','gen-catalogs':'Общий каталог',news:'Новости',analytics:'Аналитика',staff:'Сотрудники',settings:'Настройки',hr:'HR / Вакансии',ads:'Реклама'};
+  const T={overview:'Обзор',orders:'Заказы',couriers:'Курьеры',clients:'Клиенты',support:'Поддержка',catalog:'Каталог',stores:'Магазины','gen-catalogs':'Общий каталог',news:'Новости',analytics:'Аналитика',staff:'Сотрудники',settings:'Настройки',hr:'HR / Вакансии',ads:'Реклама',partners:'Партнерство'};
   const el=document.getElementById('tb-title');if(el)el.textContent=T[page]||page;
   if(page==='couriers')renderCouriersPage();
   if(page==='support'){renderTickets();}
@@ -1458,6 +1459,7 @@ window.goPage=function(page){
   if(page==='stores'){renderStoresPage();}
   if(page==='ads'){renderAdsPage();}
   if(page==='gen-catalogs'){renderGenCatalogsPage();}
+  if(page==='partners'){renderPartnerPage();}
   closeSB();
   document.getElementById('pages')?.scrollTo(0,0);
 };
@@ -1685,6 +1687,106 @@ window.initGenCatalogs=async function(){
     toast(`✓ Создано: ${created}, пропущено: ${skipped}`,'ok');
     await loadGenCatalogs();renderGenCatalogsPage();
   }catch(e){toast('Ошибка: '+e.message,'err');}
+};
+
+/* ════════════════════════════════════════════════════
+   PARTNER APPLICATIONS MODULE
+════════════════════════════════════════════════════ */
+
+async function loadPartnerApps(){
+  try{
+    const q=query(collection(db,'partnerApplications'),orderBy('createdAt','desc'));
+    const snap=await getDocs(q);
+    allPartnerApps=snap.docs.map(d=>({id:d.id,...d.data()}));
+    updatePartnerBadge();
+    if(document.getElementById('page-partners')?.classList.contains('active'))renderPartnerPage();
+  }catch(e){console.error('PartnerApps:',e);}
+}
+
+function updatePartnerBadge(){
+  const n=allPartnerApps.filter(a=>a.status==='new').length;
+  const b=document.getElementById('sb-partner-b');
+  if(b){b.textContent=n;b.style.display=n>0?'':'none';}
+}
+
+function renderPartnerPage(){
+  const body=document.getElementById('partner-ob');if(!body)return;
+  const total=allPartnerApps.length;
+  const newC=allPartnerApps.filter(a=>a.status==='new').length;
+  const contacted=allPartnerApps.filter(a=>a.status==='contacted').length;
+  set('partner-kv-new',newC);
+  set('partner-kv-contacted',contacted);
+  set('partner-kv-total',total);
+  const list=partnerFilt==='all'?allPartnerApps:allPartnerApps.filter(a=>a.status===partnerFilt);
+  if(!list.length){
+    body.innerHTML=`<tr><td colspan="8"><div class="er"><div class="er-ico">🤝</div>${partnerFilt==='new'?'Нет новых заявок':'Заявок не найдено'}</div></td></tr>`;
+    return;
+  }
+  body.innerHTML=list.map(a=>{
+    const raw=a.createdAt;
+    const date=raw?.toDate?raw.toDate().toLocaleDateString('ru-RU',{day:'2-digit',month:'short',year:'2-digit',hour:'2-digit',minute:'2-digit'}):raw?new Date(raw).toLocaleDateString('ru-RU',{day:'2-digit',month:'short',year:'2-digit',hour:'2-digit',minute:'2-digit'}):'—';
+    const isNew=a.status==='new';
+    const isContacted=a.status==='contacted';
+    const sc=isNew?'var(--yellow)':isContacted?'var(--green)':'var(--text3)';
+    const sb=isNew?'var(--yellowd)':isContacted?'var(--greend)':'var(--muted2)';
+    const sbr=isNew?'rgba(245,158,11,.25)':isContacted?'rgba(34,197,94,.2)':'var(--b)';
+    const sl=isNew?'Новая':isContacted?'Связались':'Архив';
+    return `<tr>
+      <td style="min-width:140px">
+        <div style="font-weight:700;color:var(--text);font-size:.76rem">${escHtmlAdm(a.company||'—')}</div>
+        ${a.restaurant?`<div style="font-size:.6rem;color:var(--text3);margin-top:2px">🍽 ${escHtmlAdm(a.restaurant)}</div>`:''}
+      </td>
+      <td style="font-size:.7rem;color:var(--text2);max-width:160px"><div style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${escHtmlAdm(a.address||'—')}</div></td>
+      <td style="font-family:var(--fm);font-size:.68rem;color:var(--acc2);white-space:nowrap">${escHtmlAdm(a.phone||'—')}</td>
+      <td style="font-family:var(--fm);font-size:.64rem;color:var(--text3);white-space:nowrap">${a.phone2?escHtmlAdm(a.phone2):'—'}</td>
+      <td style="max-width:200px;font-size:.68rem;color:var(--text2)">${a.comment?`<span style="display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;word-break:break-word">${escHtmlAdm(a.comment)}</span>`:'<span style="color:var(--text3)">—</span>'}</td>
+      <td><span class="ostatus" style="color:${sc};background:${sb};border-color:${sbr}"><span class="osdot"></span>${sl}</span></td>
+      <td class="mono" style="font-size:.58rem;white-space:nowrap">${date}</td>
+      <td>
+        <div class="oact">
+          ${isNew?`<button class="btn btn-success btn-sm" onclick="markPartner('${a.id}','contacted')">✓ Связались</button>`:''}
+          ${!isNew&&a.status!=='archived'?'':isNew?`<button class="btn btn-secondary btn-sm" onclick="markPartner('${a.id}','archived')">Архив</button>`:''}
+          ${a.status==='contacted'?`<button class="btn btn-secondary btn-sm" onclick="markPartner('${a.id}','archived')">Архив</button>`:''}
+          <button class="btn btn-danger btn-sm" onclick="deletePartnerApp('${a.id}')">✕</button>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+window.fPartners=function(filter,btn){
+  partnerFilt=filter;
+  document.querySelectorAll('#page-partners .tab').forEach(t=>t.classList.remove('active'));
+  if(btn)btn.classList.add('active');
+  renderPartnerPage();
+};
+
+window.markPartner=async function(id,status){
+  try{
+    await updateDoc(doc(db,'partnerApplications',id),{status,updatedAt:serverTimestamp()});
+    toast(status==='contacted'?'Отмечено: связались ✓':'Перемещено в архив','ok');
+    await loadPartnerApps();
+  }catch(e){toast('Ошибка: '+e.message,'err');}
+};
+
+window.deletePartnerApp=async function(id){
+  const a=allPartnerApps.find(x=>x.id===id);
+  if(!confirm('Удалить заявку от «'+(a?.company||id)+'»?'))return;
+  try{
+    await deleteDoc(doc(db,'partnerApplications',id));
+    toast('Заявка удалена','ok');
+    await loadPartnerApps();
+  }catch(e){toast('Ошибка удаления: '+e.message,'err');}
+};
+
+/* Вызывается из home.html — сохраняет заявку в Firestore */
+window._submitPartnerApp=async function(data){
+  await addDoc(collection(db,'partnerApplications'),{
+    ...data,
+    status:'new',
+    createdAt:serverTimestamp(),
+  });
+  await loadPartnerApps();
 };
 
 window.doLogout=async function(){

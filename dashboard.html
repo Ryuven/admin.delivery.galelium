@@ -480,6 +480,7 @@ textarea.mi{resize:vertical;min-height:76px}
     <button class="ni" data-page="news" onclick="goPage('news')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 22h16a2 2 0 002-2V4a2 2 0 00-2-2H8L2 8v12a2 2 0 002 2z"/><polyline points="10 2 10 8 2 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="13" y2="17"/></svg>Новости<span class="ni-badge info" id="sb-news-b" style="display:none">0</span></button>
         <button class="ni" data-page="analytics" onclick="goPage('analytics')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>Аналитика</button>
         <button class="ni" data-page="hr" onclick="goPage('hr')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/><path d="M2 13a20 20 0 0020 0"/></svg>HR / Вакансии<span class="ni-badge info" id="sb-hr-b" style="display:none">0</span></button>
+        <button class="ni" data-page="partners" onclick="goPage('partners')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>Партнерство<span class="ni-badge" id="sb-partner-b" style="display:none;background:var(--yellow)">0</span></button>
     <div class="nav-grp">Система</div>
     <button class="ni" data-page="staff" onclick="goPage('staff')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Сотрудники</button>
     <button class="ni" data-page="settings" onclick="goPage('settings')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>Настройки</button>
@@ -807,6 +808,49 @@ textarea.mi{resize:vertical;min-height:76px}
           </div>
         </div>
 
+      </div>
+    </div>
+
+    <!-- PARTNERS -->
+    <div class="page" id="page-partners">
+      <div class="sh">
+        <div><div class="sh-tag">Заявки</div><div class="sh-title">Партнерство</div></div>
+        <div class="sh-actions">
+          <div class="tabs">
+            <button class="tab active" onclick="fPartners('all',this)">Все</button>
+            <button class="tab" onclick="fPartners('new',this)">🔔 Новые</button>
+            <button class="tab" onclick="fPartners('contacted',this)">✓ Связались</button>
+            <button class="tab" onclick="fPartners('archived',this)">Архив</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="kpi-grid" style="grid-template-columns:repeat(3,1fr);margin-bottom:14px">
+        <div class="kpi yellow"><div class="kpi-label">Новые заявки</div><div class="kpi-val" id="partner-kv-new">—</div><div class="kpi-sub">Ждут обработки</div><div class="kpi-ico">📩</div></div>
+        <div class="kpi green"><div class="kpi-label">Связались</div><div class="kpi-val" id="partner-kv-contacted">—</div><div class="kpi-sub">Обработанных</div><div class="kpi-ico">✅</div></div>
+        <div class="kpi acc"><div class="kpi-label">Всего</div><div class="kpi-val" id="partner-kv-total">—</div><div class="kpi-sub">Заявок получено</div><div class="kpi-ico">🤝</div></div>
+      </div>
+
+      <div class="panel">
+        <div style="overflow-x:auto">
+          <table class="ot">
+            <thead>
+              <tr>
+                <th>Компания / Ресторан</th>
+                <th>Адрес</th>
+                <th>Телефон</th>
+                <th>Доп. телефон</th>
+                <th>Комментарий</th>
+                <th>Статус</th>
+                <th>Дата</th>
+                <th>Действия</th>
+              </tr>
+            </thead>
+            <tbody id="partner-ob">
+              <tr><td colspan="8"><div class="pload"><div class="spin"></div></div></td></tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
 

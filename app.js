@@ -1344,7 +1344,7 @@ function renderStoresPage(){
           ${s.description?`<div style="font-size:.66rem;color:var(--text3);line-height:1.4;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${escHtmlAdm(s.description)}</div>`:''}
         </div>
       </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--b)">
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1px;background:var(--b)">
         <div style="background:var(--s2);padding:8px 12px;display:flex;flex-direction:column;gap:2px">
           <div style="font-size:.42rem;letter-spacing:.15em;text-transform:uppercase;color:var(--text3)">Статус</div>
           <div style="display:flex;align-items:center;gap:5px">
@@ -1356,10 +1356,15 @@ function renderStoresPage(){
           <div style="font-size:.42rem;letter-spacing:.15em;text-transform:uppercase;color:var(--text3)">Порядок</div>
           <div style="font-family:var(--fm);font-size:.78rem;font-weight:700;color:var(--text)">#${s.order??'—'}</div>
         </div>
+        <div style="background:var(--s2);padding:8px 12px;display:flex;flex-direction:column;gap:2px">
+          <div style="font-size:.42rem;letter-spacing:.15em;text-transform:uppercase;color:var(--text3)">Доступ</div>
+          <span style="font-size:.66rem;font-weight:600;color:${s.restricted?'var(--yellow)':'var(--green)'}">${s.restricted?'🚫 Закрыт':'✅ Открыт'}</span>
+        </div>
       </div>
       <div style="padding:9px 12px;display:flex;gap:6px;flex-wrap:wrap">
         <button class="btn btn-secondary btn-sm" onclick="openStoreModal('${s.id}')">Изменить</button>
         <button class="btn btn-${s.active?'danger':'success'} btn-sm" onclick="toggleStore('${s.id}',${!s.active})">${s.active?'Скрыть':'Показать'}</button>
+        <button class="btn btn-${s.restricted?'success':'warning'} btn-sm" onclick="toggleStoreRestrict('${s.id}',${!s.restricted})">${s.restricted?'✅ Снять':'🚫 Ограничить'}</button>
         <button class="btn btn-danger btn-sm" style="margin-left:auto" onclick="deleteStore('${s.id}')">Удалить</button>
       </div>
     </div>`;
@@ -1381,6 +1386,10 @@ window.openStoreModal=function(id){
       <input type="checkbox" id="st-active" style="width:16px;height:16px;accent-color:var(--green);cursor:pointer" ${s?.active!==false?'checked':''}>
       <label for="st-active" style="font-size:.72rem;color:var(--text2);cursor:pointer">Активен (отображается в приложении)</label>
     </div>
+    <div class="mf" style="display:flex;align-items:center;gap:10px;padding:10px 0;border-top:1px solid var(--b)">
+      <input type="checkbox" id="st-restricted" style="width:16px;height:16px;accent-color:var(--yellow);cursor:pointer" ${s?.restricted?'checked':''}>
+      <label for="st-restricted" style="font-size:.72rem;color:var(--text2);cursor:pointer">🚫 Ограничен — в приложении поверх карточки будет оверлей «Недоступен»</label>
+    </div>
     ${id?`<input type="hidden" id="st-edit-id" value="${id}"/>`:''}
   `;
   document.getElementById('m-order-foot').innerHTML=`
@@ -1400,6 +1409,7 @@ window.saveNewStore=async function(){
     badge:document.getElementById('st-badge')?.value.trim()||'',
     order:parseInt(document.getElementById('st-order')?.value||'0'),
     active:document.getElementById('st-active')?.checked??true,
+    restricted:document.getElementById('st-restricted')?.checked??false,
     createdAt:serverTimestamp(),
     updatedAt:serverTimestamp(),
   };
@@ -1417,6 +1427,7 @@ window.saveEditStore=async function(id){
     badge:document.getElementById('st-badge')?.value.trim()||'',
     order:parseInt(document.getElementById('st-order')?.value||'0'),
     active:document.getElementById('st-active')?.checked??true,
+    restricted:document.getElementById('st-restricted')?.checked??false,
     updatedAt:serverTimestamp(),
   };
   try{
@@ -1429,6 +1440,14 @@ window.toggleStore=async function(id,val){
   try{
     await updateDoc(doc(db,'stores',id),{active:val,updatedAt:serverTimestamp()});
     toast(val?'Магазин активирован':'Магазин скрыт','ok');
+    await loadStores();renderStoresPage();
+  }catch{toast('Ошибка','err');}
+};
+
+window.toggleStoreRestrict=async function(id,val){
+  try{
+    await updateDoc(doc(db,'stores',id),{restricted:val,updatedAt:serverTimestamp()});
+    toast(val?'🚫 Магазин ограничен — в приложении появится оверлей':'✅ Ограничение снято',val?'warn':'ok');
     await loadStores();renderStoresPage();
   }catch{toast('Ошибка','err');}
 };

@@ -1340,6 +1340,7 @@ function renderStoresPage(){
           <div style="display:flex;align-items:center;gap:7px;margin-bottom:3px;flex-wrap:wrap">
             <div style="font-size:.82rem;font-weight:700;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${escHtmlAdm(s.name||'—')}</div>
             ${s.badge?`<span style="font-size:.48rem;font-weight:700;padding:2px 6px;border-radius:99px;background:var(--accd);color:var(--acc2);border:1px solid var(--accg);letter-spacing:.04em">${escHtmlAdm(s.badge)}</span>`:''}
+            ${s.menuUrl?`<span style="font-size:.48rem;font-weight:700;padding:2px 6px;border-radius:99px;background:rgba(99,102,241,.12);color:#818cf8;border:1px solid rgba(99,102,241,.25);letter-spacing:.04em">📄 JSON</span>`:''}
           </div>
           ${s.description?`<div style="font-size:.66rem;color:var(--text3);line-height:1.4;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${escHtmlAdm(s.description)}</div>`:''}
         </div>
@@ -1378,6 +1379,13 @@ window.openStoreModal=function(id){
     <div class="mf"><label class="ml">Название (ID) *</label><input class="mi" id="st-name" placeholder="bi1" value="${escHtmlAdm(s?.name||'')}"/></div>
     <div class="mf"><label class="ml">Описание</label><input class="mi" id="st-desc" placeholder="Тезу осон…" value="${escHtmlAdm(s?.description||'')}"/></div>
     <div class="mf"><label class="ml">URL изображения</label><input class="mi" id="st-img" placeholder="https://…" value="${escHtmlAdm(s?.imageUrl||'')}"/></div>
+    <div class="mf">
+      <label class="ml">📄 URL JSON-каталога <span style="font-size:.58rem;color:var(--text3);font-weight:400">(необязательно — ссылка на .json файл ассортимента)</span></label>
+      <input class="mi" id="st-menu-url" placeholder="https://partner.com/menu.json" value="${escHtmlAdm(s?.menuUrl||'')}"/>
+      <div style="font-size:.6rem;color:var(--text3);margin-top:5px;line-height:1.6">
+        Формат JSON: <code style="background:var(--s2);padding:1px 5px;border-radius:4px">{"categories":[{"id":"c1","name":"Закуски"}],"products":[{"id":"p1","name":"Омлет","price":25,"categoryId":"c1","imageUrl":"https://…","available":true}]}</code>
+      </div>
+    </div>
     <div class="mr">
       <div class="mf"><label class="ml">Бейдж</label><input class="mi" id="st-badge" placeholder="Новый, Топ…" value="${escHtmlAdm(s?.badge||'')}"/></div>
       <div class="mf"><label class="ml">Порядок</label><input class="mi" type="number" id="st-order" value="${s?.order??0}"/></div>
@@ -1406,11 +1414,7 @@ window.saveNewStore=async function(){
     name,
     description:document.getElementById('st-desc')?.value.trim()||'',
     imageUrl:document.getElementById('st-img')?.value.trim()||'',
-    badge:document.getElementById('st-badge')?.value.trim()||'',
-    order:parseInt(document.getElementById('st-order')?.value||'0'),
-    active:document.getElementById('st-active')?.checked??true,
-    restricted:document.getElementById('st-restricted')?.checked??false,
-    createdAt:serverTimestamp(),
+    menuUrl:document.getElementById('st-menu-url')?.value.trim()||'',
     updatedAt:serverTimestamp(),
   };
   try{
@@ -1424,6 +1428,7 @@ window.saveEditStore=async function(id){
     name:document.getElementById('st-name')?.value.trim()||'',
     description:document.getElementById('st-desc')?.value.trim()||'',
     imageUrl:document.getElementById('st-img')?.value.trim()||'',
+    menuUrl:document.getElementById('st-menu-url')?.value.trim()||'',
     badge:document.getElementById('st-badge')?.value.trim()||'',
     order:parseInt(document.getElementById('st-order')?.value||'0'),
     active:document.getElementById('st-active')?.checked??true,

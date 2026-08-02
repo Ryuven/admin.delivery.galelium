@@ -1316,7 +1316,8 @@ async function loadStores(){
     const q=query(collection(db,'stores'),orderBy('order','asc'));
     const snap=await getDocs(q);
     allStores=snap.docs.map(d=>({id:d.id,...d.data()}));
-    if(document.getElementById('page-stores').classList.contains('active'))renderStoresPage();
+    if(document.getElementById('page-stores')?.classList.contains('active'))renderStoresPage();
+    renderHomeStores();
   }catch(e){console.error('Stores:',e);}
 }
 
@@ -1371,6 +1372,29 @@ function renderStoresPage(){
     </div>`;
   }).join('');
 }
+/* ─── HOME PAGE: клиентские карточки магазинов ──────────────── */
+function renderHomeStores(){
+  const g=document.getElementById('stores-grid');if(!g)return;
+  // Не запускать в дашборде (там есть #page-stores)
+  if(document.getElementById('page-stores'))return;
+  const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  const visible=allStores.filter(s=>s.active!==false);
+  if(!visible.length){g.innerHTML='';return;}
+  g.innerHTML=visible.map(s=>{
+    const img=s.imageUrl
+      ?`<div class="store-card-img-wrap"><img class="store-card-img" src="${esc(s.imageUrl)}" alt="" loading="lazy" onerror="this.style.display='none'"></div>`
+      :`<div class="store-card-placeholder"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" width="36" height="36"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><span>Нет фото</span></div>`;
+    const unavOv=s.restricted?`<div class="store-card-unav"><span>Недоступно</span></div>`:'';
+    const click=s.restricted?'':`onclick="window.openStoreById&&window.openStoreById('${esc(s.id)}')"`;
+    return `<div class="store-card${s.restricted?' store-card-unav-dim':''}" ${click}>
+      ${img}
+      ${s.name?`<div class="pm-badge-store">${esc(s.name)}</div>`:''}
+      ${s.badge?`<div class="pm-badge-store" style="top:8px;bottom:auto;background:var(--accd);color:var(--acc2);border:1px solid var(--accg)">${esc(s.badge)}</div>`:''}
+      ${unavOv}
+    </div>`;
+  }).join('');
+}
+
 
 window.openStoreModal=function(id){
   const s=id?allStores.find(x=>x.id===id):null;
@@ -1415,6 +1439,11 @@ window.saveNewStore=async function(){
     description:document.getElementById('st-desc')?.value.trim()||'',
     imageUrl:document.getElementById('st-img')?.value.trim()||'',
     menuUrl:document.getElementById('st-menu-url')?.value.trim()||'',
+    badge:document.getElementById('st-badge')?.value.trim()||'',
+    order:parseInt(document.getElementById('st-order')?.value||'0'),
+    active:document.getElementById('st-active')?.checked??true,
+    restricted:document.getElementById('st-restricted')?.checked??false,
+    createdAt:serverTimestamp(),
     updatedAt:serverTimestamp(),
   };
   try{

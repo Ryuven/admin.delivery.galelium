@@ -1861,119 +1861,126 @@ window.toast=function(msg,type=''){
 
 // ════════════════════════════════════════════════════════════════
 // DELIVERY ZONES (Адреса доставки)
-// Firestore: delivery_zones/{id} → {name, address, available, note, createdAt, updatedAt}
+// Firestore: cities/{id} → {name, region, order, active}
 // ════════════════════════════════════════════════════════════════
-let allZones = [];
-let _azFilter = 'all';
-let _azEditId = null;
+let allCities  = [];
+let _cityFilter = 'all';
+let _cityEditId = null;
 
-async function loadAZones() {
+async function loadAZones() {  // вызывается из goPage('addresses')
   document.getElementById('az-tbody').innerHTML = '<tr><td colspan="6"><div class="pload"><div class="spin"></div></div></td></tr>';
   try {
-    const snap = await getDocs(query(collection(db, 'delivery_zones'), orderBy('createdAt', 'desc')));
-    allZones = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-    renderAZones();
-    // Бейдж в сайдбаре — показываем если есть недоступные зоны
-    const unavailCount = allZones.filter(z => z.available === false).length;
+    const snap = await getDocs(query(collection(db, 'cities'), orderBy('order')));
+    allCities = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    renderCities();
+    // Бейдж — показываем если есть неактивные города
+    const inactiveCount = allCities.filter(c => c.active === false).length;
     const sb = document.getElementById('sb-az-b');
-    if (sb) { sb.style.display = unavailCount ? '' : 'none'; sb.textContent = unavailCount; }
+    if (sb) { sb.style.display = inactiveCount ? '' : 'none'; sb.textContent = inactiveCount; }
   } catch(e) {
     document.getElementById('az-tbody').innerHTML = `<tr><td colspan="6" style="color:var(--red);text-align:center;padding:24px;font-size:.76rem">Ошибка загрузки: ${e.message}</td></tr>`;
   }
 }
 
-function renderAZones() {
-  const avail   = allZones.filter(z => z.available !== false).length;
-  const unavail = allZones.filter(z => z.available === false).length;
-  set('az-kv-total',   allZones.length || '0');
-  set('az-kv-avail',   avail);
-  set('az-kv-unavail', unavail);
+function renderCities() {
+  const active   = allCities.filter(c => c.active !== false).length;
+  const inactive = allCities.filter(c => c.active === false).length;
+  set('az-kv-total',   allCities.length || '0');
+  set('az-kv-avail',   active);
+  set('az-kv-unavail', inactive);
 
-  const list = _azFilter === 'available'   ? allZones.filter(z => z.available !== false)
-             : _azFilter === 'unavailable' ? allZones.filter(z => z.available === false)
-             : allZones;
+  const list = _cityFilter === 'active'   ? allCities.filter(c => c.active !== false)
+             : _cityFilter === 'inactive' ? allCities.filter(c => c.active === false)
+             : allCities;
 
   if (!list.length) {
     document.getElementById('az-tbody').innerHTML = `<tr><td colspan="6" style="text-align:center;padding:28px;color:var(--muted2);font-size:.76rem">
       <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" style="opacity:.25;display:block;margin:0 auto 8px"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
-      Зон нет
+      Городов нет
     </td></tr>`;
     return;
   }
 
-  document.getElementById('az-tbody').innerHTML = list.map(z => {
-    const ok   = z.available !== false;
-    const col  = ok ? 'var(--green)' : 'var(--red)';
-    const lbl  = ok ? 'Доступна' : 'Недоступна';
-    const date = z.createdAt?.toDate ? z.createdAt.toDate().toLocaleDateString('ru-RU') : '—';
+  document.getElementById('az-tbody').innerHTML = list.map(c => {
+    const ok  = c.active !== false;
+    const col = ok ? 'var(--green)' : 'var(--red)';
+    const lbl = ok ? 'Активен' : 'Скоро';
     return `<tr>
-      <td style="font-weight:600;white-space:nowrap">${escHtmlAdm(z.name||'—')}</td>
-      <td style="max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--text2)">${escHtmlAdm(z.address||'—')}</td>
-      <td style="color:var(--muted2);font-size:.7rem;max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${escHtmlAdm(z.note||'—')}</td>
+      <td style="font-size:.68rem;color:var(--muted2);font-family:monospace;white-space:nowrap">${escHtmlAdm(c.id)}</td>
+      <td style="font-weight:600;white-space:nowrap">${escHtmlAdm(c.name||'—')}</td>
+      <td style="color:var(--text2);font-size:.72rem">${escHtmlAdm(c.region||'—')}</td>
+      <td style="text-align:center;color:var(--muted2);font-size:.76rem;font-weight:600">${c.order ?? '—'}</td>
       <td><span class="ostatus" style="color:${col};border-color:${col}30;background:${col}10;font-size:.52rem">${lbl}</span></td>
-      <td style="color:var(--muted2);font-size:.7rem;white-space:nowrap">${date}</td>
       <td>
         <div style="display:flex;gap:5px;align-items:center">
-          <button class="btn btn-secondary btn-sm" onclick="toggleAZone('${z.id}',${ok})" style="font-size:.6rem;padding:4px 9px">
+          <button class="btn btn-secondary btn-sm" onclick="toggleCity('${c.id}',${ok})" style="font-size:.6rem;padding:4px 9px">
             ${ok ? 'Отключить' : 'Включить'}
           </button>
-          <button class="btn btn-secondary btn-sm" onclick="editAZone('${z.id}')" style="font-size:.6rem;padding:4px 9px">✏️</button>
-          <button class="btn btn-sm" onclick="deleteAZone('${z.id}','${escHtmlAdm(z.name||'').replace(/'/g,"\\'")}') " style="font-size:.6rem;padding:4px 9px;background:rgba(239,68,68,.1);color:#ef4444;border:1px solid rgba(239,68,68,.25)">🗑</button>
+          <button class="btn btn-secondary btn-sm" onclick="openCityModal('${c.id}')" style="font-size:.6rem;padding:4px 9px">✏️</button>
+          <button class="btn btn-sm" onclick="deleteCity('${c.id}','${escHtmlAdm(c.name||'').replace(/'/g,"\\'")}') " style="font-size:.6rem;padding:4px 9px;background:rgba(239,68,68,.1);color:#ef4444;border:1px solid rgba(239,68,68,.25)">🗑</button>
         </div>
       </td>
     </tr>`;
   }).join('');
 }
 
-window.azFilter = function(f, btn) {
-  _azFilter = f;
+window.cityFilter = function(f, btn) {
+  _cityFilter = f;
   document.querySelectorAll('#az-tabs .tab').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
-  renderAZones();
+  renderCities();
 };
 
-window.openAZModal = function(id = null) {
-  _azEditId = id;
-  const z = id ? allZones.find(x => x.id === id) : null;
-  document.getElementById('az-modal-title').textContent = z ? 'Редактировать зону' : 'Новая зона доставки';
-  document.getElementById('az-name').value    = z?.name    || '';
-  document.getElementById('az-address').value = z?.address || '';
-  document.getElementById('az-note').value    = z?.note    || '';
-  document.getElementById('az-avail-tog').checked = z ? z.available !== false : true;
+window.openCityModal = function(id = null) {
+  _cityEditId = id;
+  const c = id ? allCities.find(x => x.id === id) : null;
+  document.getElementById('az-modal-title').textContent = c ? 'Редактировать город' : 'Новый город';
+  // ID поле — только при создании
+  const idField = document.getElementById('az-id-field');
+  const idInput = document.getElementById('az-id');
+  if (idField) idField.style.display = c ? 'none' : '';
+  if (idInput) { idInput.value = ''; idInput.disabled = !!c; }
+  document.getElementById('az-name').value   = c?.name   || '';
+  document.getElementById('az-region').value = c?.region || '';
+  document.getElementById('az-order').value  = c?.order  ?? (allCities.length + 1);
+  document.getElementById('az-avail-tog').checked = c ? c.active !== false : true;
   document.getElementById('az-modal').classList.add('open');
-  setTimeout(() => document.getElementById('az-name').focus(), 150);
+  setTimeout(() => document.getElementById(c ? 'az-name' : 'az-id').focus(), 150);
 };
 
-window.closeAZModal = function() {
+window.closeCityModal = function() {
   document.getElementById('az-modal').classList.remove('open');
-  _azEditId = null;
+  _cityEditId = null;
 };
 
-window.editAZone = function(id) { openAZModal(id); };
+window.saveCity = async function() {
+  const name   = document.getElementById('az-name').value.trim();
+  const region = document.getElementById('az-region').value.trim();
+  const order  = parseInt(document.getElementById('az-order').value) || 1;
+  const active = document.getElementById('az-avail-tog').checked;
+  const rawId  = document.getElementById('az-id')?.value.trim();
 
-window.saveAZone = async function() {
-  const name      = document.getElementById('az-name').value.trim();
-  const address   = document.getElementById('az-address').value.trim();
-  const note      = document.getElementById('az-note').value.trim();
-  const available = document.getElementById('az-avail-tog').checked;
+  if (!name) { toast('Введите название города', 'warn'); return; }
+  if (!_cityEditId && !rawId) { toast('Введите ID города (напр. dushanbe)', 'warn'); return; }
 
-  if (!name)    { toast('Введите название зоны', 'warn'); return; }
-  if (!address) { toast('Введите адрес или описание', 'warn'); return; }
+  // Валидация ID: только латиница, цифры, дефисы, подчёркивания
+  if (!_cityEditId && !/^[a-z0-9_-]+$/.test(rawId)) {
+    toast('ID может содержать только строчные буквы, цифры, - и _', 'warn'); return;
+  }
 
   const btn = document.getElementById('az-save-btn');
   btn.disabled = true; btn.textContent = 'Сохраняем…';
 
   try {
-    const data = { name, address, note, available, updatedAt: serverTimestamp() };
-    if (_azEditId) {
-      await updateDoc(doc(db, 'delivery_zones', _azEditId), data);
-      toast('Зона обновлена ✓', 'ok');
+    const data = { name, region, order, active };
+    if (_cityEditId) {
+      await updateDoc(doc(db, 'cities', _cityEditId), data);
+      toast('Город обновлён ✓', 'ok');
     } else {
-      data.createdAt = serverTimestamp();
-      await addDoc(collection(db, 'delivery_zones'), data);
-      toast('Зона добавлена ✓', 'ok');
+      await setDoc(doc(db, 'cities', rawId), data);
+      toast('Город добавлен ✓', 'ok');
     }
-    closeAZModal();
+    closeCityModal();
     await loadAZones();
   } catch(e) {
     toast('Ошибка: ' + e.message, 'err');
@@ -1982,22 +1989,19 @@ window.saveAZone = async function() {
   }
 };
 
-window.toggleAZone = async function(id, currentAvail) {
+window.toggleCity = async function(id, currentActive) {
   try {
-    await updateDoc(doc(db, 'delivery_zones', id), {
-      available: !currentAvail,
-      updatedAt: serverTimestamp(),
-    });
-    toast(currentAvail ? '🚫 Зона отключена' : '✅ Зона включена', 'ok');
+    await updateDoc(doc(db, 'cities', id), { active: !currentActive });
+    toast(currentActive ? '🔜 Город скрыт' : '✅ Город активирован', 'ok');
     await loadAZones();
   } catch(e) { toast('Ошибка: ' + e.message, 'err'); }
 };
 
-window.deleteAZone = async function(id, name) {
-  if (!confirm(`Удалить зону «${name}»?\nЭто действие необратимо.`)) return;
+window.deleteCity = async function(id, name) {
+  if (!confirm(`Удалить город «${name}»?\nЭто действие необратимо.`)) return;
   try {
-    await deleteDoc(doc(db, 'delivery_zones', id));
-    toast('Зона удалена', 'ok');
+    await deleteDoc(doc(db, 'cities', id));
+    toast('Город удалён', 'ok');
     await loadAZones();
   } catch(e) { toast('Ошибка: ' + e.message, 'err'); }
 };

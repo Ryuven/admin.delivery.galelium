@@ -1500,7 +1500,7 @@ window.goPage=function(page){
   document.querySelectorAll('.ni').forEach(n=>n.classList.remove('active'));
   document.getElementById('page-'+page)?.classList.add('active');
   document.querySelector(`.ni[data-page="${page}"]`)?.classList.add('active');
-  const T={overview:'Обзор',orders:'Заказы',couriers:'Курьеры',clients:'Клиенты',support:'Поддержка',catalog:'Каталог',stores:'Магазины','gen-catalogs':'Общий каталог',news:'Новости',analytics:'Аналитика',staff:'Сотрудники',settings:'Настройки',hr:'HR / Вакансии',ads:'Реклама',partners:'Партнерство'};
+  const T={overview:'Обзор',orders:'Заказы',couriers:'Курьеры',clients:'Клиенты',support:'Поддержка',catalog:'Каталог',stores:'Магазины',addresses:'Адреса доставки','gen-catalogs':'Общий каталог',news:'Новости',analytics:'Аналитика',staff:'Сотрудники',settings:'Настройки',hr:'HR / Вакансии',ads:'Реклама',partners:'Партнерство'};
   const el=document.getElementById('tb-title');if(el)el.textContent=T[page]||page;
   if(page==='couriers')renderCouriersPage();
   if(page==='support'){renderTickets();}
@@ -1513,6 +1513,7 @@ window.goPage=function(page){
   if(page==='ads'){renderAdsPage();}
   if(page==='gen-catalogs'){renderGenCatalogsPage();}
   if(page==='partners'){renderPartnerPage();}
+  if(page==='addresses'){loadAZones();}
   closeSB();
   document.getElementById('pages')?.scrollTo(0,0);
 };
@@ -1856,4 +1857,147 @@ window.toast=function(msg,type=''){
   el.innerHTML=`<div class="tdot"></div><span>${msg}</span>`;
   w.appendChild(el);
   setTimeout(()=>el.remove(),3500);
+};
+
+// ════════════════════════════════════════════════════════════════
+// DELIVERY ZONES (Адреса доставки)
+// Firestore: delivery_zones/{id} → {name, address, available, note, createdAt, updatedAt}
+// ════════════════════════════════════════════════════════════════
+let allZones = [];
+let _azFilter = 'all';
+let _azEditId = null;
+
+async function loadAZones() {
+  document.getElementById('az-tbody').innerHTML = '<tr><td colspan="6"><div class="pload"><div class="spin"></div></div></td></tr>';
+  try {
+    const snap = await getDocs(query(collection(db, 'delivery_zones'), orderBy('createdAt', 'desc')));
+    allZones = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    renderAZones();
+    // Бейдж в сайдбаре — показываем если есть недоступные зоны
+    const unavailCount = allZones.filter(z => z.available === false).length;
+    const sb = document.getElementById('sb-az-b');
+    if (sb) { sb.style.display = unavailCount ? '' : 'none'; sb.textContent = unavailCount; }
+  } catch(e) {
+    document.getElementById('az-tbody').innerHTML = `<tr><td colspan="6" style="color:var(--red);text-align:center;padding:24px;font-size:.76rem">Ошибка загрузки: ${e.message}</td></tr>`;
+  }
+}
+
+function renderAZones() {
+  const avail   = allZones.filter(z => z.available !== false).length;
+  const unavail = allZones.filter(z => z.available === false).length;
+  set('az-kv-total',   allZones.length || '0');
+  set('az-kv-avail',   avail);
+  set('az-kv-unavail', unavail);
+
+  const list = _azFilter === 'available'   ? allZones.filter(z => z.available !== false)
+             : _azFilter === 'unavailable' ? allZones.filter(z => z.available === false)
+             : allZones;
+
+  if (!list.length) {
+    document.getElementById('az-tbody').innerHTML = `<tr><td colspan="6" style="text-align:center;padding:28px;color:var(--muted2);font-size:.76rem">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" style="opacity:.25;display:block;margin:0 auto 8px"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+      Зон нет
+    </td></tr>`;
+    return;
+  }
+
+  document.getElementById('az-tbody').innerHTML = list.map(z => {
+    const ok   = z.available !== false;
+    const col  = ok ? 'var(--green)' : 'var(--red)';
+    const lbl  = ok ? 'Доступна' : 'Недоступна';
+    const date = z.createdAt?.toDate ? z.createdAt.toDate().toLocaleDateString('ru-RU') : '—';
+    return `<tr>
+      <td style="font-weight:600;white-space:nowrap">${escHtmlAdm(z.name||'—')}</td>
+      <td style="max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--text2)">${escHtmlAdm(z.address||'—')}</td>
+      <td style="color:var(--muted2);font-size:.7rem;max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${escHtmlAdm(z.note||'—')}</td>
+      <td><span class="ostatus" style="color:${col};border-color:${col}30;background:${col}10;font-size:.52rem">${lbl}</span></td>
+      <td style="color:var(--muted2);font-size:.7rem;white-space:nowrap">${date}</td>
+      <td>
+        <div style="display:flex;gap:5px;align-items:center">
+          <button class="btn btn-secondary btn-sm" onclick="toggleAZone('${z.id}',${ok})" style="font-size:.6rem;padding:4px 9px">
+            ${ok ? 'Отключить' : 'Включить'}
+          </button>
+          <button class="btn btn-secondary btn-sm" onclick="editAZone('${z.id}')" style="font-size:.6rem;padding:4px 9px">✏️</button>
+          <button class="btn btn-sm" onclick="deleteAZone('${z.id}','${escHtmlAdm(z.name||'').replace(/'/g,"\\'")}') " style="font-size:.6rem;padding:4px 9px;background:rgba(239,68,68,.1);color:#ef4444;border:1px solid rgba(239,68,68,.25)">🗑</button>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+window.azFilter = function(f, btn) {
+  _azFilter = f;
+  document.querySelectorAll('#az-tabs .tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderAZones();
+};
+
+window.openAZModal = function(id = null) {
+  _azEditId = id;
+  const z = id ? allZones.find(x => x.id === id) : null;
+  document.getElementById('az-modal-title').textContent = z ? 'Редактировать зону' : 'Новая зона доставки';
+  document.getElementById('az-name').value    = z?.name    || '';
+  document.getElementById('az-address').value = z?.address || '';
+  document.getElementById('az-note').value    = z?.note    || '';
+  document.getElementById('az-avail-tog').checked = z ? z.available !== false : true;
+  document.getElementById('az-modal').classList.add('open');
+  setTimeout(() => document.getElementById('az-name').focus(), 150);
+};
+
+window.closeAZModal = function() {
+  document.getElementById('az-modal').classList.remove('open');
+  _azEditId = null;
+};
+
+window.editAZone = function(id) { openAZModal(id); };
+
+window.saveAZone = async function() {
+  const name      = document.getElementById('az-name').value.trim();
+  const address   = document.getElementById('az-address').value.trim();
+  const note      = document.getElementById('az-note').value.trim();
+  const available = document.getElementById('az-avail-tog').checked;
+
+  if (!name)    { toast('Введите название зоны', 'warn'); return; }
+  if (!address) { toast('Введите адрес или описание', 'warn'); return; }
+
+  const btn = document.getElementById('az-save-btn');
+  btn.disabled = true; btn.textContent = 'Сохраняем…';
+
+  try {
+    const data = { name, address, note, available, updatedAt: serverTimestamp() };
+    if (_azEditId) {
+      await updateDoc(doc(db, 'delivery_zones', _azEditId), data);
+      toast('Зона обновлена ✓', 'ok');
+    } else {
+      data.createdAt = serverTimestamp();
+      await addDoc(collection(db, 'delivery_zones'), data);
+      toast('Зона добавлена ✓', 'ok');
+    }
+    closeAZModal();
+    await loadAZones();
+  } catch(e) {
+    toast('Ошибка: ' + e.message, 'err');
+  } finally {
+    btn.disabled = false; btn.textContent = 'Сохранить';
+  }
+};
+
+window.toggleAZone = async function(id, currentAvail) {
+  try {
+    await updateDoc(doc(db, 'delivery_zones', id), {
+      available: !currentAvail,
+      updatedAt: serverTimestamp(),
+    });
+    toast(currentAvail ? '🚫 Зона отключена' : '✅ Зона включена', 'ok');
+    await loadAZones();
+  } catch(e) { toast('Ошибка: ' + e.message, 'err'); }
+};
+
+window.deleteAZone = async function(id, name) {
+  if (!confirm(`Удалить зону «${name}»?\nЭто действие необратимо.`)) return;
+  try {
+    await deleteDoc(doc(db, 'delivery_zones', id));
+    toast('Зона удалена', 'ok');
+    await loadAZones();
+  } catch(e) { toast('Ошибка: ' + e.message, 'err'); }
 };

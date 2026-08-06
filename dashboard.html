@@ -477,6 +477,7 @@ textarea.mi{resize:vertical;min-height:76px}
     <button class="ni" data-page="support" onclick="goPage('support')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>Поддержка<span class="ni-badge" id="sb-tkt-b" style="display:none">0</span></button>
     <button class="ni" data-page="catalog" onclick="goPage('catalog')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>Каталог</button>
     <button class="ni" data-page="stores" onclick="goPage('stores')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>Магазины</button>
+    <button class="ni" data-page="addresses" onclick="goPage('addresses')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>Адреса<span class="ni-badge" id="sb-az-b" style="display:none;background:var(--red)">!</span></button>
     <button class="ni" data-page="gen-catalogs" onclick="goPage('gen-catalogs')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg>Общий каталог</button>
     <button class="ni" data-page="ads" onclick="goPage('ads')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="7" width="20" height="13" rx="2"/><path d="M16 7V5a2 2 0 00-4 0v2M8 12h8M8 16h5"/></svg>Реклама</button>
     <button class="ni" data-page="news" onclick="goPage('news')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 22h16a2 2 0 002-2V4a2 2 0 00-2-2H8L2 8v12a2 2 0 002 2z"/><polyline points="10 2 10 8 2 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="13" y2="17"/></svg>Новости<span class="ni-badge info" id="sb-news-b" style="display:none">0</span></button>
@@ -614,6 +615,46 @@ textarea.mi{resize:vertical;min-height:76px}
       </div>
     </div>
 
+    <!-- ADDRESSES / DELIVERY ZONES -->
+    <div class="page" id="page-addresses">
+      <div class="sh">
+        <div><div class="sh-tag">Управление</div><div class="sh-title">Зоны <em>доставки</em></div></div>
+        <div class="sh-actions">
+          <button class="btn btn-primary" onclick="openAZModal()">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Добавить зону
+          </button>
+        </div>
+      </div>
+
+      <!-- KPI -->
+      <div class="kpis" style="margin-bottom:16px">
+        <div class="kpi acc"><div class="kpi-label">Всего зон</div><div class="kpi-val" id="az-kv-total">—</div><div class="kpi-sub">В базе Firestore</div><div class="kpi-ico">📍</div></div>
+        <div class="kpi green"><div class="kpi-label">Доступные</div><div class="kpi-val" id="az-kv-avail">—</div><div class="kpi-sub">Доставка активна</div><div class="kpi-ico">✅</div></div>
+        <div class="kpi red"><div class="kpi-label">Недоступные</div><div class="kpi-val" id="az-kv-unavail">—</div><div class="kpi-sub">Доставка отключена</div><div class="kpi-ico">🚫</div></div>
+      </div>
+
+      <!-- Filter + Table -->
+      <div class="panel">
+        <div class="panel-head">
+          <div class="panel-title">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            Список зон
+          </div>
+          <div class="tabs" id="az-tabs">
+            <button class="tab active" onclick="azFilter('all',this)">Все</button>
+            <button class="tab" onclick="azFilter('available',this)">Доступные</button>
+            <button class="tab" onclick="azFilter('unavailable',this)">Недоступные</button>
+          </div>
+        </div>
+        <div style="overflow-x:auto">
+          <table class="ot">
+            <thead><tr><th>Название</th><th>Адрес / Описание</th><th>Примечание</th><th>Статус</th><th>Добавлена</th><th>Действия</th></tr></thead>
+            <tbody id="az-tbody"><tr><td colspan="6"><div class="pload"><div class="spin"></div></div></td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
 
     <!-- GEN CATALOGS -->
     <div class="page" id="page-gen-catalogs">
@@ -867,6 +908,41 @@ textarea.mi{resize:vertical;min-height:76px}
 .ads-toggle{display:flex;align-items:center;gap:10px;cursor:pointer;user-select:none}
 .ads-toggle input[type=checkbox]{width:36px;height:20px;accent-color:var(--acc);cursor:pointer}
 </style>
+
+<!-- MODAL: Зона доставки (добавить / редактировать) -->
+<div class="mo" id="az-modal" onclick="if(event.target===this)closeAZModal()">
+  <div class="modal" style="max-width:480px">
+    <div class="modal-head">
+      <div class="modal-title" id="az-modal-title">Новая зона доставки</div>
+      <button class="modal-x" onclick="closeAZModal()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="modal-body" style="display:flex;flex-direction:column;gap:14px">
+      <div class="mf">
+        <label class="ml">Название зоны *</label>
+        <input class="mi" id="az-name" type="text" placeholder="Например: Центр, Исмоилони, Сино…">
+      </div>
+      <div class="mf">
+        <label class="ml">Адрес / Описание *</label>
+        <textarea class="mi" id="az-address" rows="3" placeholder="Улица, район или описание зоны доставки…"></textarea>
+      </div>
+      <div class="mf">
+        <label class="ml">Примечание (необязательно)</label>
+        <input class="mi" id="az-note" type="text" placeholder="Внутренняя заметка для диспетчеров…">
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--s2);border:1px solid var(--b);border-radius:8px">
+        <div>
+          <div style="font-size:.76rem;font-weight:600;color:var(--text)">Доставка доступна</div>
+          <div style="font-size:.62rem;color:var(--muted);margin-top:2px">Включите, чтобы принимать заказы в эту зону</div>
+        </div>
+        <label class="tog"><input type="checkbox" id="az-avail-tog" checked><span class="tog-track"></span><span class="tog-thumb"></span></label>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-secondary" onclick="closeAZModal()">Отмена</button>
+      <button class="btn btn-primary" id="az-save-btn" onclick="saveAZone()">Сохранить</button>
+    </div>
+  </div>
+</div>
 
 <script type="module" src="app.js"></script>
 </body>

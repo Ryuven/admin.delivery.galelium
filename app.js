@@ -1,6 +1,6 @@
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.8.1/firebase-app.js';
 import { getAuth, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/11.8.1/firebase-auth.js';
-import { getFirestore, doc, getDoc, setDoc, addDoc, updateDoc, deleteDoc, getDocs, collection, query, where, orderBy, onSnapshot, serverTimestamp, limit, increment } from 'https://www.gstatic.com/firebasejs/11.8.1/firebase-firestore.js';
+import { getFirestore, doc, getDoc, setDoc, addDoc, updateDoc, deleteDoc, getDocs, collection, query, where, orderBy, onSnapshot, serverTimestamp, limit, increment, arrayUnion, arrayRemove, writeBatch } from 'https://www.gstatic.com/firebasejs/11.8.1/firebase-firestore.js';
 
 const cfg={apiKey:'AIzaSyCjIAMFuwLKwmjChCuiz-MHLv5WZOczAAE',authDomain:'delivery-galelium.firebaseapp.com',projectId:'delivery-galelium',storageBucket:'delivery-galelium.firebasestorage.app',messagingSenderId:'982466555080',appId:'1:982466555080:web:c77ccbff0e71e540ddc9fd'};
 const app=initializeApp(cfg),auth=getAuth(app),db=getFirestore(app);
@@ -10,6 +10,13 @@ let CU=null,AD=null;
 let allOrders=[],allCouriers=[],allClients=[],allProducts=[],allStaff=[];
 let allGenCatalogs=[];
 let allNews=[],newsFilt='all',editingNewsId=null;
+
+/* ── RETAILERS STATE ── */
+let _retailers   = [];
+let _retCities   = [];   // кэш городов для селектов
+let _editRetId   = null; // null = новый, string = редактирование
+let _editLocId   = null;
+let _editLocRid  = null;
 let allVacancies=[],hrFilt='all',editingVacId=null;
 let allPartnerApps=[],partnerFilt='all';
 let liveOrders=[];
@@ -1495,6 +1502,353 @@ window.deleteStore=async function(id){
   }catch{toast('Ошибка','err');}
 };
 
+// ════════════════════════════════════════════════════════════════
+//  RETAILERS  — Firestore: retailers/{id}  +  /locations/{locId}
+// ════════════════════════════════════════════════════════════════
+
+/* --- Города для <select> --------------------------------------- */
+async function loadRetCities(){
+  if(_retCities.length) return;
+  try{
+    const s=await getDocs(query(collection(db,'cities'),orderBy('order')));
+    _retCities=s.docs.map(d=>({id:d.id,...d.data()})).filter(c=>c.active!==false);
+  }catch{
+    _retCities=[{id:'dushanbe',name:'Душанбе'}];
+  }
+}
+
+function fillRetCitySelect(selId, selVal=''){
+  const el=document.getElementById(selId);
+  if(!el)return;
+  el.innerHTML=_retCities.map(c=>`<option value="${c.id}"${c.id===selVal?' selected':''}>${escHtmlAdm(c.name)}${c.region?' · '+escHtmlAdm(c.region):''}</option>`).join('');
+}
+
+/* --- Рендер страницы ритейлеров -------------------------------- */
+async function renderRetailersPage(){
+  const list=document.getElementById('retailers-list');
+  if(!list)return;
+  list.innerHTML='<div class="pload"><div class="spin"></div> Загружаем…</div>';
+
+  await loadRetCities();
+
+  try{
+    const s=await getDocs(query(collection(db,'retailers'),orderBy('order')));
+    _retailers=s.docs.map(d=>({id:d.id,...d.data()}));
+  }catch{
+    try{
+      const s2=await getDocs(collection(db,'retailers'));
+      _retailers=s2.docs.map(d=>({id:d.id,...d.data()}));
+    }catch{_retailers=[];}
+  }
+
+  /* Считаем точки для каждого ритейлера */
+  const locCounts={};
+  let totalLocs=0;
+  await Promise.all(_retailers.map(async r=>{
+    try{
+      const ls=await getDocs(collection(db,'retailers',r.id,'locations'));
+      locCounts[r.id]=ls.size; totalLocs+=ls.size;
+    }catch{locCounts[r.id]=0;}
+  }));
+
+  /* KPI */
+  const kEl=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v;};
+  kEl('ret-kv-active',_retailers.filter(r=>r.active!==false).length);
+  kEl('ret-kv-total',_retailers.length);
+  kEl('ret-kv-locs',totalLocs);
+
+  if(!_retailers.length){
+    list.innerHTML=`<div class="pload" style="flex-direction:column;gap:8px;padding:32px">
+      <div style="font-size:2rem;opacity:.12">🏪</div>
+      <div style="font-size:.76rem;color:var(--text3)">Ритейлеров пока нет — нажмите «Новый ритейлер»</div>
+    </div>`;
+    return;
+  }
+
+  list.innerHTML=_retailers.map(r=>{
+    const cnt=locCounts[r.id]??0;
+    const cityName=_retCities.find(c=>c.id===r.primaryCityId)?.name||r.primaryCityId||'—';
+    const isActive=r.active!==false;
+    const logo=r.imageUrl
+      ?`<img src="${escHtmlAdm(r.imageUrl)}" alt="" style="width:100%;height:100%;object-fit:cover;display:block" onerror="this.style.display='none'">`
+      :`<span style="font-size:.52rem;font-weight:700;color:var(--text3)">${escHtmlAdm((r.name||'').slice(0,2).toUpperCase())}</span>`;
+    return `
+    <div class="ret-card" id="ret-card-${r.id}">
+      <div class="ret-card-head" onclick="toggleRetCard('${r.id}')">
+        <div class="ret-card-logo">${logo}</div>
+        <div class="ret-card-info">
+          <div class="ret-card-name">${escHtmlAdm(r.name||'—')}</div>
+          <div class="ret-card-meta">
+            <span class="ret-card-city">📍 ${escHtmlAdm(cityName)}</span>
+            <span class="ret-card-locs-count">🏪 ${cnt} точ${cnt===1?'ка':cnt<5?'ки':'ек'}</span>
+            ${!isActive?`<span style="font-size:.55rem;color:var(--text3);padding:2px 6px;background:var(--s2);border-radius:99px;border:1px solid var(--b)">скрыт</span>`:''}
+          </div>
+        </div>
+        <div class="ret-card-actions">
+          <button class="btn btn-secondary btn-sm" onclick="event.stopPropagation();openRetailerModal('${r.id}')">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+          </button>
+          <svg class="ret-card-chevron" id="ret-chevron-${r.id}" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+        </div>
+      </div>
+      <div class="ret-locs-panel" id="ret-locs-${r.id}">
+        <div class="ret-locs-head">
+          <div class="ret-locs-title">📍 Точки магазина</div>
+          <button class="btn btn-success btn-sm" onclick="openLocationModal('${r.id}','${escHtmlAdm(r.name||'')}')">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Добавить точку
+          </button>
+        </div>
+        <div id="ret-locs-list-${r.id}">
+          <div class="pload" style="padding:14px"><div class="spin"></div></div>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+window.toggleRetCard=async function(rid){
+  const panel=document.getElementById(`ret-locs-${rid}`);
+  const chev=document.getElementById(`ret-chevron-${rid}`);
+  if(!panel)return;
+  const isOpen=panel.classList.contains('open');
+  panel.classList.toggle('open',!isOpen);
+  chev?.classList.toggle('open',!isOpen);
+  if(!isOpen) await loadLocationsPanel(rid);
+};
+
+async function loadLocationsPanel(rid){
+  const el=document.getElementById(`ret-locs-list-${rid}`);
+  if(!el)return;
+  el.innerHTML='<div class="pload" style="padding:12px"><div class="spin"></div></div>';
+  try{
+    const s=await getDocs(collection(db,'retailers',rid,'locations'));
+    const locs=s.docs.map(d=>({id:d.id,...d.data()}));
+    renderLocationsPanel(rid,locs);
+  }catch(e){
+    el.innerHTML=`<div class="ret-loc-empty">Ошибка: ${e.message}</div>`;
+  }
+}
+
+function renderLocationsPanel(rid,locs){
+  const el=document.getElementById(`ret-locs-list-${rid}`);
+  if(!el)return;
+  if(!locs.length){
+    el.innerHTML='<div class="ret-loc-empty">Точек пока нет — нажмите «Добавить точку»</div>';
+    return;
+  }
+  const rName=_retailers.find(r=>r.id===rid)?.name||'';
+  el.innerHTML=locs.map(loc=>{
+    const cName=_retCities.find(c=>c.id===loc.cityId)?.name||loc.cityId||'—';
+    const coords=(loc.lat&&loc.lng)?`${(+loc.lat).toFixed(5)}, ${(+loc.lng).toFixed(5)}`:'';
+    return `
+    <div class="ret-loc-row">
+      <div class="ret-loc-ico">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+      </div>
+      <div class="ret-loc-body">
+        <div class="ret-loc-addr">${escHtmlAdm(loc.address||'—')}</div>
+        <div class="ret-loc-meta">${escHtmlAdm(cName)}${coords?' · '+coords:''}</div>
+      </div>
+      <button class="btn btn-secondary btn-sm" onclick="openLocationModal('${rid}','${escHtmlAdm(rName)}','${loc.id}')">
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+      </button>
+    </div>`;
+  }).join('');
+}
+
+/* --- Модалка ритейлера ----------------------------------------- */
+window.openRetailerModal=async function(rid=null){
+  _editRetId=rid;
+  await loadRetCities();
+  fillRetCitySelect('ret-city');
+
+  const title=document.getElementById('ret-modal-title');
+  const delBtn=document.getElementById('ret-del-btn');
+  const preview=document.getElementById('ret-img-preview');
+  if(title) title.textContent=rid?'Редактировать ритейлер':'Новый ритейлер';
+  if(delBtn) delBtn.style.display=rid?'inline-flex':'none';
+  if(preview) preview.style.display='none';
+
+  if(rid){
+    const r=_retailers.find(x=>x.id===rid);
+    if(r){
+      const v=(id,val)=>{const e=document.getElementById(id);if(e)e.value=val;};
+      v('ret-id',r.id); v('ret-name',r.name||''); v('ret-desc',r.description||'');
+      v('ret-image',r.imageUrl||''); v('ret-order',r.order??1);
+      v('ret-active',String(r.active!==false));
+      fillRetCitySelect('ret-city',r.primaryCityId||'');
+      if(r.imageUrl) _showRetPreview(r.imageUrl);
+    }
+  }else{
+    ['ret-id','ret-name','ret-desc','ret-image'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});
+    const ord=document.getElementById('ret-order'); if(ord)ord.value=_retailers.length+1;
+    const act=document.getElementById('ret-active'); if(act)act.value='true';
+  }
+  openMo('retailer-modal');
+};
+
+window.closeRetailerModal=()=>closeMo('retailer-modal');
+
+function _showRetPreview(url){
+  const w=document.getElementById('ret-img-preview');
+  const i=document.getElementById('ret-img-preview-img');
+  if(!w||!i)return;
+  if(!url){w.style.display='none';return;}
+  i.src=url; w.style.display='block';
+}
+
+// Live preview при вводе URL
+document.getElementById('ret-image')?.addEventListener('input',e=>_showRetPreview(e.target.value));
+
+window.saveRetailer=async function(){
+  const name   =document.getElementById('ret-name')?.value.trim()||'';
+  const cityId =document.getElementById('ret-city')?.value||'';
+  const imgUrl =document.getElementById('ret-image')?.value.trim()||'';
+  const desc   =document.getElementById('ret-desc')?.value.trim()||'';
+  const order  =parseInt(document.getElementById('ret-order')?.value||'1');
+  const active =document.getElementById('ret-active')?.value==='true';
+
+  if(!name){toast('Введите название ритейлера','warn');return;}
+  if(!cityId){toast('Выберите город','warn');return;}
+
+  const btn=document.querySelector('#retailer-modal .btn-primary');
+  if(btn){btn.disabled=true;btn.textContent='Сохраняем…';}
+
+  try{
+    const data={name,primaryCityId:cityId,imageUrl:imgUrl,description:desc,order:isNaN(order)?1:order,active,updatedAt:serverTimestamp()};
+    if(_editRetId){
+      await updateDoc(doc(db,'retailers',_editRetId),data);
+      toast(`Ритейлер «${name}» обновлён`,'ok');
+    }else{
+      data.cityIds=[]; data.createdAt=serverTimestamp();
+      await addDoc(collection(db,'retailers'),data);
+      toast(`Ритейлер «${name}» создан`,'ok');
+    }
+    closeRetailerModal();
+    _retCities=[];
+    await renderRetailersPage();
+  }catch(e){
+    console.error(e);
+    toast('Ошибка: '+e.message,'err');
+  }finally{
+    if(btn){btn.disabled=false;btn.textContent='Сохранить';}
+  }
+};
+
+window.deleteRetailer=async function(){
+  if(!_editRetId)return;
+  const r=_retailers.find(x=>x.id===_editRetId);
+  if(!confirm(`Удалить ритейлер «${r?.name}» и все его точки?`))return;
+  try{
+    const ls=await getDocs(collection(db,'retailers',_editRetId,'locations'));
+    const b=writeBatch(db);
+    ls.docs.forEach(d=>b.delete(d.ref));
+    b.delete(doc(db,'retailers',_editRetId));
+    await b.commit();
+    toast('Ритейлер удалён','ok');
+    closeRetailerModal();
+    await renderRetailersPage();
+  }catch(e){toast('Ошибка: '+e.message,'err');}
+};
+
+/* --- Модалка точки --------------------------------------------- */
+window.openLocationModal=async function(rid,rName,locId=null){
+  _editLocRid=rid; _editLocId=locId;
+  await loadRetCities();
+
+  const title=document.getElementById('loc-modal-title');
+  const delBtn=document.getElementById('loc-del-btn');
+  const rn=document.getElementById('loc-retailer-name');
+  const ridEl=document.getElementById('loc-retailer-id');
+  const lidEl=document.getElementById('loc-id');
+
+  if(title) title.textContent=locId?'Редактировать точку':'Новая точка';
+  if(delBtn) delBtn.style.display=locId?'inline-flex':'none';
+  if(rn)    rn.textContent=rName||'';
+  if(ridEl) ridEl.value=rid;
+  if(lidEl) lidEl.value=locId||'';
+
+  if(locId){
+    try{
+      const snap=await getDoc(doc(db,'retailers',rid,'locations',locId));
+      if(snap.exists()){
+        const l=snap.data();
+        fillRetCitySelect('loc-city',l.cityId||'');
+        const v=(id,val)=>{const e=document.getElementById(id);if(e)e.value=val;};
+        v('loc-address',l.address||''); v('loc-lat',l.lat??''); v('loc-lng',l.lng??'');
+      }
+    }catch{toast('Ошибка загрузки точки','err');}
+  }else{
+    const r=_retailers.find(x=>x.id===rid);
+    fillRetCitySelect('loc-city',r?.primaryCityId||'');
+    ['loc-address','loc-lat','loc-lng'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});
+  }
+  openMo('location-modal');
+};
+
+window.closeLocationModal=()=>closeMo('location-modal');
+
+window.saveLocation=async function(){
+  const rid    =document.getElementById('loc-retailer-id')?.value||'';
+  const locId  =document.getElementById('loc-id')?.value||'';
+  const cityId =document.getElementById('loc-city')?.value||'';
+  const address=document.getElementById('loc-address')?.value.trim()||'';
+  const latRaw =document.getElementById('loc-lat')?.value||'';
+  const lngRaw =document.getElementById('loc-lng')?.value||'';
+
+  if(!cityId){toast('Выберите город','warn');return;}
+  if(!address){toast('Введите адрес','warn');return;}
+  const lat=latRaw?parseFloat(latRaw):null;
+  const lng=lngRaw?parseFloat(lngRaw):null;
+  if((latRaw&&isNaN(lat))||(lngRaw&&isNaN(lng))){toast('Некорректные координаты','warn');return;}
+
+  const btn=document.querySelector('#location-modal .btn-primary');
+  if(btn){btn.disabled=true;btn.textContent='Сохраняем…';}
+
+  try{
+    const data={cityId,address,updatedAt:serverTimestamp()};
+    if(lat!==null)data.lat=lat;
+    if(lng!==null)data.lng=lng;
+
+    if(locId){
+      await updateDoc(doc(db,'retailers',rid,'locations',locId),data);
+    }else{
+      data.createdAt=serverTimestamp();
+      await addDoc(collection(db,'retailers',rid,'locations'),data);
+    }
+    // Добавляем город в cityIds ритейлера — для фильтра на главной
+    await updateDoc(doc(db,'retailers',rid),{cityIds:arrayUnion(cityId)});
+
+    toast('Точка сохранена ✓','ok');
+    closeLocationModal();
+    await loadLocationsPanel(rid);
+  }catch(e){
+    console.error(e);
+    toast('Ошибка: '+e.message,'err');
+  }finally{
+    if(btn){btn.disabled=false;btn.textContent='Сохранить';}
+  }
+};
+
+window.deleteLocation=async function(){
+  const rid    =document.getElementById('loc-retailer-id')?.value||'';
+  const locId  =document.getElementById('loc-id')?.value||'';
+  const cityId =document.getElementById('loc-city')?.value||'';
+  if(!rid||!locId)return;
+  if(!confirm('Удалить эту точку?'))return;
+  try{
+    await deleteDoc(doc(db,'retailers',rid,'locations',locId));
+    // Убираем cityId из массива если точек в этом городе больше нет
+    const rem=await getDocs(query(collection(db,'retailers',rid,'locations'),where('cityId','==',cityId)));
+    if(rem.empty) await updateDoc(doc(db,'retailers',rid),{cityIds:arrayRemove(cityId)});
+    toast('Точка удалена','ok');
+    closeLocationModal();
+    await loadLocationsPanel(rid);
+  }catch(e){toast('Ошибка: '+e.message,'err');}
+};
+// ── конец RETAILERS ──────────────────────────────────────────────
+
 window.goPage=function(page){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.ni').forEach(n=>n.classList.remove('active'));
@@ -1509,7 +1863,7 @@ window.goPage=function(page){
   if(page==='overview'){renderDonut();renderLiveOrders();renderAct();}
   if(page==='news'){renderNewsTable();}
   if(page==='hr'){renderHrPage();}
-  if(page==='stores'){renderStoresPage();}
+  if(page==='stores'){renderRetailersPage();}
   if(page==='ads'){renderAdsPage();}
   if(page==='gen-catalogs'){renderGenCatalogsPage();}
   if(page==='partners'){renderPartnerPage();}

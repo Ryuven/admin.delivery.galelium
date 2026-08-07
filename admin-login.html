@@ -3,603 +3,334 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover"/>
-<title>dastdaroz Admin — Вход</title>
-<meta name="robots" content="noindex,nofollow"/>
+<meta name="mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<title>dastdaroz — Вход в систему</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&family=DM+Mono:wght@400;500&family=Inter:wght@300;400;500;600;700&display=swap"/>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@700;800;900&family=Inter:wght@300;400;500;600;700&display=swap"/>
 <style>
 :root{
-  --bg:#0c0c0c;--s1:#161616;--s2:#1e1e1e;--s3:#262626;
-  --b:rgba(255,255,255,.07);--bh:rgba(255,255,255,.13);
-  --red:#f43f5e;--redd:rgba(244,63,94,.09);
-  --green:#34d399;--amber:#fbbf24;
-  --tx:#f0f0f0;--tx2:#888;--tx3:#505050;
-  --fd:'Nunito',sans-serif;--fm:'DM Mono',monospace;--fs:'Inter',system-ui,sans-serif;
-  --ease:cubic-bezier(.32,0,.18,1);--tf:.14s;--r:11px;
+  --acc:#1a9e4a;--acc2:#22c55e;
+  --accd:rgba(26,158,74,.15);
+  --red:#ef4444;--amber:#f59e0b;
+  --tx:#f0f0f0;--tx2:#888888;--tx3:#444444;
+  --b:#2e2e2e;
+  --s2:#1a1a1a;--s3:#222222;
+  --r:16px;
+  --fd:'Unbounded',sans-serif;--fs:'Inter',system-ui,sans-serif;
+  --ease:cubic-bezier(.32,0,.18,1);--tf:.13s;
 }
-
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 html{height:100%;-webkit-text-size-adjust:100%}
 body{
-  background:var(--bg);color:var(--tx);font-family:var(--fs);
+  background:#0f0f0f;color:var(--tx);font-family:var(--fs);
   min-height:100svh;-webkit-font-smoothing:antialiased;
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
-  padding:40px 20px;
+  display:flex;flex-direction:column;align-items:center;justify-content:flex-start;
+  padding:52px 24px 32px;
 }
-
-/* ── Progress bar ── */
-.fb-bar{
-  position:fixed;top:0;left:0;right:0;height:2px;z-index:999;
-  background:#fff;transform-origin:left;transform:scaleX(0);
-  transition:transform .4s var(--ease);
-}
-.fb-bar.loading{transform:scaleX(.6)}
-.fb-bar.done{transform:scaleX(1);opacity:0;transition:transform .2s,opacity .3s ease .2s}
-
-/* ── Wrap ── */
-.wrap{
-  width:min(400px,calc(100vw - 40px));
-  display:flex;flex-direction:column;
-  animation:fadeUp .32s var(--ease) both;
-}
-@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
-
-/* ── Logo ── */
-.logo{display:flex;justify-content:center;margin-bottom:30px}
-.logo img{height:46px;width:auto;object-fit:contain;filter:brightness(0) invert(1) opacity(.9)}
-
-/* ── Admin badge ── */
-.admin-badge{display:flex;justify-content:center;margin-bottom:32px}
-.badge-inner{
-  display:inline-flex;align-items:center;gap:7px;
-  padding:4px 13px 4px 9px;
-  background:var(--s2);border:1px solid var(--b);border-radius:99px;
-  font-family:var(--fm);font-size:.58rem;color:var(--tx2);letter-spacing:.04em;
-}
-.badge-dot{
-  width:6px;height:6px;border-radius:50%;background:var(--green);flex-shrink:0;
-  animation:pulse 2.4s ease-in-out infinite;
-}
-@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(52,211,153,.4)}50%{box-shadow:0 0 0 5px rgba(52,211,153,0)}}
-
-/* ── Heading ── */
-.form-hd{margin-bottom:24px}
-.form-title{
-  font-family:var(--fd);font-weight:900;font-size:1.5rem;color:var(--tx);
-  letter-spacing:-.025em;line-height:1.12;margin-bottom:4px;
-}
-.form-title em{color:var(--tx2);font-style:normal}
-.form-sub{font-size:.74rem;color:var(--tx3);line-height:1.5}
-
-/* ── Alert ── */
-.alert{
-  display:none;align-items:flex-start;gap:9px;
-  padding:11px 13px;margin-bottom:16px;
-  border-radius:var(--r);font-size:.72rem;color:var(--tx2);
-  line-height:1.5;border:1px solid;
-}
+#fb-bar,#ldot-1,#ldot-2,#status-bar{display:none!important}
+.wrap{width:100%;max-width:380px;display:flex;flex-direction:column;animation:fadeUp .28s var(--ease) both}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+.logo{display:flex;justify-content:center;margin-bottom:36px}
+.logo img{height:46px;width:auto;object-fit:contain}
+.hd{text-align:center;margin-bottom:24px}
+.form-title{font-family:var(--fd);font-weight:900;font-size:1.45rem;color:var(--tx);letter-spacing:-.04em;line-height:1.15;margin-bottom:10px}
+.form-sub{font-size:.82rem;color:var(--tx2);line-height:1.6;max-width:300px;margin:0 auto}
+.alert{display:none;align-items:flex-start;gap:8px;padding:10px 13px;margin-bottom:12px;border-radius:12px;font-size:.75rem;color:var(--tx2);line-height:1.5;border:1px solid}
 .alert.show{display:flex}
-.alert.err{background:var(--redd);border-color:rgba(244,63,94,.18)}
-.alert.ok{background:rgba(52,211,153,.07);border-color:rgba(52,211,153,.2)}
-.alert strong{display:block;font-size:.68rem;font-weight:700;margin-bottom:2px}
-.alert.err strong{color:var(--red)}
-.alert.ok  strong{color:var(--green)}
-
-/* ── Fields ── */
-.field{position:relative;margin-bottom:13px}
-.lbl{
-  font-size:.56rem;letter-spacing:.18em;text-transform:uppercase;
-  color:var(--tx3);display:block;margin-bottom:6px;font-weight:700;
-}
-.inp{
-  width:100%;background:var(--s1);border:1px solid var(--b);
-  border-radius:var(--r);color:var(--tx);font-family:var(--fs);font-size:.86rem;
-  padding:12px 14px;outline:none;
-  transition:border-color var(--tf),box-shadow var(--tf),background var(--tf);
-}
-.inp:focus{border-color:var(--bh);box-shadow:0 0 0 3px rgba(255,255,255,.04);background:var(--s2)}
-.inp.has-eye{padding-right:46px}
-.inp.err{border-color:rgba(244,63,94,.45);animation:shake .3s ease}
-.inp::placeholder{color:var(--tx3)}
-@keyframes shake{0%,100%{transform:translateX(0)}22%,66%{transform:translateX(-4px)}44%,88%{transform:translateX(4px)}}
-.field-err{font-size:.62rem;color:var(--red);margin-top:5px;display:none}
+.alert.err{background:rgba(239,68,68,.07);border-color:rgba(239,68,68,.2)}
+.alert strong{display:block;font-size:.7rem;font-weight:700;margin-bottom:2px;color:var(--red)}
+.field{position:relative;margin-bottom:10px}
+.field-err{font-size:.64rem;color:var(--red);margin-top:5px;display:none}
 .field-err.show{display:block}
-
-/* ── Phone field ── */
-.phone-field{
-  display:flex;align-items:stretch;
-  background:var(--s1);border:1px solid var(--b);
-  border-radius:var(--r);overflow:hidden;
-  transition:border-color var(--tf),box-shadow var(--tf),background var(--tf);
-}
-.phone-field:focus-within{
-  border-color:var(--bh);
-  box-shadow:0 0 0 3px rgba(255,255,255,.04);
-  background:var(--s2);
-}
-.phone-prefix{
-  display:flex;align-items:center;gap:7px;padding:0 13px;
-  background:var(--s2);border-right:1px solid var(--b);
-  font-family:var(--fs);font-weight:700;font-size:.84rem;color:var(--tx2);
-  flex-shrink:0;user-select:none;
-}
-.phone-flag{
-  width:14px;height:21px;border-radius:2px;flex-shrink:0;
-  box-shadow:0 0 0 1px rgba(255,255,255,.1);object-fit:cover;display:block;
-}
-.phone-input{
-  flex:1;min-width:0;border:none;background:none;outline:none;
-  color:var(--tx);font-family:var(--fs);font-size:.86rem;font-weight:500;
-  padding:12px 14px 12px 10px;letter-spacing:.03em;
-}
-.phone-input::placeholder{color:var(--tx3)}
-
-/* ── Eye ── */
-.eye{
-  position:absolute;right:0;bottom:0;width:44px;height:44px;
-  background:none;border:none;cursor:pointer;color:var(--tx3);
-  display:flex;align-items:center;justify-content:center;transition:color var(--tf);
-}
+.inp{width:100%;background:var(--s2);border:1.5px solid var(--b);border-radius:var(--r);color:var(--tx);font-family:var(--fs);font-size:.93rem;font-weight:400;padding:17px 18px;outline:none;transition:border-color var(--tf),box-shadow var(--tf)}
+.inp:focus{border-color:var(--acc);box-shadow:0 0 0 3px var(--accd)}
+.inp.has-eye{padding-right:52px}
+.inp.err{border-color:rgba(239,68,68,.5);animation:shake .3s ease}
+.inp::placeholder{color:var(--tx3)}
+@keyframes shake{0%,100%{transform:translateX(0)}22%,66%{transform:translateX(-5px)}44%,88%{transform:translateX(5px)}}
+.phone-field{display:flex;align-items:center;border:1.5px solid var(--b);border-radius:var(--r);background:var(--s2);overflow:hidden;transition:border-color var(--tf),box-shadow var(--tf)}
+.phone-field.err{border-color:rgba(239,68,68,.5)}
+.phone-field:focus-within{border-color:var(--acc);box-shadow:0 0 0 3px var(--accd)}
+.phone-prefix{display:flex;align-items:center;gap:7px;padding:17px 4px 17px 18px;background:transparent;border:none;font-family:var(--fs);font-weight:600;font-size:.93rem;color:var(--tx);flex-shrink:0;cursor:pointer;user-select:none;transition:opacity var(--tf)}
+.phone-prefix:hover{opacity:.65}
+.phone-flag{width:22px;height:15px;border-radius:3px;flex-shrink:0;box-shadow:0 0 0 1px rgba(255,255,255,.1);object-fit:cover;display:block}
+.phone-prefix-arrow{font-size:.52rem;color:var(--tx3);margin-left:1px}
+.phone-input{flex:1;min-width:0;border:none;background:none;outline:none;color:var(--tx);font-family:var(--fs);font-size:.93rem;font-weight:500;padding:17px 18px 17px 10px;letter-spacing:.04em}
+.phone-input::placeholder{color:var(--tx3);font-weight:400}
+.eye{position:absolute;right:0;top:0;width:52px;height:100%;background:none;border:none;cursor:pointer;color:var(--tx3);display:flex;align-items:center;justify-content:center;transition:color var(--tf)}
 .eye:hover{color:var(--tx2)}
-
-/* ── Opt row ── */
-.opt-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
-.remember{
-  display:flex;align-items:center;gap:7px;
-  font-size:.68rem;color:var(--tx2);cursor:pointer;user-select:none;
-}
-.remember input{accent-color:#fff;cursor:pointer;width:12px;height:12px}
-.support-link{
-  font-size:.68rem;color:var(--tx3);background:none;border:none;
-  cursor:pointer;font-family:var(--fs);padding:0;
-  text-decoration:none;transition:color var(--tf);
-}
-.support-link:hover{color:var(--tx2)}
-
-/* ── Submit ── */
-.btn-submit{
-  width:100%;padding:13px;border-radius:var(--r);
-  background:#fff;border:none;
-  color:#111;font-family:var(--fd);font-weight:900;
-  font-size:.76rem;letter-spacing:.08em;text-transform:uppercase;
-  cursor:pointer;display:flex;align-items:center;justify-content:center;gap:9px;
-  transition:opacity var(--tf),transform var(--tf);
-}
-.btn-submit:hover:not(:disabled){opacity:.88;transform:translateY(-1px)}
+.phone-chip{display:flex;align-items:center;gap:10px;border:1.5px solid var(--b);border-radius:var(--r);padding:11px 14px;margin-bottom:10px;background:var(--s2)}
+.phone-chip-ico{width:28px;height:28px;border-radius:8px;flex-shrink:0;background:var(--s3);border:1px solid var(--b);display:flex;align-items:center;justify-content:center;color:var(--tx2)}
+.phone-chip-num{flex:1;font-family:var(--fs);font-weight:700;font-size:.85rem;color:var(--tx);letter-spacing:.02em}
+.phone-chip-edit{background:var(--s3);border:none;cursor:pointer;color:var(--tx2);font-size:.68rem;font-weight:700;font-family:var(--fs);padding:5px 9px;border-radius:8px;display:flex;align-items:center;gap:3px;transition:opacity var(--tf)}
+.phone-chip-edit:hover{opacity:.7}
+.opt-row{display:flex;justify-content:flex-end;margin-bottom:8px}
+.forgot{font-size:.73rem;color:var(--tx2);background:none;border:none;cursor:pointer;font-family:var(--fs);padding:0;transition:color var(--tf);text-decoration:none}
+.forgot:hover{color:var(--tx)}
+.btn-submit{width:100%;padding:18px;background:var(--acc);border:none;border-radius:var(--r);color:#fff;font-family:var(--fd);font-weight:900;font-size:.95rem;letter-spacing:.01em;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:opacity .15s,transform .15s}
+.btn-submit:hover:not(:disabled){opacity:.88}
 .btn-submit:active:not(:disabled){transform:scale(.98)}
-.btn-submit:disabled{opacity:.22;cursor:not-allowed;transform:none}
+.btn-submit:disabled{background:var(--s3);color:var(--tx3);cursor:not-allowed}
 .btn-submit.loading .btn-txt{opacity:.4}
-.spinner{
-  width:14px;height:14px;border-radius:50%;
-  border:2px solid rgba(0,0,0,.2);border-top-color:#111;
-  animation:spin .7s linear infinite;display:none;flex-shrink:0;
-}
+.spinner{width:14px;height:14px;border-radius:50%;border:2px solid rgba(255,255,255,.25);border-top-color:#fff;animation:spin .7s linear infinite;display:none;flex-shrink:0}
 @keyframes spin{to{transform:rotate(360deg)}}
 .btn-submit.loading .spinner{display:block}
-
-/* ── Divider ── */
-.divider{height:1px;background:var(--b);margin:22px 0}
-
-/* ── Security notice ── */
-.sec-notice{
-  display:flex;align-items:flex-start;gap:9px;
-  font-size:.63rem;color:var(--tx3);line-height:1.65;
-}
-.sec-notice svg{flex-shrink:0;margin-top:1px}
-
-/* ── Status ── */
-.status-bar{
-  display:flex;align-items:center;gap:7px;margin-top:20px;
-  font-family:var(--fm);font-size:.56rem;color:var(--tx3);letter-spacing:.04em;
-}
-.status-dot{width:5px;height:5px;border-radius:50%;background:var(--s3);flex-shrink:0;transition:background .3s}
-.status-dot.ok{background:var(--green)}
-.status-dot.err{background:var(--red)}
+.cp-overlay{position:fixed;inset:0;z-index:9000;background:rgba(0,0,0,.65);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity .2s var(--ease)}
+.cp-overlay.open{opacity:1;pointer-events:all}
+.cp-modal{width:min(480px,100vw);max-height:82svh;background:#1c1c1e;border-radius:22px 22px 0 0;display:flex;flex-direction:column;transform:translateY(40px);transition:transform .24s var(--ease);overflow:hidden}
+.cp-overlay.open .cp-modal{transform:translateY(0)}
+.cp-handle{width:32px;height:3px;border-radius:99px;background:var(--b);margin:10px auto 0;flex-shrink:0}
+.cp-header{display:flex;align-items:center;justify-content:space-between;padding:14px 18px 12px;flex-shrink:0;border-bottom:1px solid var(--b)}
+.cp-title{font-family:var(--fd);font-weight:900;font-size:.9rem;color:var(--tx);letter-spacing:-.02em}
+.cp-close{width:28px;height:28px;border-radius:50%;background:var(--s3);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--tx2);font-size:.85rem;transition:background var(--tf)}
+.cp-close:hover{background:var(--b)}
+.cp-search-wrap{padding:10px 14px 8px;flex-shrink:0}
+.cp-search{width:100%;padding:10px 12px 10px 36px;border-radius:10px;border:1.5px solid var(--b);background:var(--s3);color:var(--tx);font-family:var(--fs);font-size:.82rem;outline:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23444' stroke-width='2'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='M21 21l-4.35-4.35'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:12px center;transition:border-color var(--tf)}
+.cp-search:focus{border-color:var(--acc)}
+.cp-search::placeholder{color:var(--tx3)}
+.cp-list{overflow-y:auto;flex:1;padding:4px 8px 18px}
+.cp-item{display:flex;align-items:center;gap:11px;padding:9px 10px;border-radius:10px;cursor:pointer;transition:background var(--tf);border:none;background:none;width:100%;text-align:left}
+.cp-item:hover{background:var(--s3)}
+.cp-item.selected{background:var(--accd)}
+.cp-item-flag{width:30px;height:20px;border-radius:3px;object-fit:cover;flex-shrink:0;box-shadow:0 0 0 1px rgba(255,255,255,.08)}
+.cp-item-name{flex:1;font-size:.8rem;color:var(--tx);font-weight:500}
+.cp-item-dial{font-size:.75rem;color:var(--tx2);font-weight:600}
+.cp-empty{text-align:center;padding:28px 0;font-size:.78rem;color:var(--tx3)}
 </style>
 </head>
 <body>
+<div id="fb-bar"></div><div id="ldot-1"></div><div id="ldot-2"></div>
+<div id="status-bar"><span id="status-dot"></span><span id="status-text"></span></div>
 
-<div class="fb-bar" id="fb-bar"></div>
+<div class="wrap" role="main">
+  <div class="logo"><img src="dastdaroz_id.png" alt="dastdaroz ID"/></div>
 
-<div class="wrap">
-
-  <!-- Logo -->
-  <div class="logo">
-    <img src="dastdaroz.png" alt="dastdaroz"/>
+  <div class="hd">
+    <div class="form-title" id="card-title">Вход в систему</div>
+    <div class="form-sub" id="card-sub">Введите номер телефона и пароль от аккаунта dastdaroz ID</div>
   </div>
 
-  <!-- Badge -->
-  <div class="admin-badge">
-    <div class="badge-inner">
-      <div class="badge-dot"></div>
-      Admin Control Panel
-    </div>
-  </div>
-
-  <!-- Heading -->
-  <div class="form-hd">
-    <div class="form-title">Вход в <em>систему</em></div>
-    <div class="form-sub">Введите номер телефона и пароль от аккаунта dastdaroz ID</div>
-  </div>
-
-  <!-- Alert -->
-  <div class="alert err" id="alert" role="alert">
-    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;margin-top:1px">
-      <circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16v.01" stroke-linecap="round"/>
-    </svg>
+  <div class="alert err" id="lock-alert" role="alert">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;margin-top:1px"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16v.01" stroke-linecap="round"/></svg>
     <div><strong id="alert-title"></strong><span id="alert-msg"></span></div>
   </div>
 
-  <!-- Phone -->
-  <div class="field">
-    <label class="lbl" for="l-phone">Номер телефона</label>
-    <div class="phone-field">
-      <div class="phone-prefix">
-        <img class="phone-flag" src="flag_tajikistan_96x64.png" alt="TJ"/>
-        +992
+  <div id="form-login">
+    <!-- Step 1 -->
+    <div id="login-step-1">
+      <div class="field">
+        <div class="phone-field">
+          <div class="phone-prefix" id="prefix-login" role="button" tabindex="0" aria-label="Выбрать код страны">
+            <img class="phone-flag" id="flag-login" src="storage/flags/flag_tj_96x64.png" alt="TJ"/>
+            <span id="dial-login">+992</span>
+            <span class="phone-prefix-arrow">▾</span>
+          </div>
+          <input type="tel" id="login-phone" class="phone-input" placeholder="90 000 00 00" autocomplete="tel" autofocus inputmode="numeric" maxlength="12"/>
+        </div>
+        <div class="field-err" id="err-login-phone"></div>
       </div>
-      <input type="tel" id="l-phone" class="phone-input"
-        placeholder="90 000 00 00" autocomplete="tel" autofocus inputmode="numeric" maxlength="12"/>
+      <button class="btn-submit" id="btn-login-next" type="button">
+        <div class="spinner"></div><span class="btn-txt">Продолжить</span>
+      </button>
     </div>
-    <div class="field-err" id="err-l-phone"></div>
+
+    <!-- Step 2 -->
+    <div id="login-step-2" style="display:none">
+      <div class="phone-chip">
+        <div class="phone-chip-ico">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.362 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.338 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+        </div>
+        <div class="phone-chip-num" id="phone-chip-num">+992 —</div>
+        <button class="phone-chip-edit" type="button" id="btn-login-back">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+          Изменить
+        </button>
+      </div>
+      <div class="field">
+        <input type="password" id="login-pass" class="inp has-eye" placeholder="Введите пароль" autocomplete="current-password"/>
+        <button class="eye" id="eye-login" type="button" aria-label="Показать">
+          <svg id="eye-login-show" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          <svg id="eye-login-hide" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="display:none"><path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+        </button>
+        <div class="field-err" id="err-login-pass"></div>
+      </div>
+      <div class="opt-row">
+        <a class="forgot" href="https://t.me/dastdaroz_support" target="_blank" rel="noopener">Забыли пароль?</a>
+      </div>
+      <button class="btn-submit" id="btn-login" type="button">
+        <div class="spinner"></div><span class="btn-txt">Войти</span>
+      </button>
+    </div>
   </div>
+</div>
 
-  <!-- Password -->
-  <div class="field">
-    <label class="lbl" for="l-pass">Пароль</label>
-    <input type="password" id="l-pass" class="inp has-eye"
-      placeholder="••••••••••" autocomplete="current-password"/>
-    <button class="eye" id="eye-login" type="button" aria-label="Показать пароль">
-      <svg id="eye-login-show" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
-      </svg>
-      <svg id="eye-login-hide" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="display:none">
-        <path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24"/>
-        <line x1="1" y1="1" x2="23" y2="23"/>
-      </svg>
-    </button>
-    <div class="field-err" id="err-l-pass"></div>
+<!-- Country Picker -->
+<div class="cp-overlay" id="cp-overlay" role="dialog" aria-modal="true">
+  <div class="cp-modal">
+    <div class="cp-handle"></div>
+    <div class="cp-header">
+      <div class="cp-title">Выберите страну</div>
+      <button class="cp-close" id="cp-close">✕</button>
+    </div>
+    <div class="cp-search-wrap">
+      <input type="text" id="cp-search" class="cp-search" placeholder="Поиск..." autocomplete="off" spellcheck="false"/>
+    </div>
+    <div class="cp-list" id="cp-list"></div>
   </div>
-
-  <!-- Options -->
-  <div class="opt-row">
-    <label class="remember">
-      <input type="checkbox" id="remember"/> Запомнить сессию
-    </label>
-    <a class="support-link" href="https://t.me/dastdaroz_support" target="_blank" rel="noopener">
-      Нужна помощь?
-    </a>
-  </div>
-
-  <!-- Submit -->
-  <button class="btn-submit" id="btn-login" type="button">
-    <div class="spinner"></div>
-    <span class="btn-txt">Войти в систему</span>
-  </button>
-
-  <div class="divider"></div>
-
-  <div class="sec-notice">
-    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-    </svg>
-    Только для авторизованных сотрудников с ролью <strong style="color:var(--tx2)">admin</strong>. Все действия записываются в журнал аудита.
-  </div>
-
-  <div class="status-bar">
-    <div class="status-dot" id="status-dot"></div>
-    <span id="status-txt">Подключение к Firebase…</span>
-  </div>
-
 </div>
 
 <script type="module">
-import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.8.1/firebase-app.js';
-import {
-  getAuth, signInWithEmailAndPassword, onAuthStateChanged,
-  setPersistence, browserLocalPersistence, browserSessionPersistence,
-} from 'https://www.gstatic.com/firebasejs/11.8.1/firebase-auth.js';
-import {
-  getFirestore, doc, getDoc, setDoc, serverTimestamp,
-} from 'https://www.gstatic.com/firebasejs/11.8.1/firebase-firestore.js';
+import { auth } from './firebase.js';
+import { onAuthStateChanged, signInWithEmailAndPassword, setPersistence, browserLocalPersistence }
+  from 'https://www.gstatic.com/firebasejs/11.8.1/firebase-auth.js';
 
-const cfg = {
-  apiKey:            'AIzaSyCjIAMFuwLKwmjChCuiz-MHLv5WZOczAAE',
-  authDomain:        'delivery-galelium.firebaseapp.com',
-  projectId:         'delivery-galelium',
-  storageBucket:     'delivery-galelium.firebasestorage.app',
-  messagingSenderId: '982466555080',
-  appId:             '1:982466555080:web:c77ccbff0e71e540ddc9fd',
-};
-const app  = initializeApp(cfg);
-const auth = getAuth(app);
-const db   = getFirestore(app);
-
-const ADMIN_HOME   = 'dashboard.html';
+const HOME = 'dashboard.html';
 const PHONE_DOMAIN = 'phone.dastdaroz.id';
 
-// ─────────────────────────────────────────────────────────────
-//  Rate Limiter (in-memory + sessionStorage)
-//  5 неудачных попыток → 30с → 2м → 15м → 1ч
-// ─────────────────────────────────────────────────────────────
+// Rate Limiter
 const RL = (() => {
-  const SK          = 'adm_rl_v1';
-  const MAX_FAILS   = 5;
-  const WIN_MS      = 15 * 60_000;
-  const LOCKOUTS_MS = [30_000, 120_000, 900_000, 3_600_000];
-  const G_MAX       = 20;
-  const G_WIN_MS    = 10 * 60_000;
-
-  const load = () => { try { return JSON.parse(sessionStorage.getItem(SK) || '{}'); } catch { return {}; } };
-  const save = s  => { try { sessionStorage.setItem(SK, JSON.stringify(s)); } catch {} };
-
-  function check(key) {
-    const now = Date.now(), s = load(), e = s[key];
-    if (!e) return { ok: true, fails: 0 };
-    if (e.until && now < e.until) return { ok: false, until: e.until };
-    if (!e.until && now - e.first > WIN_MS) { delete s[key]; save(s); return { ok: true, fails: 0 }; }
-    return { ok: true, fails: e.fails || 0 };
-  }
-
-  function fail(key) {
-    const now = Date.now(), s = load();
-    let e = s[key];
-    if (!e || (!e.until && now - e.first > WIN_MS)) e = { fails: 0, lockouts: 0, first: now };
-    if (e.until && now >= e.until) { e.fails = 0; delete e.until; e.first = now; }
-    e.fails = (e.fails || 0) + 1;
-    if (e.fails >= MAX_FAILS) {
-      const dur = LOCKOUTS_MS[Math.min(e.lockouts, LOCKOUTS_MS.length - 1)];
-      e.until = now + dur;
-      e.lockouts = (e.lockouts || 0) + 1;
-      e.fails = 0; e.first = now;
-    }
-    s[key] = e; save(s);
-    return check(key);
-  }
-
-  function success(key) { const s = load(); delete s[key]; save(s); }
-
-  function checkGlobal() {
-    const now = Date.now(), s = load();
-    const g = s['__g'] || { t: [] };
-    g.t = g.t.filter(x => now - x < G_WIN_MS);
-    if (g.t.length >= G_MAX) { s['__g'] = g; save(s); return false; }
-    g.t.push(now); s['__g'] = g; save(s);
-    return true;
-  }
-
-  return { check, fail, success, checkGlobal, MAX_FAILS };
+  const SK='rl_v1',MAX_FAILS=5,WIN_MS=15*60_000,LOCKOUTS_MS=[30_000,120_000,900_000,3_600_000],G_MAX=30,G_WIN_MS=10*60_000;
+  const load=()=>{try{return JSON.parse(sessionStorage.getItem(SK)||'{}')}catch{return{}}};
+  const save=s=>{try{sessionStorage.setItem(SK,JSON.stringify(s))}catch{}};
+  function check(key){const now=Date.now(),s=load(),e=s[key];if(!e)return{ok:true,fails:0};if(e.until&&now<e.until)return{ok:false,until:e.until};if(!e.until&&now-e.first>WIN_MS){delete s[key];save(s);return{ok:true,fails:0}}return{ok:true,fails:e.fails||0}}
+  function fail(key){const now=Date.now(),s=load();let e=s[key];if(!e||(!e.until&&now-e.first>WIN_MS))e={fails:0,lockouts:0,first:now};if(e.until&&now>=e.until){e.fails=0;delete e.until;e.first=now}e.fails=(e.fails||0)+1;if(e.fails>=MAX_FAILS){const dur=LOCKOUTS_MS[Math.min(e.lockouts,LOCKOUTS_MS.length-1)];e.until=now+dur;e.lockouts=(e.lockouts||0)+1;e.fails=0;e.first=now}s[key]=e;save(s);return check(key)}
+  function success(key){const s=load();delete s[key];save(s)}
+  function checkGlobal(){const now=Date.now(),s=load(),g=s['__g']||{t:[]};g.t=g.t.filter(x=>now-x<G_WIN_MS);if(g.t.length>=G_MAX){s['__g']=g;save(s);return false}g.t.push(now);s['__g']=g;save(s);return true}
+  return{check,fail,success,checkGlobal,MAX_FAILS};
 })();
 
-// Countdown при блокировке
-let _cdTimer = null;
-function startLockout(until) {
-  if (_cdTimer) clearInterval(_cdTimer);
-  setLoading(false);
-  document.getElementById('btn-login').disabled = true;
-  const tick = () => {
-    const sec = Math.ceil((until - Date.now()) / 1000);
-    if (sec <= 0) {
-      clearInterval(_cdTimer); _cdTimer = null;
-      document.getElementById('btn-login').disabled = false;
-      hideAlert(); return;
-    }
-    const m = Math.floor(sec / 60), s = sec % 60;
-    const t = m > 0 ? `${m}:${String(s).padStart(2,'0')}` : `${s} сек`;
-    showAlert('Доступ временно ограничен', `Слишком много неудачных попыток. Повторите через: ${t}`);
-  };
-  tick(); _cdTimer = setInterval(tick, 1000);
+let _cdTimer=null;
+function startLockout(until,btn){
+  if(_cdTimer)clearInterval(_cdTimer);setLoading(btn,false);btn.disabled=true;
+  const tick=()=>{const sec=Math.ceil((until-Date.now())/1000);if(sec<=0){clearInterval(_cdTimer);_cdTimer=null;btn.disabled=false;hideAlert();return}const m=Math.floor(sec/60),s=sec%60;showAlert('Доступ временно ограничен',`Слишком много попыток. Повторите через: ${m>0?`${m}:${String(s).padStart(2,'0')}`:`${s} с`}`)};
+  tick();_cdTimer=setInterval(tick,1000);
 }
 
-// ─────────────────────────────────────────────────────────────
-//  Phone helpers (та же логика что в клиентском login)
-// ─────────────────────────────────────────────────────────────
-function digitsOnly(v) { return (v || '').replace(/\D/g, ''); }
+const digitsOnly=v=>(v||'').replace(/\D/g,'');
+function normalizePhone(raw){let d=digitsOnly(raw);if(d.startsWith('992'))d=d.slice(3);else if(d.startsWith('8')&&d.length===10)d=d.slice(1);return d.length===9?d:null}
+function formatPhoneDisplay(d9){return'+992 '+d9.slice(0,2)+' '+d9.slice(2,5)+' '+d9.slice(5,7)+' '+d9.slice(7,9)}
+function phoneToPseudoEmail(d9){return`992${d9}@${PHONE_DOMAIN}`}
+function attachPhoneMask(input){input.addEventListener('input',()=>{let d=digitsOnly(input.value).slice(0,9),out='';if(d.length>0)out=d.slice(0,2);if(d.length>2)out+=' '+d.slice(2,5);if(d.length>5)out+=' '+d.slice(5,7);if(d.length>7)out+=' '+d.slice(7,9);input.value=out})}
 
-function normalizePhone(raw) {
-  let d = digitsOnly(raw);
-  if (d.startsWith('992')) d = d.slice(3);
-  else if (d.startsWith('8') && d.length === 10) d = d.slice(1);
-  if (d.length !== 9) return null;
-  return d;
-}
+const fbBar=document.getElementById('fb-bar');
+const alertEl=document.getElementById('lock-alert'),alertTitle=document.getElementById('alert-title'),alertMsg=document.getElementById('alert-msg');
+const statusText=document.getElementById('status-text');
+const loginPhone=document.getElementById('login-phone'),loginPass=document.getElementById('login-pass');
+const btnLoginNext=document.getElementById('btn-login-next'),btnLogin=document.getElementById('btn-login'),btnLoginBack=document.getElementById('btn-login-back');
+const loginStep1=document.getElementById('login-step-1'),loginStep2=document.getElementById('login-step-2');
+const ldot1=document.getElementById('ldot-1'),ldot2=document.getElementById('ldot-2');
+const phoneChipNum=document.getElementById('phone-chip-num');
+let loginPhoneDigits=null;
 
-function phoneToPseudoEmail(d9) { return `992${d9}@${PHONE_DOMAIN}`; }
+attachPhoneMask(loginPhone);
 
-// Маска: "90 123 45 67"
-const phoneInput = document.getElementById('l-phone');
-phoneInput.addEventListener('input', () => {
-  let d = digitsOnly(phoneInput.value).slice(0, 9), out = '';
-  if (d.length > 0) out  = d.slice(0, 2);
-  if (d.length > 2) out += ' ' + d.slice(2, 5);
-  if (d.length > 5) out += ' ' + d.slice(5, 7);
-  if (d.length > 7) out += ' ' + d.slice(7, 9);
-  phoneInput.value = out;
-});
-
-// ─────────────────────────────────────────────────────────────
-//  DOM helpers
-// ─────────────────────────────────────────────────────────────
-const statusDot = document.getElementById('status-dot');
-const statusTxt = document.getElementById('status-txt');
-const fbBar     = document.getElementById('fb-bar');
-
-function showAlert(title, msg, type = 'err') {
-  document.getElementById('alert-title').textContent = title;
-  document.getElementById('alert-msg').textContent   = ' ' + msg;
-  document.getElementById('alert').className = `alert ${type} show`;
-}
-function hideAlert() { document.getElementById('alert').className = 'alert err'; }
-
-function showFieldErr(id, msg) {
-  const inp = document.getElementById(id);
-  const err = document.getElementById('err-' + id);
-  if (inp) inp.classList.add('err');
-  if (err) { err.textContent = msg; err.classList.add('show'); }
-}
-function clearFieldErr(id) {
-  const inp = document.getElementById(id);
-  const err = document.getElementById('err-' + id);
-  if (inp) inp.classList.remove('err');
-  if (err) { err.textContent = ''; err.classList.remove('show'); }
-}
-
-[phoneInput, document.getElementById('l-pass')].forEach(el => {
-  el.addEventListener('input', () => {
-    if (_cdTimer) return;
-    clearFieldErr(el.id); hideAlert();
-  });
-});
-
-function setLoading(on) {
-  const btn = document.getElementById('btn-login');
-  btn.disabled = on;
-  btn.classList.toggle('loading', on);
-}
-
-// Eye toggle
-document.getElementById('eye-login').addEventListener('click', () => {
-  const inp = document.getElementById('l-pass');
-  const vis = inp.type === 'password';
-  inp.type = vis ? 'text' : 'password';
-  document.getElementById('eye-login-show').style.display = vis ? 'none' : '';
-  document.getElementById('eye-login-hide').style.display = vis ? '' : 'none';
-});
-
-// Firebase error messages
-function fbMsg(code) {
-  const m = {
-    'auth/user-not-found':            ['Аккаунт не найден',    'Нет аккаунта с таким номером телефона.'],
-    'auth/wrong-password':            ['Неверный пароль',       'Проверьте правильность пароля.'],
-    'auth/invalid-credential':        ['Неверные данные',       'Номер телефона или пароль введены неправильно.'],
-    'auth/invalid-login-credentials': ['Неверные данные',       'Номер телефона или пароль введены неправильно.'],
-    'auth/too-many-requests':         ['Слишком много попыток', 'Firebase временно заблокировал вход. Попробуйте позже.'],
-    'auth/network-request-failed':    ['Ошибка сети',           'Проверьте подключение к интернету.'],
-    'no-admin':                       ['Нет прав доступа',      'Этот аккаунт не имеет роли admin. Обратитесь к администратору.'],
-  };
-  return m[code] || ['Ошибка', 'Что-то пошло не так. Попробуйте ещё раз.'];
-}
-
-// ─────────────────────────────────────────────────────────────
-//  Auth state
-// ─────────────────────────────────────────────────────────────
 fbBar.classList.add('loading');
-onAuthStateChanged(auth, async user => {
+onAuthStateChanged(auth,user=>{
   fbBar.classList.remove('loading');
-  fbBar.classList.add('done');
-  if (!user) {
-    statusDot.className  = 'status-dot ok';
-    statusTxt.textContent = 'dastdaroz · Firebase подключён';
-    return;
-  }
-  try {
-    const snap = await getDoc(doc(db, 'users', user.uid));
-    if (snap.exists() && snap.data().role === 'admin') {
-      statusDot.className  = 'status-dot ok';
-      statusTxt.textContent = `Авторизован (${snap.data().displayName || user.uid}) — переход…`;
-      setTimeout(() => location.href = ADMIN_HOME, 600);
-    } else {
-      // Авторизован, но не admin — выходим
-      await auth.signOut();
-      statusDot.className  = 'status-dot ok';
-      statusTxt.textContent = 'dastdaroz · Firebase подключён';
-    }
-  } catch {
-    statusDot.className  = 'status-dot ok';
-    statusTxt.textContent = 'dastdaroz · Firebase подключён';
-  }
+  if(user){statusText.textContent='Перенаправление…';setTimeout(()=>{window.location.href=HOME},400);}
 });
 
-// ─────────────────────────────────────────────────────────────
-//  LOGIN
-// ─────────────────────────────────────────────────────────────
-const WRONG_PASS = new Set([
-  'auth/wrong-password',
-  'auth/invalid-credential',
-  'auth/invalid-login-credentials',
-]);
+document.getElementById('eye-login').addEventListener('click',()=>{
+  const p=loginPass.type==='password';loginPass.type=p?'text':'password';
+  document.getElementById('eye-login-show').style.display=p?'none':'';
+  document.getElementById('eye-login-hide').style.display=p?'':'none';
+});
 
-document.getElementById('btn-login').addEventListener('click', async () => {
-  // Сбрасываем ошибки
-  clearFieldErr('l-phone');
-  clearFieldErr('l-pass');
-  hideAlert();
+function showAlert(t,m){alertTitle.textContent=t;alertMsg.textContent=' '+m;alertEl.className='alert err show'}
+function hideAlert(){alertEl.className='alert err'}
+function showFieldErr(id,msg){const el=document.getElementById(id),er=document.getElementById('err-'+id);if(el)el.classList.add('err');if(er){er.textContent=msg;er.classList.add('show')}}
+function clearFieldErr(id){const el=document.getElementById(id),er=document.getElementById('err-'+id);if(el)el.classList.remove('err');if(er){er.textContent='';er.classList.remove('show')}}
+[loginPhone,loginPass].forEach(inp=>inp.addEventListener('input',()=>{if(_cdTimer)return;clearFieldErr(inp.id);hideAlert()}));
 
-  // Валидация
-  const d9   = normalizePhone(phoneInput.value);
-  const pass = document.getElementById('l-pass').value;
-  let bad = false;
-  if (!d9)   { showFieldErr('l-phone', 'Введите номер телефона (9 цифр)'); bad = true; }
-  if (!pass) { showFieldErr('l-pass',  'Введите пароль'); bad = true; }
-  if (bad) return;
+function goLoginStep(n){
+  loginStep1.style.display=n===1?'':'none';loginStep2.style.display=n===2?'':'none';
+  if(ldot1){ldot1.classList.toggle('active',n===1);ldot1.classList.toggle('done',n===2)}
+  if(ldot2){ldot2.classList.toggle('active',n===2);ldot2.classList.remove('done')}
+  if(n===2)setTimeout(()=>loginPass.focus(),150);
+  if(n===1)setTimeout(()=>loginPhone.focus(),150);
+}
 
-  // Rate limit: глобальный
-  if (!RL.checkGlobal()) {
-    showAlert('Слишком много попыток', 'Подождите немного и попробуйте снова.');
-    return;
-  }
+btnLoginNext.addEventListener('click',()=>{
+  const d9=normalizePhone(loginPhone.value);
+  if(!d9){showFieldErr('login-phone','Введите корректный номер (9 цифр)');return}
+  loginPhoneDigits=d9;phoneChipNum.textContent=formatPhoneDisplay(d9);goLoginStep(2);
+  const st=RL.check(phoneToPseudoEmail(d9));if(!st.ok)startLockout(st.until,btnLogin);
+});
+btnLoginBack.addEventListener('click',()=>{if(_cdTimer){clearInterval(_cdTimer);_cdTimer=null;btnLogin.disabled=false}loginPass.value='';hideAlert();goLoginStep(1)});
+loginPhone.addEventListener('keydown',e=>{if(e.key==='Enter')btnLoginNext.click()});
+loginPass.addEventListener('keydown',e=>{if(e.key==='Enter')btnLogin.click()});
 
-  // Rate limit: per-phone
-  const key     = phoneToPseudoEmail(d9);
-  const rlState = RL.check(key);
-  if (!rlState.ok) { startLockout(rlState.until); return; }
+function fbErr(code){const map={'auth/user-not-found':['Аккаунт не найден','Аккаунт с этим номером не существует.'],'auth/wrong-password':['Неверный пароль','Пароль неверный. Попробуйте ещё раз.'],'auth/invalid-credential':['Неверные данные','Номер или пароль неверны.'],'auth/invalid-login-credentials':['Неверные данные','Номер или пароль неверны.'],'auth/too-many-requests':['Лимит','Слишком много попыток. Подождите.'],'auth/network-request-failed':['Ошибка сети','Проверьте подключение к интернету.']};return map[code]||['Ошибка','Что-то пошло не так. Попробуйте ещё раз.']}
+function setLoading(btn,on){btn.disabled=on;btn.classList.toggle('loading',on)}
 
-  setLoading(true);
-  try {
-    const pers = document.getElementById('remember').checked
-      ? browserLocalPersistence
-      : browserSessionPersistence;
-    await setPersistence(auth, pers);
-
-    const cred = await signInWithEmailAndPassword(auth, key, pass);
-
-    // Проверяем роль строго: только 'admin'
-    const snap = await getDoc(doc(db, 'users', cred.user.uid));
-    if (!snap.exists() || snap.data().role !== 'admin') {
-      await auth.signOut();
-      const [t, m] = fbMsg('no-admin');
-      showAlert(t, m);
-      setLoading(false);
-      return;
-    }
-
-    // Обновляем lastLoginAt
-    await setDoc(doc(db, 'users', cred.user.uid), {
-      lastLoginAt: serverTimestamp(),
-    }, { merge: true });
-
-    RL.success(key);
-    // onAuthStateChanged → redirect
-
-  } catch (e) {
-    if (WRONG_PASS.has(e.code)) {
-      const res    = RL.fail(key);
-      const [t, m] = fbMsg(e.code);
-      if (!res.ok) {
-        startLockout(res.until);
-      } else {
-        const left = RL.MAX_FAILS - res.fails;
-        showAlert(t, m + (left <= 2 ? ` (осталось попыток: ${left})` : ''));
-        document.getElementById('l-pass').value = '';
-        setLoading(false);
-      }
-    } else {
-      const [t, m] = fbMsg(e.code);
-      showAlert(t, m);
-      document.getElementById('l-pass').value = '';
-      setLoading(false);
-    }
+const WRONG_CODES=new Set(['auth/wrong-password','auth/invalid-credential','auth/invalid-login-credentials']);
+btnLogin.addEventListener('click',async()=>{
+  const pass=loginPass.value;
+  if(!pass){showFieldErr('login-pass','Введите пароль');return}
+  if(!loginPhoneDigits){goLoginStep(1);return}
+  if(!RL.checkGlobal()){showAlert('Слишком много попыток','Подождите немного и попробуйте снова.');return}
+  const key=phoneToPseudoEmail(loginPhoneDigits),rlSt=RL.check(key);
+  if(!rlSt.ok){startLockout(rlSt.until,btnLogin);return}
+  setLoading(btnLogin,true);
+  try{
+    await setPersistence(auth,browserLocalPersistence);
+    await signInWithEmailAndPassword(auth,key,pass);
+    RL.success(key);statusText.textContent='Успешно!';window.location.href=HOME;
+  }catch(e){
+    if(WRONG_CODES.has(e.code)){
+      const res=RL.fail(key),[t,m]=fbErr(e.code);
+      if(!res.ok)startLockout(res.until,btnLogin);
+      else{const left=RL.MAX_FAILS-res.fails;showAlert(t,m+(left<=2?` Осталось: ${left}.`:''));setLoading(btnLogin,false)}
+    }else{const[t,m]=fbErr(e.code);showAlert(t,m);setLoading(btnLogin,false)}
   }
 });
 
-// Enter key
-phoneInput.addEventListener('keydown', e => {
-  if (e.key === 'Enter') document.getElementById('l-pass').focus();
-});
-document.getElementById('l-pass').addEventListener('keydown', e => {
-  if (e.key === 'Enter') document.getElementById('btn-login').click();
-});
+// Country Picker
+const COUNTRIES=[
+  {code:'TJ',name:'Таджикистан',dial:'992',flag:'storage/flags/flag_tj_96x64.png'},
+  {code:'RU',name:'Россия',dial:'7',flag:'storage/flags/flag_ru_96x64.png'},
+  {code:'UZ',name:'Узбекистан',dial:'998',flag:'storage/flags/flag_uz_96x64.png'},
+  {code:'KZ',name:'Казахстан',dial:'7',flag:'storage/flags/flag_kz_96x64.png'},
+  {code:'KG',name:'Кыргызстан',dial:'996',flag:'storage/flags/flag_kg_96x64.png'},
+  {code:'TM',name:'Туркменистан',dial:'993',flag:'storage/flags/flag_tm_96x64.png'},
+  {code:'AZ',name:'Азербайджан',dial:'994',flag:'storage/flags/flag_az_96x64.png'},
+  {code:'AM',name:'Армения',dial:'374',flag:'storage/flags/flag_am_96x64.png'},
+  {code:'GE',name:'Грузия',dial:'995',flag:'storage/flags/flag_ge_96x64.png'},
+  {code:'UA',name:'Украина',dial:'380',flag:'storage/flags/flag_ua_96x64.png'},
+  {code:'BY',name:'Беларусь',dial:'375',flag:'storage/flags/flag_by_96x64.png'},
+  {code:'AF',name:'Афганистан',dial:'93',flag:'storage/flags/flag_af_96x64.png'},
+  {code:'PK',name:'Пакистан',dial:'92',flag:'storage/flags/flag_pk_96x64.png'},
+  {code:'IN',name:'Индия',dial:'91',flag:'storage/flags/flag_in_96x64.png'},
+  {code:'CN',name:'Китай',dial:'86',flag:'storage/flags/flag_cn_96x64.png'},
+  {code:'TR',name:'Турция',dial:'90',flag:'storage/flags/flag_tr_96x64.png'},
+  {code:'IR',name:'Иран',dial:'98',flag:'storage/flags/flag_ir_96x64.png'},
+  {code:'SA',name:'Саудовская Аравия',dial:'966',flag:'storage/flags/flag_sa_96x64.png'},
+  {code:'AE',name:'ОАЭ',dial:'971',flag:'storage/flags/flag_ae_96x64.png'},
+  {code:'DE',name:'Германия',dial:'49',flag:'storage/flags/flag_de_96x64.png'},
+  {code:'GB',name:'Великобритания',dial:'44',flag:'storage/flags/flag_gb_96x64.png'},
+  {code:'FR',name:'Франция',dial:'33',flag:'storage/flags/flag_fr_96x64.png'},
+  {code:'US',name:'США',dial:'1',flag:'storage/flags/flag_us_96x64.png'},
+];
+let selectedCountry=COUNTRIES[0];
+function applyCountry(c){selectedCountry=c;const f=document.getElementById('flag-login'),d=document.getElementById('dial-login');if(f){f.src=c.flag;f.alt=c.code}if(d)d.textContent='+'+c.dial}
+function renderCP(q=''){
+  const list=document.getElementById('cp-list'),ql=q.toLowerCase().trim();
+  const f=ql?COUNTRIES.filter(c=>c.name.toLowerCase().includes(ql)||c.code.toLowerCase().includes(ql)||c.dial.includes(ql)):COUNTRIES;
+  if(!f.length){list.innerHTML='<div class="cp-empty">Ничего не найдено</div>';return}
+  list.innerHTML=f.map(c=>`<button class="cp-item${c.code===selectedCountry.code?' selected':''}" data-code="${c.code}" type="button"><img class="cp-item-flag" src="${c.flag}" alt="${c.code}" loading="lazy"/><span class="cp-item-name">${c.name}</span><span class="cp-item-dial">+${c.dial}</span></button>`).join('');
+  list.querySelectorAll('.cp-item').forEach(btn=>btn.addEventListener('click',()=>{const c=COUNTRIES.find(x=>x.code===btn.dataset.code);if(c){applyCountry(c);closeCP()}}));
+  const sel=list.querySelector('.selected');if(sel)sel.scrollIntoView({block:'nearest'});
+}
+function openCP(){document.getElementById('cp-search').value='';renderCP();document.getElementById('cp-overlay').classList.add('open');setTimeout(()=>document.getElementById('cp-search').focus(),280);document.body.style.overflow='hidden'}
+function closeCP(){document.getElementById('cp-overlay').classList.remove('open');document.body.style.overflow=''}
+document.getElementById('prefix-login').addEventListener('click',openCP);
+document.getElementById('prefix-login').addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' ')openCP()});
+document.getElementById('cp-close').addEventListener('click',closeCP);
+document.getElementById('cp-overlay').addEventListener('click',e=>{if(e.target===document.getElementById('cp-overlay'))closeCP()});
+document.getElementById('cp-search').addEventListener('input',e=>renderCP(e.target.value));
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeCP()});
 </script>
 </body>
 </html>

@@ -173,44 +173,40 @@ body::after{display:none}
 .dl{display:flex;align-items:center;margin-bottom:6px;font-size:.64rem}
 .dl-dot{width:7px;height:7px;border-radius:2px;flex-shrink:0;margin-right:6px}
 
-/* Tickets */
-.ticket{padding:11px 14px;border-bottom:1px solid var(--b);cursor:pointer;transition:background var(--tf)}
-.ticket:hover{background:rgba(99,102,241,.03)}
-.ticket:last-child{border-bottom:none}
-.tk-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:4px;flex-wrap:wrap}
-.tk-id{font-family:var(--fm);font-size:.56rem;color:var(--text3)}
-.tk-pri{font-size:.5rem;font-weight:700;padding:2px 7px;border-radius:99px;border:1px solid;letter-spacing:.06em;text-transform:uppercase}
-.tk-subj{font-size:.72rem;font-weight:600;color:var(--text);margin-bottom:3px}
-.tk-meta{font-size:.6rem;color:var(--text3);display:flex;gap:7px;flex-wrap:wrap}
-.tk-unread-dot{width:6px;height:6px;border-radius:50%;background:var(--red);flex-shrink:0}
-
-/* Ticket chat thread */
-.tk-detail-wrap{display:flex;flex-direction:column;height:100%}
-.tk-client-row{display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid var(--b)}
-.tk-client-av{width:34px;height:34px;border-radius:50%;background:var(--accd);border:1.5px solid var(--accg);display:flex;align-items:center;justify-content:center;color:var(--acc2);font-weight:700;font-size:.7rem;flex-shrink:0}
-.tk-client-body{flex:1;min-width:0}
-.tk-client-name{font-weight:700;font-size:.78rem;color:var(--text)}
-.tk-client-phone{font-size:.64rem;color:var(--text3);margin-top:1px}
-.tk-status-pill{font-size:.54rem;font-weight:700;padding:3px 9px;border-radius:99px;border:1px solid;letter-spacing:.04em;text-transform:uppercase;flex-shrink:0}
-.tk-status-pill.open{color:var(--yellow);border-color:var(--yellow);background:var(--yellowd)}
-.tk-status-pill.in_progress{color:var(--acc2);border-color:var(--acc2);background:var(--accd)}
-.tk-status-pill.resolved{color:var(--green);border-color:var(--green);background:var(--greend)}
-.tk-order-chip{display:flex;align-items:center;gap:8px;background:var(--s2);border:1px solid var(--b);border-radius:9px;padding:9px 12px;margin:10px 16px 0;font-size:.7rem;color:var(--text2);cursor:pointer;transition:border-color var(--tf)}
-.tk-order-chip:hover{border-color:var(--bh)}
-.tk-order-chip svg{color:var(--acc2);flex-shrink:0}
-.tk-order-chip-num{font-weight:700;color:var(--text)}
-.tk-order-chip-arrow{margin-left:auto;color:var(--text3);flex-shrink:0}
-.tk-chat-messages{flex:1;overflow-y:auto;padding:12px 16px;display:flex;flex-direction:column;gap:7px;min-height:160px;max-height:320px}
-.tk-msg{max-width:78%;padding:7px 11px;border-radius:11px;font-size:.72rem;line-height:1.5;word-wrap:break-word;white-space:pre-wrap}
-.tk-msg-client{align-self:flex-start;background:var(--s2);border:1px solid var(--b);color:var(--text)}
-.tk-msg-admin{align-self:flex-end;background:#e8e8e8;color:#0a0a0a}
-.tk-msg-time{font-size:.54rem;opacity:.6;margin-top:3px;display:block}
-.tk-chat-reply-row{display:flex;gap:7px;padding:10px 16px;border-top:1px solid var(--b);align-items:flex-end;flex-shrink:0}
-.tk-chat-reply-input{flex:1;resize:none;max-height:80px;border:1px solid var(--b);border-radius:8px;padding:8px 11px;font-family:var(--fs);font-size:.72rem;background:var(--s2);color:var(--text);outline:none;transition:border-color var(--tf)}
-.tk-chat-reply-input:focus{border-color:var(--acc)}
-.tk-chat-send{width:34px;height:34px;border-radius:8px;background:#e8e8e8;border:none;color:#0a0a0a;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:opacity var(--tf)}
-.tk-chat-send:disabled{opacity:.4;cursor:default}
-.tk-actions-row{display:flex;gap:7px;padding:10px 16px;border-top:1px solid var(--b);flex-wrap:wrap;flex-shrink:0}
+/* Support Chats list */
+.sc-item{display:flex;align-items:center;gap:11px;padding:12px 14px;border-bottom:1px solid var(--b);cursor:pointer;transition:background var(--tf)}
+.sc-item:hover{background:rgba(99,102,241,.03)}
+.sc-item:last-child{border-bottom:none}
+.sc-item.active{background:rgba(99,102,241,.06)}
+.sc-item-av{width:36px;height:36px;border-radius:50%;background:var(--accd);border:1.5px solid var(--accg);display:flex;align-items:center;justify-content:center;color:var(--acc2);font-weight:700;font-size:.7rem;flex-shrink:0}
+.sc-item-body{flex:1;min-width:0}
+.sc-item-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:3px}
+.sc-item-name{font-size:.76rem;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sc-item-time{font-size:.58rem;color:var(--text3);white-space:nowrap;flex-shrink:0}
+.sc-item-last{font-size:.66rem;color:var(--text3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:flex;align-items:center;gap:5px}
+.sc-item-dot{width:6px;height:6px;border-radius:50%;background:var(--red);flex-shrink:0}
+.sc-item-order{font-size:.58rem;color:var(--acc2);margin-top:2px;font-weight:600}
+.sc-item-badge{min-width:18px;height:18px;padding:0 5px;background:var(--red);color:#fff;border-radius:99px;font-size:.58rem;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+/* Support Chat detail */
+.sc-detail-wrap{display:flex;flex-direction:column;height:100%}
+.sc-detail-user{display:flex;align-items:center;gap:10px}
+.sc-detail-av{width:34px;height:34px;border-radius:50%;background:var(--accd);border:1.5px solid var(--accg);display:flex;align-items:center;justify-content:center;color:var(--acc2);font-weight:700;font-size:.7rem;flex-shrink:0}
+.sc-detail-phone{font-size:.64rem;color:var(--text3);margin-top:1px}
+.sc-order-chip{display:flex;align-items:center;gap:8px;background:var(--s2);border:1px solid var(--b);border-radius:9px;padding:9px 12px;margin:10px 16px 0;font-size:.7rem;color:var(--text2);cursor:pointer;transition:border-color var(--tf)}
+.sc-order-chip:hover{border-color:var(--bh)}
+.sc-order-chip svg{color:var(--acc2);flex-shrink:0}
+.sc-msgs{flex:1;overflow-y:auto;padding:12px 16px;display:flex;flex-direction:column;gap:7px;min-height:160px;max-height:340px}
+.sc-msg{max-width:78%;padding:7px 11px;border-radius:11px;font-size:.72rem;line-height:1.5;word-wrap:break-word;white-space:pre-wrap}
+.sc-msg-client{align-self:flex-start;background:var(--s2);border:1px solid var(--b);color:var(--text)}
+.sc-msg-admin{align-self:flex-end;background:#e8e8e8;color:#0a0a0a}
+.sc-msg-name{font-size:.54rem;font-weight:700;color:var(--acc2);margin-bottom:2px;display:block;text-align:right}
+.sc-msg-time{font-size:.54rem;opacity:.6;margin-top:3px;display:block}
+.sc-msg-admin .sc-msg-time{text-align:right}
+.sc-reply-row{display:flex;gap:7px;padding:10px 16px;border-top:1px solid var(--b);align-items:flex-end;flex-shrink:0}
+.sc-reply-input{flex:1;resize:none;max-height:80px;border:1px solid var(--b);border-radius:8px;padding:8px 11px;font-family:var(--fs);font-size:.72rem;background:var(--s2);color:var(--text);outline:none;transition:border-color var(--tf)}
+.sc-reply-input:focus{border-color:var(--acc)}
+.sc-send-btn{width:34px;height:34px;border-radius:8px;background:var(--acc);border:none;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:opacity var(--tf)}
+.sc-send-btn:disabled{opacity:.4;cursor:default}
 
 /* Modal */
 .mo{position:fixed;inset:0;z-index:999;background:rgba(0,0,0,.82);display:flex;align-items:center;justify-content:center;padding:16px;opacity:0;visibility:hidden;transition:all .22s var(--ease)}
@@ -727,13 +723,22 @@ textarea.mi{resize:vertical;min-height:76px}
 
     <!-- SUPPORT -->
     <div class="page" id="page-support">
-      <div class="sh"><div><div class="sh-tag">Тех. поддержка</div><div class="sh-title">Обращения <em>клиентов</em></div></div></div>
+      <div class="sh"><div><div class="sh-tag">Чат · Поддержка</div><div class="sh-title">Чаты <em>с клиентами</em></div></div></div>
       <div class="two-col">
         <div class="panel">
-          <div class="fb"><button class="fp active" onclick="fTickets('all',this)">Все</button><button class="fp r" onclick="fTickets('urgent',this)">Срочные</button><button class="fp" onclick="fTickets('open',this)">Открытые</button><button class="fp g" onclick="fTickets('resolved',this)">Решённые</button></div>
-          <div id="tickets-list"></div>
+          <div class="fb">
+            <button class="fp active" onclick="fChats('all',this)">Все</button>
+            <button class="fp r" onclick="fChats('unread',this)">Непрочитанные</button>
+          </div>
+          <div id="chats-list"></div>
         </div>
-        <div class="panel" id="ticket-detail"><div class="panel-head"><div class="panel-title">Детали обращения</div></div><div style="padding:36px 20px;text-align:center;color:var(--text3);font-size:.72rem"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" style="opacity:.18;margin-bottom:10px"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg><div>Выберите обращение из списка</div></div></div>
+        <div class="panel" id="chat-detail">
+          <div class="panel-head"><div class="panel-title">Выберите чат</div></div>
+          <div style="padding:36px 20px;text-align:center;color:var(--text3);font-size:.72rem">
+            <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" style="opacity:.18;margin-bottom:10px"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+            <div>Выберите чат из списка</div>
+          </div>
+        </div>
       </div>
     </div>
 

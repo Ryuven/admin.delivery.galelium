@@ -100,7 +100,7 @@ function startListeners(){
     if(document.getElementById('page-couriers').classList.contains('active'))renderCouriersPage();
   });
 
-  listenTickets();
+  listenSupportChats();
 }
 
 /* ── LOAD ALL ── */
@@ -108,7 +108,7 @@ async function loadAll(){
   await Promise.all([loadOrders(),loadClients(),loadProducts(),loadStaff(),loadNewsAdmin(),loadVacancies(),loadStores(),loadGenCatalogs(),loadPartnerApps()]);
   renderKPI();
   renderAnalytics();
-  renderTickets();
+  renderSupportChats();
 }
 
 async function loadOrders(){
@@ -932,142 +932,122 @@ window.updateStaffRole=async function(uid){
   try{await setDoc(doc(db,'users',uid),{role,updatedAt:serverTimestamp()},{merge:true});toast('Роль обновлена','ok');closeMo('order-modal');await loadStaff();}catch{toast('Ошибка','err');}
 };
 
-/* ── SUPPORT TICKETS ── */
-let TICKETS = [];
-let unsubTickets = null;
-let currentTicketId = null;
-let unsubTicketMsgs = null;
+/* ══ SUPPORT CHATS (admin panel) ══════════════════════════════ */
+let CHATS = [];
+let unsubChats = null;
+let currentChatId = null;
+let unsubChatMsgs = null;
 
 function escHtmlAdm(s) { return (s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
 
-function listenTickets() {
-  if (unsubTickets) unsubTickets();
-  const q = query(collection(db, 'supportTickets'), orderBy('updatedAt', 'desc'));
-  unsubTickets = onSnapshot(q, snap => {
-    TICKETS = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-    renderTickets();
+function listenSupportChats() {
+  if (unsubChats) unsubChats();
+  const q = query(collection(db, 'supportChats'), orderBy('updatedAt', 'desc'));
+  unsubChats = onSnapshot(q, snap => {
+    CHATS = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    renderSupportChats();
   }, () => {});
 }
 
-function renderTickets() {
-  const el = document.getElementById('tickets-list'); if (!el) return;
-  let list = [...TICKETS];
-  if (tktFilt === 'urgent')        list = list.filter(t => (t.adminUnread || 0) > 0 && t.status !== 'resolved');
-  else if (tktFilt === 'open')     list = list.filter(t => t.status === 'open');
-  else if (tktFilt === 'resolved') list = list.filter(t => t.status === 'resolved');
-
-  const urgent = TICKETS.filter(t => (t.adminUnread || 0) > 0 && t.status !== 'resolved').length;
-  const b = document.getElementById('sb-tkt-b'); if (b) { b.style.display = urgent > 0 ? '' : 'none'; b.textContent = urgent; }
-
-  const sc = { open: 'var(--yellow)', in_progress: 'var(--acc2)', resolved: 'var(--green)' };
-  const sl = { open: 'Открыт', in_progress: 'В работе', resolved: 'Решён' };
-
-  el.innerHTML = list.map(t => {
-    const num  = '#' + t.id.slice(-6).toUpperCase();
-    const time = t.updatedAt?.toDate ? t.updatedAt.toDate().toLocaleDateString('ru-RU', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' }) : '—';
-    const hasUnread = (t.adminUnread || 0) > 0;
-    const c = sc[t.status] || 'var(--text3)';
-    return `<div class="ticket" onclick="openTicket('${t.id}')" style="${currentTicketId === t.id ? 'background:rgba(99,102,241,.06)' : ''}">
-      <div class="tk-head"><span class="tk-id">${num}</span><span class="tk-pri" style="color:${c};border-color:${c}30;background:${c}10">${sl[t.status] || t.status}</span></div>
-      <div class="tk-subj">${hasUnread ? '<span class="tk-unread-dot" style="display:inline-block;margin-right:5px;vertical-align:middle"></span>' : ''}${escHtmlAdm(t.subject)}</div>
-      <div class="tk-meta"><span>${escHtmlAdm(t.clientName)}</span>${t.orderNumber ? `<span>· #${escHtmlAdm(t.orderNumber)}</span>` : ''}<span>· ${time}</span></div>
+function renderSupportChats() {
+  const el = document.getElementById('chats-list'); if (!el) return;
+  let list = tktFilt === 'unread' ? CHATS.filter(c => (c.adminUnread || 0) > 0) : [...CHATS];
+  const totalUnread = CHATS.filter(c => (c.adminUnread || 0) > 0).length;
+  const b = document.getElementById('sb-tkt-b'); if (b) { b.style.display = totalUnread > 0 ? '' : 'none'; b.textContent = totalUnread; }
+  el.innerHTML = list.map(c => {
+    const initials = (c.userName || '?').trim().split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2) || '?';
+    const time = c.updatedAt?.toDate ? c.updatedAt.toDate().toLocaleDateString('ru-RU', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' }) : '—';
+    const hasUnread = (c.adminUnread || 0) > 0;
+    return `<div class="sc-item ${currentChatId === c.id ? 'active' : ''}" onclick="openSupportChat('${c.id}')">
+      <div class="sc-item-av">${escHtmlAdm(initials)}</div>
+      <div class="sc-item-body">
+        <div class="sc-item-head">
+          <div class="sc-item-name">${escHtmlAdm(c.userName || 'Пользователь')}</div>
+          <div class="sc-item-time">${time}</div>
+        </div>
+        <div class="sc-item-last">${hasUnread ? '<span class="sc-item-dot"></span>' : ''}${escHtmlAdm((c.lastMessage || '').slice(0, 55) || 'Нет сообщений')}</div>
+        ${c.orderNumber ? `<div class="sc-item-order">Заказ #${escHtmlAdm(c.orderNumber)}</div>` : ''}
+      </div>
+      ${hasUnread ? `<div class="sc-item-badge">${c.adminUnread}</div>` : ''}
     </div>`;
   }).join('') || `<div class="er"><div class="er-ico"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div>Нет обращений</div>`;
 }
 
-window.fTickets = function (f, btn) {
+window.fChats = function (f, btn) {
   tktFilt = f;
   document.querySelectorAll('#page-support .fp').forEach(p => p.classList.remove('active'));
   btn.classList.add('active');
-  renderTickets();
+  renderSupportChats();
 };
 
-window.openTicket = async function (id) {
-  currentTicketId = id;
-  renderTickets();
-
-  const t = TICKETS.find(x => x.id === id); if (!t) return;
-
-  const sl = { open: 'Открыт', in_progress: 'В работе', resolved: 'Решён' };
-  const initials = (t.clientName || '?').trim().split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2) || '?';
-
-  const orderHtml = t.orderId ? `
-    <div class="tk-order-chip" onclick="openOrderModal('${t.orderId}')">
+window.openSupportChat = async function (id) {
+  currentChatId = id;
+  renderSupportChats();
+  const c = CHATS.find(x => x.id === id); if (!c) return;
+  const initials = (c.userName || '?').trim().split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2) || '?';
+  const orderHtml = c.orderId ? `
+    <div class="sc-order-chip" onclick="openOrderModal('${c.orderId}')">
       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
-      <span>Заказ <span class="tk-order-chip-num">#${escHtmlAdm(t.orderNumber || '')}</span></span>
-      <svg class="tk-order-chip-arrow" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+      <span>Заказ <strong>#${escHtmlAdm(c.orderNumber || '')}</strong></span>
+      <svg style="margin-left:auto;color:var(--text3)" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
     </div>` : '';
-
-  document.getElementById('ticket-detail').innerHTML = `
-    <div class="tk-detail-wrap">
+  document.getElementById('chat-detail').innerHTML = `
+    <div class="sc-detail-wrap">
       <div class="panel-head">
-        <div class="panel-title">${'#' + id.slice(-6).toUpperCase()}</div>
-        <span class="tk-status-pill ${t.status}">${sl[t.status] || t.status}</span>
-      </div>
-      <div class="tk-client-row">
-        <div class="tk-client-av">${initials}</div>
-        <div class="tk-client-body">
-          <div class="tk-client-name">${escHtmlAdm(t.clientName)}</div>
-          <div class="tk-client-phone">${escHtmlAdm(t.clientPhone || '—')}</div>
+        <div class="sc-detail-user">
+          <div class="sc-detail-av">${escHtmlAdm(initials)}</div>
+          <div>
+            <div class="panel-title">${escHtmlAdm(c.userName || 'Пользователь')}</div>
+            <div class="sc-detail-phone">${escHtmlAdm(c.userPhone || '—')}</div>
+          </div>
         </div>
       </div>
       ${orderHtml}
-      <div class="tk-chat-messages" id="tk-chat-messages"><div style="padding:28px;text-align:center;color:var(--text3);font-size:.7rem">Загрузка…</div></div>
-      <div class="tk-chat-reply-row">
-        <textarea class="tk-chat-reply-input" id="tk-reply-input" rows="1" placeholder="Ваш ответ…"
+      <div class="sc-msgs" id="sc-msgs"><div style="padding:28px;text-align:center;color:var(--text3);font-size:.7rem">Загрузка…</div></div>
+      <div class="sc-reply-row">
+        <textarea class="sc-reply-input" id="sc-reply-input" rows="1" placeholder="Ваш ответ…"
           oninput="this.style.height='auto';this.style.height=Math.min(this.scrollHeight,80)+'px'"
-          onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendTicketReply('${id}');}"></textarea>
-        <button class="tk-chat-send" id="tk-send-btn" onclick="sendTicketReply('${id}')">
+          onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendAdminReply('${id}');}"></textarea>
+        <button class="sc-send-btn" id="sc-send-btn" onclick="sendAdminReply('${id}')">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
         </button>
       </div>
-      <div class="tk-actions-row">
-        ${t.status !== 'in_progress' && t.status !== 'resolved' ? `<button class="btn" style="background:var(--accd);border:1px solid var(--accg);color:var(--acc2)" onclick="setTicketStatus('${id}','in_progress')">Взять в работу</button>` : ''}
-        ${t.status !== 'resolved' ? `<button class="btn btn-success" onclick="setTicketStatus('${id}','resolved')">Решено</button>` : `<button class="btn" style="background:var(--accd);border:1px solid var(--accg);color:var(--acc2)" onclick="setTicketStatus('${id}','open')">Открыть заново</button>`}
-      </div>
     </div>`;
-
-  updateDoc(doc(db, 'supportTickets', id), { adminUnread: 0 }).catch(() => {});
-  listenTicketMessages(id);
+  updateDoc(doc(db, 'supportChats', id), { adminUnread: 0 }).catch(() => {});
+  _listenChatMessages(id);
 };
 
-function listenTicketMessages(ticketId) {
-  if (unsubTicketMsgs) unsubTicketMsgs();
-  const q = query(collection(db, 'supportTickets', ticketId, 'messages'), orderBy('createdAt', 'asc'));
-  unsubTicketMsgs = onSnapshot(q, snap => {
-    renderTicketMessages(snap.docs.map(d => ({ id: d.id, ...d.data() })));
+function _listenChatMessages(chatId) {
+  if (unsubChatMsgs) unsubChatMsgs();
+  const q = query(collection(db, 'supportChats', chatId, 'messages'), orderBy('createdAt', 'asc'));
+  unsubChatMsgs = onSnapshot(q, snap => {
+    const msgs = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    const el = document.getElementById('sc-msgs'); if (!el) return;
+    if (!msgs.length) { el.innerHTML = '<div style="padding:28px;text-align:center;color:var(--text3);font-size:.7rem">Нет сообщений</div>'; return; }
+    el.innerHTML = msgs.map(m => {
+      const isAdmin = m.senderRole === 'admin';
+      const time = m.createdAt?.toDate ? m.createdAt.toDate().toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' }) : '';
+      const nameHtml = isAdmin && m.senderName ? `<span class="sc-msg-name">${escHtmlAdm(m.senderName)}</span>` : '';
+      return `<div class="sc-msg ${isAdmin ? 'sc-msg-admin' : 'sc-msg-client'}">${nameHtml}${escHtmlAdm(m.text)}<span class="sc-msg-time">${time}</span></div>`;
+    }).join('');
+    el.scrollTop = el.scrollHeight;
   });
 }
 
-function renderTicketMessages(msgs) {
-  const el = document.getElementById('tk-chat-messages'); if (!el) return;
-  if (msgs.length === 0) {
-    el.innerHTML = '<div style="padding:28px;text-align:center;color:var(--text3);font-size:.7rem">Нет сообщений</div>';
-    return;
-  }
-  el.innerHTML = msgs.map(m => {
-    const mine = m.senderRole === 'admin';
-    const time = m.createdAt?.toDate ? m.createdAt.toDate().toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' }) : '';
-    return `<div class="tk-msg ${mine ? 'tk-msg-admin' : 'tk-msg-client'}">${escHtmlAdm(m.text)}<span class="tk-msg-time">${time}</span></div>`;
-  }).join('');
-  el.scrollTop = el.scrollHeight;
-}
-
-window.sendTicketReply = async function (ticketId) {
-  const inp = document.getElementById('tk-reply-input'); if (!inp) return;
+window.sendAdminReply = async function (chatId) {
+  const inp = document.getElementById('sc-reply-input'); if (!inp) return;
   const text = inp.value.trim(); if (!text) return;
   inp.value = ''; inp.style.height = 'auto';
-  const btn = document.getElementById('tk-send-btn'); if (btn) btn.disabled = true;
+  const btn = document.getElementById('sc-send-btn'); if (btn) btn.disabled = true;
   try {
-    await addDoc(collection(db, 'supportTickets', ticketId, 'messages'), {
-      text, senderId: CU.uid, senderRole: 'admin', senderName: AD?.displayName || 'Поддержка', createdAt: serverTimestamp(),
+    await addDoc(collection(db, 'supportChats', chatId, 'messages'), {
+      text, senderId: CU.uid, senderRole: 'admin',
+      senderName: AD?.displayName || CU.displayName || 'Поддержка',
+      createdAt: serverTimestamp(),
     });
-    await updateDoc(doc(db, 'supportTickets', ticketId), {
-      clientUnread: increment(1),
-      lastMessage: text.slice(0, 120),
-      lastMessageAt: serverTimestamp(),
-      lastMessageSenderRole: 'admin',
-      status: 'in_progress',
+    await updateDoc(doc(db, 'supportChats', chatId), {
+      userUnread: increment(1), lastMessage: text.slice(0, 120),
+      lastMessageAt: serverTimestamp(), lastMessageSenderRole: 'admin',
       updatedAt: serverTimestamp(),
     });
   } catch (e) { toast('Ошибка отправки', 'err'); }
@@ -1075,12 +1055,130 @@ window.sendTicketReply = async function (ticketId) {
   inp.focus();
 };
 
-window.setTicketStatus = async function (ticketId, status) {
+/* ══ SUPPORT CHAT (user side, home.html) ═══════════════════════ */
+let _supChatId = null;
+let _unsubSupMsgs = null;
+let _supSelectedOrder = null;
+let _supOrdersCache = [];
+let _supOrderPickerOpen = false;
+
+window.openSupport = function () {
+  if (!CU) return;
+  document.getElementById('supsh-ov').classList.add('open');
+  document.getElementById('supsh').classList.add('open');
+  document.body.style.overflow = 'hidden';
+  _supChatId = CU.uid;
+  _listenSupportChatUser();
+  _loadSupportOrders();
+};
+
+window.closeSupport = function () {
+  document.getElementById('supsh-ov')?.classList.remove('open');
+  document.getElementById('supsh')?.classList.remove('open');
+  document.body.style.overflow = '';
+  if (_unsubSupMsgs) { _unsubSupMsgs(); _unsubSupMsgs = null; }
+};
+
+function _listenSupportChatUser() {
+  if (_unsubSupMsgs) _unsubSupMsgs();
+  if (!_supChatId) return;
+  const q = query(collection(db, 'supportChats', _supChatId, 'messages'), orderBy('createdAt', 'asc'));
+  _unsubSupMsgs = onSnapshot(q, snap => {
+    _renderSupportMsgsUser(snap.docs.map(d => ({ id: d.id, ...d.data() })));
+    updateDoc(doc(db, 'supportChats', _supChatId), { userUnread: 0 }).catch(() => {});
+  }, () => {});
+}
+
+function _renderSupportMsgsUser(msgs) {
+  const el = document.getElementById('supsh-msgs'); if (!el) return;
+  if (!msgs.length) {
+    el.innerHTML = `<div class="supsh-empty">
+      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+      <div class="supsh-empty-t">Нет сообщений</div>
+      <div class="supsh-empty-s">Напишите нам — ответим быстро</div>
+    </div>`;
+    return;
+  }
+  const escH = s => (s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  el.innerHTML = msgs.map(m => {
+    const isMe = m.senderRole === 'user';
+    const time = m.createdAt?.toDate ? m.createdAt.toDate().toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' }) : '';
+    const nameHtml = !isMe && m.senderName ? `<span class="supsh-msg-name">${escH(m.senderName)}</span>` : '';
+    return `<div class="supsh-msg ${isMe ? 'supsh-msg-me' : 'supsh-msg-them'}">${nameHtml}${escH(m.text)}<span class="supsh-msg-time">${time}</span></div>`;
+  }).join('');
+  el.scrollTop = el.scrollHeight;
+}
+
+async function _loadSupportOrders() {
+  if (!CU) return;
   try {
-    await updateDoc(doc(db, 'supportTickets', ticketId), { status, updatedAt: serverTimestamp() });
-    toast(status === 'resolved' ? 'Обращение закрыто' : status === 'in_progress' ? 'Взято в работу' : 'Переоткрыто', 'ok');
-    openTicket(ticketId);
-  } catch (e) { toast('Ошибка', 'err'); }
+    const snap = await getDocs(query(collection(db, 'orders'), where('userId', '==', CU.uid), orderBy('createdAt', 'desc'), limit(10)));
+    _supOrdersCache = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    _renderSupOrderPicker();
+  } catch (e) {}
+}
+
+function _renderSupOrderPicker() {
+  const el = document.getElementById('supsh-order-picker'); if (!el) return;
+  const escH = s => (s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  const noSel = _supSelectedOrder === null;
+  let html = `<button class="supsh-order-item ${noSel ? 'selected' : ''}" onclick="selectSupportOrder(null,null)">
+    <div class="supsh-order-item-ico"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="${noSel ? '#fff' : 'currentColor'}" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg></div>
+    <div class="supsh-order-item-body"><div class="supsh-order-item-num">Без заказа</div><div class="supsh-order-item-meta">Общий вопрос</div></div>
+    ${noSel ? '<svg class="supsh-order-item-check" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>' : ''}
+  </button>`;
+  _supOrdersCache.forEach(o => {
+    const sel = _supSelectedOrder === o.id;
+    const num = o.orderNumber || o.id.slice(-6).toUpperCase();
+    const date = o.createdAt?.toDate ? o.createdAt.toDate().toLocaleDateString('ru-RU', { day: '2-digit', month: 'short' }) : '';
+    html += `<button class="supsh-order-item ${sel ? 'selected' : ''}" onclick="selectSupportOrder('${o.id}','${escH(num)}')">
+      <div class="supsh-order-item-ico"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="${sel ? '#fff' : 'currentColor'}" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg></div>
+      <div class="supsh-order-item-body"><div class="supsh-order-item-num">#${escH(num)}</div><div class="supsh-order-item-meta">${date}${o.totalPrice ? ' · ' + o.totalPrice + ' сом' : ''}</div></div>
+      ${sel ? '<svg class="supsh-order-item-check" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>' : ''}
+    </button>`;
+  });
+  el.innerHTML = html;
+}
+
+window.toggleSupportOrderPicker = function () {
+  _supOrderPickerOpen = !_supOrderPickerOpen;
+  document.getElementById('supsh-order-picker')?.classList.toggle('open', _supOrderPickerOpen);
+  const btn = document.getElementById('supsh-order-btn');
+  if (btn) btn.textContent = _supOrderPickerOpen ? 'Закрыть' : 'Выбрать';
+};
+
+window.selectSupportOrder = function (orderId, orderNum) {
+  _supSelectedOrder = orderId;
+  const valEl = document.getElementById('supsh-order-val');
+  if (valEl) { valEl.textContent = orderId ? `#${orderNum}` : 'Без заказа'; valEl.classList.toggle('has-order', !!orderId); }
+  _renderSupOrderPicker();
+  if (_supOrderPickerOpen) toggleSupportOrderPicker();
+};
+
+window.sendSupportMsg = async function () {
+  if (!CU) return;
+  const inp = document.getElementById('supsh-input'); if (!inp) return;
+  const text = inp.value.trim(); if (!text) return;
+  inp.value = ''; inp.style.height = 'auto';
+  _supChatId = CU.uid;
+  const chatRef = doc(db, 'supportChats', _supChatId);
+  const chatData = {
+    userId: CU.uid, userName: CU.displayName || 'Пользователь',
+    userPhone: CU.phoneNumber || '', lastMessage: text.slice(0, 120),
+    lastMessageAt: serverTimestamp(), lastMessageSenderRole: 'user',
+    adminUnread: increment(1), userUnread: 0, updatedAt: serverTimestamp(),
+  };
+  if (_supSelectedOrder) {
+    const order = _supOrdersCache.find(o => o.id === _supSelectedOrder);
+    if (order) { chatData.orderId = order.id; chatData.orderNumber = order.orderNumber || order.id.slice(-6).toUpperCase(); }
+  }
+  try {
+    await setDoc(chatRef, chatData, { merge: true });
+    await addDoc(collection(db, 'supportChats', _supChatId, 'messages'), {
+      text, senderId: CU.uid, senderRole: 'user',
+      senderName: CU.displayName || 'Пользователь', createdAt: serverTimestamp(),
+    });
+  } catch (e) { if (window.toast) window.toast('Ошибка отправки', 'err'); }
 };
 
 /* ── SETTINGS ── */
@@ -1857,7 +1955,7 @@ window.goPage=function(page){
   const T={overview:'Обзор',orders:'Заказы',couriers:'Курьеры',clients:'Клиенты',support:'Поддержка',catalog:'Каталог',stores:'Магазины',addresses:'Адреса доставки','gen-catalogs':'Общий каталог',news:'Новости',analytics:'Аналитика',staff:'Сотрудники',settings:'Настройки',hr:'HR / Вакансии',ads:'Реклама',partners:'Партнерство'};
   const el=document.getElementById('tb-title');if(el)el.textContent=T[page]||page;
   if(page==='couriers')renderCouriersPage();
-  if(page==='support'){renderTickets();}
+  if(page==='support'){renderSupportChats();}
   if(page==='analytics')renderAnalytics();
   if(page==='staff')renderStaff();
   if(page==='overview'){renderDonut();renderLiveOrders();renderAct();}

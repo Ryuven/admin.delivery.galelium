@@ -1977,6 +1977,20 @@ function renderGenCatalogsPage(){
     const statusBg=isActive?'var(--greend)':'var(--muted2)';
     const statusLabel=isActive?'Активна':'Скрыта';
     const isDefault=!!c._isDefault;
+    const cityIds=c.cityIds||[];
+    // Показываем города: если пусто — "Все города"
+    const citiesSnippet = cityIds.length===0
+      ? `<div style="font-size:.52rem;color:var(--cyan);margin-top:5px;display:flex;align-items:center;gap:3px">
+           <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 010 20M12 2a15.3 15.3 0 000 20"/></svg>
+           Все города
+         </div>`
+      : `<div style="font-size:.52rem;color:var(--text3);margin-top:5px;display:flex;align-items:center;gap:3px;flex-wrap:wrap">
+           <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+           ${cityIds.map(cid=>{
+             const cn=(_retCities||[]).find(x=>x.id===cid)?.name||cid;
+             return `<span style="padding:1px 5px;background:var(--s2);border:1px solid var(--b);border-radius:99px">${escHtmlAdm(cn)}</span>`;
+           }).join('')}
+         </div>`;
     return `<div class="gc-card${isActive?'':' gc-card-hidden'}">
       <div class="gc-card-img">
         <img src="storage/general-catalogs/${escHtmlAdm(c.slug)}.png" alt="${escHtmlAdm(c.name||c.slug)}"
@@ -1989,6 +2003,7 @@ function renderGenCatalogsPage(){
       <div class="gc-card-body">
         <div class="gc-card-name" title="${escHtmlAdm(c.name||c.slug)}">${escHtmlAdm(c.name||c.slug)}</div>
         <div class="gc-card-slug">${escHtmlAdm(c.slug)}</div>
+        ${citiesSnippet}
         <div class="gc-card-foot">
           <button class="btn btn-secondary btn-sm" onclick="openGcModal('${escHtmlAdm(c.id||c.slug)}')">✏️ Изменить</button>
           <button class="btn btn-${isActive?'danger':'success'} btn-sm" onclick="toggleGc('${escHtmlAdm(c.id||c.slug)}',${!isActive})">${isActive?'Скрыть':'Показать'}</button>
@@ -1999,9 +2014,26 @@ function renderGenCatalogsPage(){
   }).join('');
 }
 
-window.openGcModal=function(id){
+window.openGcModal=async function(id){
   const c=allGenCatalogs.find(x=>(x.id||x.slug)===id);
   if(!c){toast('Не найдено','warn');return;}
+
+  // Грузим список городов для чекбоксов (через кеш ритейлеров)
+  await loadRetCities();
+  const selCityIds=c.cityIds||[];
+
+  // Чекбоксы городов
+  const citiesHtml=_retCities.length
+    ? _retCities.map(city=>`
+        <label style="display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:8px;cursor:pointer;border:1px solid var(--b);background:var(--s2);transition:border-color .15s"
+               onmouseenter="this.style.borderColor='var(--bh)'" onmouseleave="this.style.borderColor='var(--b)'">
+          <input type="checkbox" class="gc-city-cb" value="${escHtmlAdm(city.id)}"
+            style="width:15px;height:15px;accent-color:var(--acc);cursor:pointer;flex-shrink:0"
+            ${selCityIds.includes(city.id)?'checked':''}>
+          <span style="font-size:.72rem;color:var(--text)">${escHtmlAdm(city.name)}${city.region?` <span style="color:var(--text3);font-size:.6rem">· ${escHtmlAdm(city.region)}</span>`:''}</span>
+        </label>`).join('')
+    : `<div style="font-size:.68rem;color:var(--text3)">Города не загружены</div>`;
+
   document.getElementById('gc-modal-title').textContent='Редактировать категорию';
   document.getElementById('gc-modal-body').innerHTML=`
     <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px">
@@ -2023,6 +2055,21 @@ window.openGcModal=function(id){
       <input type="checkbox" id="gc-edit-active" style="width:16px;height:16px;accent-color:var(--green);cursor:pointer" ${c.active!==false?'checked':''}>
       <label for="gc-edit-active" style="font-size:.72rem;color:var(--text2);cursor:pointer">Активна (показывается на главной)</label>
     </div>
+
+    <!-- ── Города ── -->
+    <div class="mf" style="margin-top:4px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+        <label class="ml" style="margin-bottom:0">Города показа</label>
+        <span style="font-size:.56rem;color:var(--text3)">Пусто = все города</span>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:5px" id="gc-cities-list">
+        ${citiesHtml}
+      </div>
+      <div style="font-size:.58rem;color:var(--text3);margin-top:8px;display:flex;align-items:center;gap:4px">
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        Если ни один город не отмечен — категория показывается во всех городах
+      </div>
+    </div>
     <input type="hidden" id="gc-edit-slug" value="${escHtmlAdm(c.slug)}"/>
   `;
   document.getElementById('gc-modal-foot').innerHTML=`
@@ -2036,10 +2083,15 @@ window.saveGc=async function(id){
   const name=document.getElementById('gc-edit-name')?.value.trim();
   const slug=document.getElementById('gc-edit-slug')?.value.trim();
   if(!name){toast('Введите название','warn');return;}
+
+  // Собираем отмеченные города
+  const cityIds=[...document.querySelectorAll('.gc-city-cb:checked')].map(cb=>cb.value);
+
   const data={
     slug,name,
     order:parseInt(document.getElementById('gc-edit-order')?.value||'0'),
     active:document.getElementById('gc-edit-active')?.checked??true,
+    cityIds,                // [] = все города, ['dushanbe'] = только Душанбе
     updatedAt:serverTimestamp(),
   };
   try{
@@ -2087,6 +2139,7 @@ window.initGenCatalogs=async function(){
       if(existing.has(c.slug)){skipped++;return;}
       batch.push(setDoc(doc(db,'generalCatalogs',c.slug),{
         slug:c.slug,name:c.name,order:i,active:true,
+        cityIds:[],   // [] = показывается во всех городах
         createdAt:serverTimestamp(),updatedAt:serverTimestamp(),
       }));
       created++;
